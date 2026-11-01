@@ -48,6 +48,7 @@
 | I2-S7 — scoped Woo public copy | PBL-010/011/012/PBL-040 presentation partial; no new business scope | shop H1; search result count; direct-add demo loop action; PDP description labels via named filters/hooks | catalog/search/PDP `15 passed`; full `26 passed / 2 skipped`; existing screenshots updated | `DONE / PROVISIONAL`; breadcrumb/full localization/design remain open |
 | I2-S8 — user-owned isolation regression | PBL-011/PBL-040 regression safety; no new business scope | temporary authenticated unmarked product; loop/PDP demo-boundary assertions; guaranteed cleanup | targeted `1 passed`; post-full inventory `10`, temp matches `0`; full `27 passed / 2 skipped` | `DONE / TECHNICAL`; master/RBAC/real stock/lifecycle remain open |
 | I2-S9 — truthful canonical shop controls | SCR-005; PBL-010/012 presentation/ranking safety partial | scoped shop predicate; Woo loop total; named count renderer; ordering UI removed without query mutation | catalog `3 passed`; local total `10`; category isolation; axe/no-overflow/runtime + 3 screenshots; full `27 passed / 2 skipped` | `DONE / PROVISIONAL`; ranking/query/data/design remain open |
+| I2-S10 — fail-closed product-search scope | PBL-002/012 regression safety partial; no new business scope | post-only + mixed post-type crafted URLs; exact-product/shop presentation exclusion; params preserved | `3 passed` on `1440/390/360`; no overflow/runtime; full `30 passed / 2 skipped` | `DONE / TECHNICAL`; generic/mixed search UX, index/ranking/design remain open |
 
 ## Статусы исходного backlog
 

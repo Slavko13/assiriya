@@ -22,6 +22,7 @@
 | TECH-016 | 2026-11-01 | Четыре проверенных Woo public labels локализуются named hooks/filters без gettext/template override; demo loop CTA меняется только в direct-add state | Сужает blast radius, сохраняет labels out-of-stock/variable states и не меняет user-owned page/content/data; full translation catalog остаётся отдельной задачей | принято для I2-S7; partial public copy only |
 | TECH-017 | 2026-11-01 | Demo presentation boundary проверяется временным authenticated unmarked product с обязательным validated force-delete cleanup | Даёт browser-level доказательство отсутствия demo leakage в loop/PDP; exact-SKU REST check подтверждает cleanup в штатном test run | принято для I2-S8; production master/RBAC/lifecycle open |
 | TECH-018 | 2026-11-01 | Canonical shop показывает local total и не показывает ordering UI до ranking contract | Named hooks меняют только presentation при `is_shop() && !is_search()`; query/default order/data не изменяются, category/search изолированы | принято для I2-S9; ranking и design open |
+| TECH-019 | 2026-11-01 | Custom product-search presentation включается только для exact product scope; post-only и mixed scopes fail closed | Исключает ложные product-specific count/empty/catalog semantics на crafted generic search URL, не меняя WordPress query и не проектируя generic search | принято для I2-S10; generic search UX remains outside scope |
 
 ## Состояние DEC
 

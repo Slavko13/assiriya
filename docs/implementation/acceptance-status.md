@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S9:** `29` tests = `27 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S10:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -113,6 +113,17 @@ I2-S8 закрывает только technical isolation regression; production
 | I2-S9-ACC-005 | Regression не ухудшен | full `29`: `27 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S9 закрывает только canonical-shop presentation. Ranking contract, query/data behavior, full localization и visual approval остаются open.
+
+### I2-S10 — fail-closed product-search scope regression
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S10-ACC-001 | Non-product scope не получает product UI | `post_type=post`: successful response, query/scope preserved, product/shop markers `0` | `PASS` |
+| I2-S10-ACC-002 | Mixed scope fail closed | `post_type[]=product&post_type[]=post`: params preserved; product count/empty/heading и shop controls `0` | `PASS` |
+| I2-S10-ACC-003 | Viewports/runtime не ухудшены | targeted `3 passed` на `1440/390/360`; no overflow/runtime errors | `PASS` |
+| I2-S10-ACC-004 | Regression не ухудшен | full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S10 закрывает только fail-closed presentation scope. Generic/mixed search UX, search index/ranking и visual approval остаются open.
 
 ## Технические критерии Итерации 1
 

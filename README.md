@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **27 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **30 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -21,6 +21,7 @@
 - первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
 - provisional generic product search: escaped results/no-results context и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
+- fail-closed search scope: post-only и mixed post types не получают product-search presentation;
 - scoped public Woo copy: shop H1/count, search count, demo actions и PDP description labels; unapproved ordering UI снят только на shop/search, полная локализация остаётся отдельной задачей;
 - E2E isolation: временный unmarked Woo product не получает demo presentation; `finally` cleanup и отсутствие temporary SKU проверяются;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;

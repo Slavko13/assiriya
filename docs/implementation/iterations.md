@@ -368,6 +368,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только truthful canonical-shop presentation. Ranking/query/data и visual approval остаются open.
 
+### I2-S10 — fail-closed product-search scope regression
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** regression safety для I2-S5/S6/S9, `PBL-002/PBL-012 partial`; business scope не расширяется.
+
+Критерии среза:
+
+- crafted `post_type=post` и `post_type[]=product&post_type[]=post` возвращают successful WordPress documents и сохраняют query scope;
+- exact-product custom markers/count/empty state и canonical-shop controls не протекают в non-product/mixed search;
+- test не утверждает generic search layout/result semantics и не меняет WordPress query;
+- `1440/390/360`: no horizontal overflow и no runtime errors;
+- full regression проходит без failures.
+
+Вне scope: generic site search UX, mixed-result design, search index/ranking, normalization/suggestions и screenshot baseline.
+
+Выполнено и проверено:
+
+- новый browser regression проходит post-only и mixed URL на каждом viewport;
+- custom product/search/shop markers и product-specific heading отсутствуют; query и post-type params сохранены;
+- targeted: `3 passed`; no overflow/runtime errors;
+- full regression: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к fail-closed presentation boundary. Generic/mixed search UX и business search contract остаются open.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

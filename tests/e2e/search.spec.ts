@@ -135,3 +135,49 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
   expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
+
+test('keeps product-search presentation fail-closed for post-only and mixed scopes', async ({ page }) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  const query = 'Фильтр';
+  const cases = [
+    { label: 'post-only', postTypes: ['post'] },
+    { label: 'mixed product and post', postTypes: ['product', 'post'] },
+  ];
+
+  for (const searchCase of cases) {
+    const params = new URLSearchParams({ s: query });
+    if (searchCase.postTypes.length === 1) {
+      params.set('post_type', searchCase.postTypes[0]);
+    } else {
+      searchCase.postTypes.forEach((postType) => params.append('post_type[]', postType));
+    }
+
+    const response = await page.goto(`/?${params.toString()}`, { waitUntil: 'networkidle' });
+    expect(response?.ok(), `${searchCase.label} search should return a successful document`).toBeTruthy();
+    await expect(page.locator('body')).toHaveClass(/\bsearch\b/);
+    await expect(page.locator('main')).toBeVisible();
+
+    const resultUrl = new URL(page.url());
+    expect(resultUrl.searchParams.get('s'), `${searchCase.label} should preserve the query`).toBe(query);
+    if (searchCase.postTypes.length === 1) {
+      expect(resultUrl.searchParams.get('post_type')).toBe('post');
+    } else {
+      expect(resultUrl.searchParams.getAll('post_type[]')).toEqual(searchCase.postTypes);
+    }
+
+    await expect(page.locator('[data-product-search-count]')).toHaveCount(0);
+    await expect(page.locator('[data-product-search-empty]')).toHaveCount(0);
+    await expect(page.locator('[data-shop-product-count]')).toHaveCount(0);
+    await expect(page.locator('.az-shop-categories')).toHaveCount(0);
+    await expect(page.getByText(/^\s*Поиск товаров:/)).toHaveCount(0);
+
+    const pageWidth = await page.evaluate(() => ({
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+    }));
+    expect(pageWidth.scrollWidth, `${searchCase.label} should not overflow`).toBeLessThanOrEqual(pageWidth.clientWidth + 1);
+  }
+
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});
