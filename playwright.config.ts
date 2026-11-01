@@ -1,6 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = process.env.BASE_URL ?? 'http://localhost:8080';
+import { validatePlaywrightEnvironment } from './scripts/playwright-env.mjs';
+
+const { baseURL } = validatePlaywrightEnvironment();
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -60,6 +62,9 @@ export default defineConfig({
       dependencies: ['desktop-chrome-1440', 'mobile-chrome-390', 'mobile-chrome-360'],
       use: {
         viewport: { width: 1440, height: 1100 },
+        trace: 'off',
+        screenshot: 'off',
+        video: 'off',
       },
     },
   ],

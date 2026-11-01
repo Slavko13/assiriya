@@ -393,6 +393,34 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к fail-closed presentation boundary. Generic/mixed search UX и business search contract остаются open.
 
+### I2-S11 — fail-closed Playwright target/admin-write preflight
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-036/PBL-040 technical safety partial`; production behavior и business scope не меняются.
+
+Критерии среза:
+
+- Playwright config требует explicit absolute HTTP(S) `BASE_URL`; implicit localhost target отсутствует;
+- malformed/non-HTTP URL, subpath, credentials, query и fragment в target отклоняются до browser/HTTP;
+- admin credential pair и `E2E_ALLOW_ADMIN_WRITES=1` образуют неделимый opt-in; любой partial state завершает config с ошибкой без supplied values, admin failure artifacts отключены;
+- с explicit `BASE_URL` без triplet public suite доступен, admin tests отмечены skipped и writes не выполняются;
+- с full triplet обнаруживаются все tests и full regression проходит;
+- documentation явно отделяет mutating local/disposable admin E2E от production smoke.
+
+Вне scope: доказательство remote ownership, RBAC/`TC-037`, production authorization, CI secret manager и server deployment.
+
+Выполнено и проверено:
+
+- standalone env validator подключён к Playwright config; fallback `http://localhost:8080` удалён;
+- Node preflight matrix: `6 passed`, включая secret non-disclosure;
+- no `BASE_URL` и credential pair without flag: config exit `1` до test discovery;
+- `BASE_URL` only: admin project `4 skipped`; full triplet: `32` tests discovered;
+- full regression с exact local target/full triplet: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`;
+- post-full inventory: published products `10`, temporary E2E products `0`.
+
+Статус закрывает только test-harness target/write safety. Он не разрешает mutating E2E на production и не закрывает RBAC/security acceptance.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

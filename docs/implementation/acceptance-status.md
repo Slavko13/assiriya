@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S10:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S11:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -124,6 +124,18 @@ I2-S9 закрывает только canonical-shop presentation. Ranking contr
 | I2-S10-ACC-004 | Regression не ухудшен | full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S10 закрывает только fail-closed presentation scope. Generic/mixed search UX, search index/ranking и visual approval остаются open.
+
+### I2-S11 — fail-closed Playwright target/admin-write preflight
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S11-ACC-001 | Implicit/unsafe target не допущен | missing `BASE_URL` → exit `1`; malformed/scheme/subpath/credentials/query/fragment covered by unit matrix | `PASS` |
+| I2-S11-ACC-002 | Admin-write opt-in неделим и preflight secret-safe | partial credential/flag state → exit `1`; `6` unit tests include error non-disclosure; admin trace/video/screenshot disabled | `PASS` |
+| I2-S11-ACC-003 | Public-only path не пишет данные | explicit `BASE_URL` without triplet → admin project `4 skipped` | `PASS` |
+| I2-S11-ACC-004 | Full explicit local path доступен | exact local URL + full triplet → `32` tests discovered; credential values absent from output | `PASS` |
+| I2-S11-ACC-005 | Regression и cleanup не ухудшены | full `32`: `30 passed`, `2 intentional skipped`; post-full inventory `10/0` | `PASS` |
+
+I2-S11 закрывает только test-harness target/write safety. Opt-in не доказывает remote ownership, не разрешает production writes и не закрывает RBAC/`TC-037`.
 
 ## Технические критерии Итерации 1
 

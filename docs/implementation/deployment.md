@@ -60,6 +60,14 @@ docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml config 
 
 Caddy profile предназначен только для контролируемого HTTP/IP demo-доступа и ограничивает admin по CIDR. Для публичной административной панели обязателен VPN, SSH tunnel либо согласованный HTTPS/TLS edge с доверенным сертификатом; `auto_https off` не выполняет `NFR-SEC-003`.
 
+## Playwright target safety
+
+Playwright всегда требует явный absolute root `BASE_URL`; fallback target отсутствует. URL с subpath, credentials, query, fragment или non-HTTP(S) scheme отклоняется до запуска browser, потому что suite использует root-relative routes.
+
+Admin E2E выполняет временные settings writes и Woo fixture create/edit/force-delete. Он разрешён только при одновременном наличии `WP_ADMIN_USER`, `WP_ADMIN_PASSWORD` и `E2E_ALLOW_ADMIN_WRITES=1`, после ручной проверки exact target ownership. Partial opt-in завершает config с ошибкой, в которой нет supplied values; trace/video/screenshot для admin project отключены.
+
+Mutating admin E2E не является production smoke и не запускается в deploy workflow. Production smoke ограничивается нижеперечисленными read-only/public проверками и demo guard.
+
 ## Git deployment
 
 На сервере должен быть clean checkout на `DEPLOY_BRANCH` и настроенный origin. Запуск:
@@ -98,7 +106,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 
 Только после этих фактов статус может стать `DEPLOYED`.
 
-## Подтверждённые локальные проверки 2026-11-01
+## Подтверждённые локальные проверки 2026-11-01—2026-11-02
 
 - smoke `/` — `PASS`;
 - smoke `/wp-json/` — `PASS`;
@@ -107,7 +115,8 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Playwright: 16 tests, 14 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD, keyboard/focus, AJAX cart/count/page, classic/Store API guards и catalog I2-S1 journey.
+- Playwright env preflight: 6 unit tests passed; missing/unsafe target и partial admin-write opt-in fail closed.
+- Playwright: 32 tests, 30 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, catalog/search/PDP и demo guards.
 
 Эти результаты относятся к локальному адресу `http://localhost:8086/`. Реального server deployment не было: `NOT_DEPLOYED`.
 

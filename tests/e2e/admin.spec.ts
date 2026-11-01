@@ -18,10 +18,14 @@ function watchRuntimeErrors(page: Page): RuntimeErrors {
 
 const adminUser = process.env.WP_ADMIN_USER;
 const adminPassword = process.env.WP_ADMIN_PASSWORD;
+const adminWritesAllowed = process.env.E2E_ALLOW_ADMIN_WRITES === '1';
 
 test.describe('WordPress administration', () => {
 	test.describe.configure({ mode: 'serial' });
-  test.skip(!adminUser || !adminPassword, 'Set WP_ADMIN_USER and WP_ADMIN_PASSWORD to run the admin smoke test.');
+  test.skip(
+    !adminUser || !adminPassword || !adminWritesAllowed,
+    'Set the admin credential pair and E2E_ALLOW_ADMIN_WRITES=1 only for an owned local/disposable target.',
+  );
 
   async function logIn(page: Page): Promise<void> {
     await page.goto('/wp-login.php');

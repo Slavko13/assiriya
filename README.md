@@ -50,7 +50,7 @@ docker compose --env-file .env -f compose.yaml -f compose.dev.yaml ps
 curl.exe -I -L http://localhost:8086/
 ```
 
-Учётные данные администратора берутся только из `WP_ADMIN_USER` и `WP_ADMIN_PASSWORD` локального `.env`. Не копируйте их в README, команды, логи, Git или отчёты; приведённый ниже E2E-запуск загружает значения в переменные процесса без печати секретов.
+Учётные данные администра берутся только из `WP_ADMIN_USER` и `WP_ADMIN_PASSWORD` локального `.env`. Не копируйте их в README, команды, логи, Git или отчёты. Playwright требует явный `BASE_URL` и не имеет target по умолчанию; записывающие admin-сценарии дополнительно требуют `E2E_ALLOW_ADMIN_WRITES=1`.
 
 ## Демо-данные
 
@@ -66,13 +66,17 @@ docker compose --env-file .env -f compose.yaml -f compose.dev.yaml --profile too
 
 ```powershell
 npm install
+npm run test:preflight
 $env:BASE_URL='http://localhost:8086'
 $env:WP_ADMIN_USER=(Get-Content .env | Where-Object { $_ -like 'WP_ADMIN_USER=*' } | Select-Object -First 1).Split('=',2)[1]
 $env:WP_ADMIN_PASSWORD=(Get-Content .env | Where-Object { $_ -like 'WP_ADMIN_PASSWORD=*' } | Select-Object -First 1).Split('=',2)[1]
+$env:E2E_ALLOW_ADMIN_WRITES='1'
 npm run test:e2e
 ```
 
-Текущий локальный результат: **16 tests: 14 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет WooCommerce category/product CRUD с cleanup, AJAX cart → count → cart page → classic checkout guard, keyboard/focus и первый срез configured shop page → category archive на `1440/390/360`. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
+Перед установкой opt-in сверьте exact root `BASE_URL` и убедитесь, что стенд локальный или disposable и принадлежит вам: admin suite временно меняет settings и создаёт/удаляет Woo fixtures. Этот suite не является production smoke; trace/video/screenshot для admin project отключены.
+
+Текущий локальный результ: **32 tests: 30 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
 
 ## Persistence, backup и restore
 

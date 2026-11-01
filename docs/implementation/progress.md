@@ -1,6 +1,6 @@
 # Прогресс
 
-**Дата среза:** 2026-11-01  
+**Дата среза:** 2026-11-02
 **Общий статус:** Итерация 1 `READY_FOR_DEPLOYMENT`; Итерация 2 `IN_PROGRESS`; сервер `NOT_DEPLOYED`.
 
 | Область | Фактический результат в checkout | Следующее доказательство | Статус |
@@ -19,6 +19,7 @@
 | Product search baseline | neutral generic form; escaped query context/no-results; positive `Фильтр` → `2` product cards; shop category grid исключён; post-only/mixed scopes fail closed | field index/ranking/normalization/suggestions, generic mixed-search UX и утверждённый DG-001/018 | `DONE / PROVISIONAL` для `I2-S5/S6/S10`; `PBL-002/006/012` остаются blocked |
 | Scoped Woo public copy | shop H1/total, search count, demo loop action и PDP description labels локализованы named hooks; shop/search ordering UI снят до ranking contract | breadcrumb/full Woo/admin/account/cart/checkout translation; ranking/query | `DONE / PROVISIONAL` для `I2-S7/S9`; не полный i18n |
 | User-owned product isolation | authenticated temporary unmarked product сохраняет user SKU/stock/action/content и не получает demo UI; force-delete cleanup подтверждён | production master/RBAC/stock/lifecycle | `DONE / TECHNICAL` для `I2-S8`; не business acceptance |
+| E2E target/write safety | explicit safe `BASE_URL`; admin writes только с credential pair + `E2E_ALLOW_ADMIN_WRITES=1`; preflight `6 passed` | remote ownership/production authorization и RBAC | `DONE / TECHNICAL` для `I2-S11`; admin suite не production smoke |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks | утверждённый mobile-макет после DEC-019/020 | `DONE` для provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
@@ -26,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -40,6 +41,7 @@
 ## Последний подтверждённый прогон
 
 - Playwright: `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`.
+- Playwright env preflight: `6 passed`; no-target/unsafe-target/partial-admin states fail closed before browser.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
 - Woo category/product CRUD с отражением на главной и cleanup, cart count, classic/Woo Blocks cart/checkout guard и keyboard/focus entry point — `PASS`.
