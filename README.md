@@ -20,10 +20,10 @@
 - 8 демонстрационных категорий, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references;
 - первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
-- provisional generic product search: escaped results/no-results context и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
+- provisional generic product search: escaped results/no-results context, включая scoped one-result page без Woo auto-redirect, и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
 - fail-closed search scope: post-only и mixed post types не получают product-search presentation;
 - scoped public Woo copy: shop H1/count, product-search count, breadcrumbs, demo actions и PDP description labels; unapproved ordering UI снят только на shop/search, полная локализация остаётся отдельной задачей;
-- E2E isolation: временный unmarked Woo product не получает demo presentation; `finally` cleanup и отсутствие temporary SKU проверяются;
+- E2E isolation: временный unmarked Woo product не получает demo presentation в каталоге, строгом поиске и PDP; `finally` cleanup и отсутствие temporary SKU проверяются;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
 - Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;

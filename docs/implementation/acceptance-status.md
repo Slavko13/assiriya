@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S12:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S13:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -149,6 +149,19 @@ I2-S11 закрывает только test-harness target/write safety. Opt-in 
 | I2-S12-ACC-006 | Regression не ухудшен | full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S12 закрывает только scoped public breadcrumb copy. JSON-LD names следуют тем же labels, но URLs/order не меняются; full i18n, SEO/canonical и visual approval остаются open.
+
+### I2-S13 — user-owned strict-search isolation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S13-ACC-001 | Единственный strict product result не уходит в PDP автоматически | exact query сохраняет `s` и один `post_type=product`; results count = `1` | `PASS` |
+| I2-S13-ACC-002 | Найден именно временный user-owned товар | единственная card = exact `post-${productId}`, title и REST permalink | `PASS` |
+| I2-S13-ACC-003 | Demo semantics не протекает | search card/PDP: provenance и demo meta `0`; CTA обычная и без «демо» | `PASS` |
+| I2-S13-ACC-004 | User data сохраняются | PDP показывает exact SKU, stock `3`, short/long descriptions | `PASS` |
+| I2-S13-ACC-005 | Cleanup точный и полный | force-delete known ID / exact-SKU fallback; после full inventory `10` published, temporary `0` | `PASS` |
+| I2-S13-ACC-006 | Regression не ухудшен | targeted `1 passed`; PHP lint; full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S13 закрывает только user-owned isolation и scoped one-result presentation. Search fields/completeness/ranking, production master/RBAC/stock/lifecycle и approved design остаются open.
 
 ## Технические критерии Итерации 1
 

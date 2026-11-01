@@ -191,6 +191,10 @@ function avtozakup_is_product_search_request(): bool {
 		|| ( is_array( $post_type ) && 1 === count( $post_type ) && 'product' === reset( $post_type ) );
 }
 
+function avtozakup_keep_product_search_results_page( bool $redirect ): bool {
+	return avtozakup_is_product_search_request() ? false : $redirect;
+}
+
 function avtozakup_is_catalog_shop_request(): bool {
 	return function_exists( 'is_shop' ) && is_shop() && ! is_search();
 }
@@ -351,6 +355,7 @@ add_filter( 'woocommerce_product_description_heading', 'avtozakup_product_descri
 add_filter( 'woocommerce_page_title', 'avtozakup_woocommerce_page_title' );
 add_filter( 'woocommerce_breadcrumb_defaults', 'avtozakup_woocommerce_breadcrumb_defaults' );
 add_filter( 'woocommerce_get_breadcrumb', 'avtozakup_woocommerce_breadcrumb_trail' );
+add_filter( 'woocommerce_redirect_single_search_result', 'avtozakup_keep_product_search_results_page' );
 
 add_action(
 	'woocommerce_before_shop_loop',

@@ -137,7 +137,33 @@ test.describe('WordPress administration', () => {
       await expect(loopAction).toContainText(/\S/);
       await expect(loopAction).not.toContainText(/демо/i);
 
-      await page.goto(createdProduct.permalink, { waitUntil: 'networkidle' });
+      await page.goto(`/?s=${encodeURIComponent(productName)}&post_type=product`, { waitUntil: 'networkidle' });
+      const strictSearchUrl = new URL(page.url());
+      expect(strictSearchUrl.searchParams.get('s')).toBe(productName);
+      expect(strictSearchUrl.searchParams.getAll('post_type')).toEqual(['product']);
+      await expect(page.locator('[data-product-search-empty]')).toHaveCount(0);
+      await expect(page.locator('[data-product-search-count]')).toHaveText('Найдено товаров: 1');
+
+      const searchProducts = page.locator('ul.products li.product');
+      await expect(searchProducts).toHaveCount(1);
+      const searchProduct = page.locator(`ul.products li.product.post-${productId}`);
+      await expect(searchProduct).toHaveCount(1);
+      await expect(searchProduct).toBeVisible();
+      await expect(searchProduct.locator('.woocommerce-loop-product__title')).toHaveText(productName);
+      await expect(searchProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+      const searchAction = searchProduct.locator('.add_to_cart_button');
+      await expect(searchAction).toHaveCount(1);
+      await expect(searchAction).toBeVisible();
+      await expect(searchAction).toContainText(/\S/);
+      await expect(searchAction).not.toContainText(/демо/i);
+      const searchProductLink = searchProduct.locator('.woocommerce-loop-product__link');
+      await expect(searchProductLink).toHaveAttribute('href', createdProduct.permalink);
+
+      await Promise.all([
+        page.waitForURL(createdProduct.permalink),
+        searchProductLink.click(),
+      ]);
+      await page.waitForLoadState('networkidle');
       await expect(page.locator('body')).toHaveClass(/single-product/);
       await expect(page.locator('h1.product_title')).toHaveText(productName);
       await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);

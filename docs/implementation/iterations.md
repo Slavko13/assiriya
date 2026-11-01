@@ -448,6 +448,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только scoped public breadcrumb copy. JSON-LD names следуют тем же labels намеренно; full localization, SEO/canonical и design approval остаются open.
 
+### I2-S13 — user-owned strict-search isolation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** regression safety для I2-S5/S6/S8/S10, `PBL-002/011/PBL-040 partial`; business search scope не расширяется.
+
+Критерии среза:
+
+- authenticated temporary unmarked product с уникальным title остаётся на results page при strict `post_type=product`, даже если найден один товар;
+- query содержит один exact `post_type=product`, count равен `1`, а единственная card совпадает по post ID, title и permalink;
+- search card и PDP не получают demo provenance/CTA/meta; user SKU, stock и descriptions сохраняются;
+- Woo single-result redirect отключается named filter только для exact product search; query, index, ranking и другие search scopes не меняются;
+- cleanup удаляет только известный ID или exact SKU и подтверждает отсутствие записи.
+
+Вне scope: SKU/article/OEM/brand search, normalization/transliteration, typo correction, ranking, suggestions, filters, production master/RBAC/stock/lifecycle и утверждённый search design.
+
+Выполнено и проверено:
+
+- first targeted run зафиксировал штатный Woo 302 на единственный товар; scoped filter оставляет exact product search на results page;
+- targeted serial admin scenario: `1 passed`; PHP lint: `PASS`;
+- единственная card имеет exact `post-${productId}`, title/permalink, обычную непустую CTA и не содержит demo provenance;
+- переход по search card сохраняет exact user SKU, stock `3`, short/long descriptions и отсутствие demo UI;
+- full regression: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; post-full inventory `10` published / `0` temporary.
+
+Статус относится только к isolation и стабильной one-result presentation. Он не доказывает поля/полноту/ранжирование поиска и не является business acceptance.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
