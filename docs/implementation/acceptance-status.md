@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S6:** `28` tests = `26 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S7:** `28` tests = `26 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -77,6 +77,18 @@ I2-S5 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; `TC-003` за
 | I2-S6-ACC-005 | Regression не ухудшен | `28` tests: `26 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S6 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; field index contract, ranking, SKU/OEM/brand, `TC-001/002`, `DG-001/018` и `DEC-003` остаются open/blocked.
+
+### I2-S7 — scoped Woo public-copy consistency
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S7-ACC-001 | Shop title локализован без page mutation | `/shop/` H1 «Каталог товаров» на `1440/390/360`; filter-only | `PASS` |
+| I2-S7-ACC-002 | Search count локален и scoped | strict product search показывает `[data-product-search-count]` = «Найдено товаров: 2» | `PASS` |
+| I2-S7-ACC-003 | Direct-add demo action не выглядит production CTA | обе simple/purchasable/in-stock/AJAX result cards: demo label; in-memory out-of-stock clone сохраняет `Read more`; single PDP action остаётся demo | `PASS` |
+| I2-S7-ACC-004 | PDP description labels согласованы | marked PDP tab + heading «Описание» на `1440/390/360`; unconditional presentation filters, content unchanged | `PASS` |
+| I2-S7-ACC-005 | Regression не ухудшен | targeted `15 passed`; full `28`: `26 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S7 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; breadcrumb, shop result count/sorting и полная Woo/admin/account/cart/checkout локализация не закрыты.
 
 ## Технические критерии Итерации 1
 

@@ -19,6 +19,7 @@
 | TECH-013 | 2026-11-01 | До согласованного индекса UI обещает только generic product search без перечисления полей; no-results query явно escaped на Woo output boundary | Убирает ложное обещание article/brand search и XSS-prone raw title output, не меняя query/ranking; отдельный search design остаётся неутверждённым | принято для I2-S5/S6; DG-001/018 и DEC-003 open |
 | TECH-014 | 2026-11-01 | Curated shop category grid выводится только на shop, не на product search | Woo `is_shop()` включает search archive; явный `!is_search()` сохраняет смысл SCR-005 и не засоряет results unrelated navigation | принято для I2-S6; search design всё ещё provisional |
 | TECH-015 | 2026-11-01 | `Relevance` ordering control скрывается только на product search до ranking contract | Не создаёт ложного впечатления утверждённого ranking; underlying Woo/WP query и result count не меняются | принято для I2-S6; ranking остаётся blocked |
+| TECH-016 | 2026-11-01 | Четыре проверенных Woo public labels локализуются named hooks/filters без gettext/template override; demo loop CTA меняется только в direct-add state | Сужает blast radius, сохраняет labels out-of-stock/variable states и не меняет user-owned page/content/data; full translation catalog остаётся отдельной задачей | принято для I2-S7; partial public copy only |
 
 ## Состояние DEC
 

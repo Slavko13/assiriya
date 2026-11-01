@@ -21,6 +21,7 @@
 - первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
 - provisional generic product search: escaped results/no-results context и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
+- scoped public Woo copy: shop H1, search count, demo actions и PDP description labels; полная локализация остаётся отдельной задачей;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
 - Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;

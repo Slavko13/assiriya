@@ -93,6 +93,7 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
   await expect(page.locator('[data-product-search-empty]')).toHaveCount(0);
   await expect(page.locator('.az-shop-categories')).toHaveCount(0);
   await expect(page.locator('.woocommerce-ordering')).toHaveCount(0);
+  await expect(page.locator('[data-product-search-count]')).toHaveText('Найдено товаров: 2');
 
   const products = page.locator('ul.products li.product');
   await expect(products).toHaveCount(2);
@@ -102,6 +103,7 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
     await expect(productTitle).toBeVisible();
     expect((await productTitle.innerText()).trim()).not.toBe('');
     await expect(product.locator('[data-demo-provenance="product"]')).toContainText('Демонстрационный товар');
+    await expect(product.locator('.add_to_cart_button')).toHaveText('Добавить в демо-корзину');
     const productUrl = await product.locator('.woocommerce-loop-product__link').getAttribute('href');
     expect(productUrl).toBeTruthy();
     const parsedProductUrl = new URL(productUrl!, page.url());

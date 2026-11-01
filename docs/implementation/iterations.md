@@ -284,6 +284,35 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к generic fixture results presentation. Поля индекса, ranking и все перечисленные PBL/TC/DG/DEC остаются partial/open/blocked; visual имеет `DESIGN_REVIEW_REQUIRED`.
 
+### I2-S7 — scoped Woo public-copy consistency
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** presentation quality для `I2-S1/S4/S6`, `PBL-010/011/012/PBL-040 partial`; бизнес-требования не расширяются.
+
+Критерии среза:
+
+- configured shop H1 отображается как «Каталог товаров» без изменения user-owned Woo page title;
+- product search result count отображается как «Найдено товаров: N» только на strict product search;
+- standard Woo loop action marked demo product подписан «Добавить в демо-корзину» только для direct-add simple/purchasable/in-stock/AJAX state; остальные состояния сохраняют штатный label;
+- PDP description tab и heading получают presentation label «Описание» без изменения content;
+- существующие catalog/search/PDP E2E утверждают эти labels на `1440/390/360` и screenshots обновляются;
+- data/query/ranking/cart guards и unmarked business data не меняются; полный regression не ухудшается.
+
+Вне scope: полноценный translation catalog, breadcrumb localization, admin copy, checkout/account/cart translation, approved typography/design and any business semantics.
+
+Выполнено и проверено:
+
+- shop H1 локализован presentation-only `woocommerce_page_title` filter; post title немаркированной Woo page не изменён;
+- strict product search заменяет только result-count callback на «Найдено товаров: N»; default query/count source сохранён;
+- direct-add marked demo Woo loop action и single action используют «Добавить в демо-корзину»; другие product states и checkout guard не менялись;
+- in-memory CTA gate control: current seeded direct-add product → demo label; cloned out-of-stock state сохраняет исходный `Read more`;
+- description tab/heading локализованы filters до «Описание» без template override/content mutation;
+- catalog/search/PDP targeted на `1440/390/360`: `15 passed`, `0 failed`; actual screenshots обновлены и визуально проверены;
+- full regression: `28` tests, `26 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к четырём проверенным public labels. Breadcrumb, shop result count/sorting и остальные Woo/admin/account/cart/checkout strings остаются вне scope; visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

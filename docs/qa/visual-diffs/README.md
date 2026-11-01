@@ -108,6 +108,13 @@ report-home-YYYYMMDD.md
 - positive scenario: `3 passed`; search file: `6 passed`; full regression: `28 tests`, `26 passed`, `2 intentional skipped`, `0 failed`;
 - axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`; visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
 
+## Scoped Woo public copy I2-S7
+
+- existing shop/search/PDP screenshots обновлены: «Каталог товаров», «Найдено товаров: N», demo loop action и «Описание»;
+- targeted catalog/search/PDP: `15 passed`; full regression: `28 tests`, `26 passed`, `2 intentional skipped`, `0 failed`;
+- это не полный translation baseline: breadcrumb, shop result count/sorting и прочие Woo strings остаются открыты;
+- visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
+
 ## Отчёт
 
 Для каждого расхождения указать: компонент, координату/селектор, expected, actual, severity, источник (`Paper`, `DG`, `DEC`), принятое действие и статус. Не «исправлять» неоднозначность Paper без записи в decision log.

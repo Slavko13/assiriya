@@ -28,6 +28,7 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   expect(shopUrl, 'The header must expose the configured WooCommerce shop URL').toBeTruthy();
   expect(new URL(shopUrl!, page.url()).pathname, 'The repaired catalog route must use the canonical WooCommerce slug').toBe('/shop/');
   await page.goto(shopUrl!, { waitUntil: 'networkidle' });
+  await expect(page.getByRole('heading', { level: 1, name: 'Каталог товаров' })).toBeVisible();
 
   const catalog = page.locator('.az-shop-categories');
   await expect(catalog).toBeVisible();
@@ -149,6 +150,8 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
 
   await expect(page.locator('.woocommerce-product-details__short-description')).toBeVisible();
   await expect(page.locator('.woocommerce-Tabs-panel--description')).toBeVisible();
+  await expect(page.locator('.woocommerce-tabs .description_tab')).toContainText('Описание');
+  await expect(page.locator('.woocommerce-Tabs-panel--description h2')).toHaveText('Описание');
   await expect(page.locator('[data-demo-provenance="product"]')).toBeVisible();
 
   const demoMeta = page.locator('[data-demo-product-meta="product"]');
