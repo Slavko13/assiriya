@@ -501,6 +501,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только curated identity boundary. Legacy taxonomy остаётся неизменённой до отдельного master-data решения.
 
+### I2-S15 — category-card accessible name
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `NFR-UX-002`, `PBL-010/PBL-040 partial`, regression safety для I2-S1/S14; business/taxonomy scope не меняется.
+
+Критерии среза:
+
+- декоративная CSS illustration не имеет `role="img"`/произвольного `aria-label` и скрыта через `aria-hidden="true"`;
+- accessible name каждой category link равен только непустому видимому term name;
+- правило проверяется для всех восьми cards на homepage и canonical shop на `1440/390/360`;
+- DOM identity, href, layout, taxonomy и visual styling не меняются.
+
+Вне scope: полный accessibility audit Woo/admin/account/cart/checkout, approved assistive-technology matrix, taxonomy master и visual redesign.
+
+Выполнено и проверено:
+
+- удалён массив несвязанных art labels; декоративный span исключён из accessibility tree;
+- targeted catalog journey: `3 passed` на `1440/390/360`; существующий axe serious/critical gate сохранён;
+- PHP lint: `PASS`; full regression: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`;
+- screenshot lazy-load noise не относится к DOM/layout change и не включён в срез.
+
+Статус закрывает только accessible name shared category card. Полная accessibility acceptance остаётся partial.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

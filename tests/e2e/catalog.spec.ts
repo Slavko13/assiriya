@@ -2,7 +2,7 @@ import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 type RuntimeErrors = {
   console: string[];
@@ -34,12 +34,22 @@ async function readCategoryCards(page: Page, selector: string): Promise<Category
   );
 }
 
+async function expectCategoryAccessibleNames(cards: Locator): Promise<void> {
+  for (let index = 0; index < await cards.count(); index += 1) {
+    const card = cards.nth(index);
+    const visibleName = (await card.locator(':scope > span:last-child').innerText()).trim();
+    expect(visibleName).not.toBe('');
+    await expect(card).toHaveAccessibleName(visibleName);
+  }
+}
+
 test('opens the dynamic catalog and a published WooCommerce category', async ({ page }, testInfo) => {
   const runtimeErrors = watchRuntimeErrors(page);
   await page.goto('/', { waitUntil: 'networkidle' });
 
   const homeCategoryCards = page.locator('#catalog .az-category-card');
   await expect(homeCategoryCards).toHaveCount(8);
+  await expectCategoryAccessibleNames(homeCategoryCards);
   const homeCategories = await readCategoryCards(page, '#catalog .az-category-card');
   const homeOrigin = new URL(page.url()).origin;
   const homeCategoryIds = homeCategories.map(({ id }) => id);
@@ -94,6 +104,7 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
 
   const categoryCards = catalog.locator('.az-category-card');
   await expect(categoryCards, 'The canonical shop should expose exactly the eight selected top-level categories').toHaveCount(8);
+  await expectCategoryAccessibleNames(categoryCards);
   const shopCategories = await readCategoryCards(page, '.az-shop-categories .az-category-card');
   expect(shopCategories, 'Homepage and shop must preserve the same selected category identities, order and URLs').toEqual(homeCategories);
 

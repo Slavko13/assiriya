@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S14:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S15:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -175,6 +175,17 @@ I2-S13 закрывает только user-owned isolation и scoped one-result
 | I2-S14-ACC-006 | Regression не ухудшен | PHP lint; targeted public `3 passed`; admin `1 passed`; full `33`: `31 passed`, `2 skipped`; inventory `10/0` | `PASS` |
 
 I2-S14 закрывает только curated identity boundary. Production taxonomy master, legacy cleanup/redirects и design approval остаются open.
+
+### I2-S15 — category-card accessible name
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S15-ACC-001 | Decorative art не загрязняет link name | art span имеет `aria-hidden="true"`; `role="img"` и arbitrary labels удалены | `PASS` |
+| I2-S15-ACC-002 | Link name соответствует видимой подписи | все 8 homepage и 8 shop cards: exact accessible name = trimmed visible term name | `PASS` |
+| I2-S15-ACC-003 | Responsive/a11y baseline не ухудшен | targeted catalog `3 passed` на `1440/390/360`; existing axe serious/critical gate проходит | `PASS` |
+| I2-S15-ACC-004 | Regression не ухудшен | PHP lint; full `33`: `31 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S15 закрывает только accessible name shared category card. Полный WC/admin/AT/browser accessibility audit и approved design остаются open.
 
 ## Технические критерии Итерации 1
 

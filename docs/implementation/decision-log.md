@@ -27,6 +27,7 @@
 | TECH-021 | 2026-11-02 | Woo breadcrumb copy локализуется named filters: home default, exact valid shop URL, exact non-paged product-search request URL | Не меняет trail order/URLs/query/data; raw `-1` shop sentinel, paged `Page N` и third-party crumb shapes fail closed; Woo template сам экранирует label | принято для I2-S12; JSON-LD names follow labels intentionally, full i18n/SEO open |
 | TECH-022 | 2026-11-02 | Exact product search сохраняет results page при одном видимом товаре вместо штатного Woo single-result redirect | Сохраняет уже проверенные count/card/provenance semantics и позволяет доказать изоляцию user-owned товара; named filter действует только при strict product search и не меняет query/index/ranking | принято как provisional technical baseline I2-S13; финальный search UX и DG-001/018 open |
 | TECH-023 | 2026-11-02 | Curated category identity проверяется по selected term ID, а не по name/slug/demo meta | В legacy DB одноимённые terms и marker могут повторяться; shared card публикует escaped numeric `data-category-id`, homepage/settings/shop сверяются без taxonomy mutation | принято для I2-S14; merge/delete/rename и production master-data policy open |
+| TECH-024 | 2026-11-02 | CSS category illustration является декоративной и исключается из accessibility tree | Произвольный art label не описывает действие ссылки и загрязнял accessible name; видимый term name остаётся единственным именем category link | принято для I2-S15; полный WC/a11y audit продолжается |
 
 ## Состояние DEC
 

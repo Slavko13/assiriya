@@ -18,7 +18,7 @@
 - классическая тема `avtozakup` с desktop 1440 и provisional mobile 390/360;
 - плагин `avtozakup-core`: Settings API главной, безопасный demo seed, checkout guard и интерфейсы будущих адаптеров;
 - 8 демонстрационных категорий, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references;
-- первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards, явной идентичностью по selected term ID и переходом в category archive;
+- первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards, явной идентичностью по selected term ID, чистыми accessible names и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
 - provisional generic product search: escaped results/no-results context, включая scoped one-result page без Woo auto-redirect, и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
 - fail-closed search scope: post-only и mixed post types не получают product-search presentation;

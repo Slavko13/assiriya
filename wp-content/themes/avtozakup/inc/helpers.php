@@ -135,8 +135,7 @@ function avtozakup_icon( string $name, string $class = '' ): string {
 
 function avtozakup_category_illustration( int $index ): string {
 	$kind = ( $index % 8 ) + 1;
-	$labels = array( 'Фильтр', 'Тормозной диск', 'Пружина', 'Ремень', 'Масло', 'Свеча', 'Автохимия', 'Инструменты' );
-	return sprintf( '<span class="az-category-art az-category-art--%d" role="img" aria-label="%s"><i></i><b></b><em></em></span>', $kind, esc_attr( $labels[ $kind - 1 ] ) );
+	return sprintf( '<span class="az-category-art az-category-art--%d" aria-hidden="true"><i></i><b></b><em></em></span>', $kind );
 }
 
 function avtozakup_category_card( WP_Term $category, int $index ): void {
