@@ -11,6 +11,7 @@
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual artifacts среза I2-S1; отдельного утверждённого SCR-005 baseline в проекте реализации пока нет.
 - `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP artifacts среза I2-S3; это функциональное доказательство явной demo provenance, а не утверждённый PDP baseline.
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
+- `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -30,6 +31,9 @@ product-demo-provenance-mobile-chrome-360.png
 product-technical-baseline-desktop-chrome-1440.png
 product-technical-baseline-mobile-chrome-390.png
 product-technical-baseline-mobile-chrome-360.png
+product-search-empty-desktop-chrome-1440.png
+product-search-empty-mobile-chrome-390.png
+product-search-empty-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -83,6 +87,14 @@ report-home-YYYYMMDD.md
 - technical PDP scenario: `3 passed`; весь catalog file: `9 passed`; full regression: `22 tests`, `20 passed`, `2 intentional skipped`, `0 failed`;
 - axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`;
 - визуал `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full SCR-009, OEM/analogs/fitment/offers и реальные stock/ETA не реализованы.
+
+## Product search empty state I2-S5
+
+- header обещает только текущий product-title search; article/brand/OEM search не заявлен;
+- special-character query проверяет single escaping в H1/searchbox/empty state, один status-блок и canonical catalog return;
+- scenario: `3 passed`; full regression: `25 tests`, `23 passed`, `2 intentional skipped`, `0 failed`;
+- axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`;
+- визуал `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: отдельного утверждённого search-results макета в Paper нет.
 
 ## Отчёт
 

@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S4:** `22` tests = `20 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S5:** `25` tests = `23 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -53,6 +53,18 @@ I2-S3 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; offers/search
 | I2-S4-ACC-005 | Regression не ухудшен | `22` tests: `20 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S4 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full `SCR-009`, OEM/analogs/fitment/offers/real stock и соответствующие DEC/DG/TC не закрыты.
+
+### I2-S5 — truthful product-search empty state
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S5-ACC-001 | Form не обещает неподдерживаемый article/brand search | visible «По названию», placeholder «Название товара», hidden `post_type=product` | `PASS` |
+| I2-S5-ACC-002 | Query context escaped и сохраняется | special chars `&`/quotes буквально совпадают в searchbox, H1 и `[data-product-search-query]`; runtime errors `0` | `PASS` |
+| I2-S5-ACC-003 | No-results честный и ограниченный | один status-блок, `0` product cards, default Woo notice `0`, canonical `/shop/` return; suggestions отсутствуют | `PASS` |
+| I2-S5-ACC-004 | Три viewport технически безопасны | scenario `3 passed`; no overflow/runtime errors; axe serious/critical `0`; 3 actual screenshots | `PASS` |
+| I2-S5-ACC-005 | Regression не ухудшен | `25` tests: `23 passed`, `2 intentional skipped`, `0 failed`; existing multi-result search/PDP PASS | `PASS` |
+
+I2-S5 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; `TC-003` затронут только presentation/safety частью, `TC-001/002` не покрыты; `PBL-002/006/012`, полные `TC-001—003`, `DG-001/018`, `DEC-003`, index/ranking/normalization и утверждённый search design не закрыты.
 
 ## Технические критерии Итерации 1
 
@@ -102,6 +114,7 @@ I2-S4 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full `SCR-009
 - Actual mobile: `docs/qa/visual-diffs/homepage-mobile-chrome-390.png`, `docs/qa/visual-diffs/homepage-mobile-chrome-360.png`.
 - Demo provenance PDP: `docs/qa/visual-diffs/product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`.
 - Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
+- Product search empty state: `docs/qa/visual-diffs/product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 
 ## Условие финального статуса

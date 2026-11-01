@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.4.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.5.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -173,11 +173,56 @@ function avtozakup_demo_single_add_to_cart_text( string $text, WC_Product $produ
 	return 'Добавить в демо-корзину';
 }
 
+function avtozakup_is_product_search_request(): bool {
+	if ( ! is_search() ) {
+		return false;
+	}
+
+	$post_type = get_query_var( 'post_type' );
+	return 'product' === $post_type
+		|| ( is_array( $post_type ) && 1 === count( $post_type ) && 'product' === reset( $post_type ) );
+}
+
+function avtozakup_product_search_page_title( string $title ): string {
+	if ( ! avtozakup_is_product_search_request() ) {
+		return $title;
+	}
+
+	$query = sanitize_text_field( get_search_query( false ) );
+	return sprintf( 'Поиск товаров: «%s»', esc_html( $query ) );
+}
+
+function avtozakup_render_product_search_empty_state(): void {
+	$query = sanitize_text_field( get_search_query( false ) );
+	?>
+	<section class="az-search-empty" data-product-search-empty role="status" aria-labelledby="az-search-empty-title">
+		<h2 id="az-search-empty-title"><?php esc_html_e( 'Товары не найдены', 'avtozakup' ); ?></h2>
+		<p>
+			<?php esc_html_e( 'По запросу', 'avtozakup' ); ?>
+			<strong data-product-search-query>«<?php echo esc_html( $query ); ?>»</strong>
+			<?php esc_html_e( 'нет опубликованных товаров. Проверьте написание или вернитесь в каталог.', 'avtozakup' ); ?>
+		</p>
+		<a class="button" href="<?php echo esc_url( avtozakup_wc_page_url( 'shop' ) ); ?>"><?php esc_html_e( 'Вернуться в каталог', 'avtozakup' ); ?></a>
+	</section>
+	<?php
+}
+
+function avtozakup_configure_product_search_page(): void {
+	if ( ! avtozakup_is_product_search_request() ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
+	add_action( 'woocommerce_no_products_found', 'avtozakup_render_product_search_empty_state', 10 );
+}
+
 add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
 add_action( 'woocommerce_single_product_summary', 'avtozakup_render_single_demo_provenance', 11 );
 add_action( 'wp', 'avtozakup_configure_demo_product_page' );
+add_action( 'wp', 'avtozakup_configure_product_search_page' );
 add_filter( 'woocommerce_get_availability_text', 'avtozakup_demo_product_availability_text', 10, 2 );
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'avtozakup_demo_single_add_to_cart_text', 10, 2 );
+add_filter( 'woocommerce_page_title', 'avtozakup_product_search_page_title' );
 
 add_action(
 	'woocommerce_before_shop_loop',

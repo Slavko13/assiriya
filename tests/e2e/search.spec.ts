@@ -1,0 +1,76 @@
+import { mkdir } from 'node:fs/promises';
+import path from 'node:path';
+
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test, type Page } from '@playwright/test';
+
+type RuntimeErrors = {
+  console: string[];
+  page: string[];
+};
+
+function watchRuntimeErrors(page: Page): RuntimeErrors {
+  const errors: RuntimeErrors = { console: [], page: [] };
+  page.on('console', (message) => {
+    if (message.type() === 'error') {
+      errors.console.push(message.text());
+    }
+  });
+  page.on('pageerror', (error) => errors.page.push(error.message));
+  return errors;
+}
+
+test('shows a truthful product-search empty state', async ({ page }, testInfo) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  const query = 'AZ-NO-RESULT-9F3C & "probe"';
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  await expect(page.locator('.az-search__type')).toContainText('По названию');
+  const search = page.getByRole('searchbox', { name: 'Поиск товаров' });
+  await expect(search).toHaveAttribute('placeholder', 'Название товара');
+  await expect(page.locator('.az-search input[name="post_type"]')).toHaveValue('product');
+  await search.fill(query);
+  await page.getByRole('button', { name: 'Найти' }).click();
+  await page.waitForLoadState('networkidle');
+
+  const resultUrl = new URL(page.url());
+  expect(resultUrl.searchParams.get('post_type')).toBe('product');
+  expect(resultUrl.searchParams.get('s')).toBe(query);
+  await expect(page.locator('main h1').first()).toContainText(`Поиск товаров: «${query}»`);
+  await expect(page.getByRole('searchbox', { name: 'Поиск товаров' })).toHaveValue(query);
+
+  const emptyState = page.locator('[data-product-search-empty]');
+  await expect(emptyState).toHaveCount(1);
+  await expect(emptyState.getByRole('heading', { name: 'Товары не найдены' })).toBeVisible();
+  await expect(emptyState.locator('[data-product-search-query]')).toHaveText(`«${query}»`);
+  await expect(emptyState).toContainText('нет опубликованных товаров');
+  const catalogUrl = await emptyState.getByRole('link', { name: 'Вернуться в каталог' }).getAttribute('href');
+  expect(catalogUrl).toBeTruthy();
+  expect(new URL(catalogUrl!, page.url()).pathname).toBe('/shop/');
+  await expect(page.locator('ul.products li.product')).toHaveCount(0);
+  await expect(page.locator('.woocommerce-info')).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
+  await mkdir(visualDiffDirectory, { recursive: true });
+  await page.screenshot({
+    path: path.join(visualDiffDirectory, `product-search-empty-${testInfo.project.name}.png`),
+    fullPage: true,
+    animations: 'disabled',
+    style: '.az-skip-link { display: none !important; }',
+  });
+
+  const pageWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(pageWidth.scrollWidth).toBeLessThanOrEqual(pageWidth.clientWidth + 1);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});

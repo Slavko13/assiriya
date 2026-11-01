@@ -288,6 +288,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-demo-product-meta { display: grid; gap: 6px; margin-top: 18px; padding: 12px 14px; border: 1px solid var(--az-border); background: var(--az-soft); }
 .az-demo-product-meta > span { display: block; }
 .az-demo-product-meta__note { color: var(--az-muted); font-size: 11px; line-height: 16px; }
+.az-search-empty { margin: 28px 0 56px; padding: 28px; border: 1px solid var(--az-border); background: var(--az-soft); }
+.az-search-empty h2 { margin: 0 0 10px; font-size: 24px; }
+.az-search-empty p { max-width: 680px; margin: 0 0 18px; color: var(--az-muted); }
+.az-search-empty strong { color: var(--az-ink); }
 .woocommerce a.button, .woocommerce button.button, .woocommerce input.button { padding: 11px 16px; border-radius: 3px; color: white; background: var(--az-blue); font-size: 12px; }
 .woocommerce a.button:hover, .woocommerce button.button:hover { color: white; background: var(--az-blue-dark); }
 .woocommerce table.shop_table { border-color: var(--az-border); border-collapse: collapse; }

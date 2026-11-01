@@ -226,6 +226,34 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к технической безопасности marked demo PDP. `SCR-009`, `PBL-011`, `FR-CAT-002/003` и перечисленные DEC/DG/TC остаются partial/open; visual имеет `DESIGN_REVIEW_REQUIRED`.
 
+### I2-S5 — truthful product-search empty state
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-002/006/012 safety partial`, `FR-SRCH-001—003 presentation partial`, `UC-SRCH-001` только submit/context/no-results; `TC-003 presentation/safety partial`, `TC-001/002 blocked`. Отдельный search-results дизайн отсутствует в Paper.
+
+Критерии среза:
+
+- header form честно описывает текущую штатную возможность как поиск по названию товара и сохраняет `post_type=product`; артикул/бренд/нормализация не обещаются;
+- product search page показывает escaped query context в H1 и сохраняет значение в searchbox;
+- zero-result product search показывает один понятный status-блок с escaped query и canonical ссылкой на configured shop;
+- empty state не предлагает выдуманные аналоги, fitment, offers или auto-corrections;
+- E2E `1440/390/360`: уникальный no-results query, H1/searchbox/status/catalog return, `0` product cards, no overflow/runtime errors, axe serious/critical = 0, actual screenshots;
+- существующий multi-result search/PDP и полный regression не ухудшаются.
+
+Вне scope: SKU/article/brand/OEM index, normalization/transliteration, typo correction, ranking, suggestions, filters/sort, analytics, fitment/offers and approved search design. `DEC-002—006`, `DG-001/018` и полные `TC-001—003` остаются open.
+
+Выполнено и проверено:
+
+- header presentation больше не обещает поиск «по артикулу/номеру детали/бренду»: до согласованного индекса форма честно подписана как поиск по названию товара;
+- product-only query context выводится через named `woocommerce_page_title` filter с explicit escaping raw query; значение searchbox сохраняется один раз без double escaping;
+- штатный Woo no-products notice заменяется только для product search на один escaped status-блок с configured shop link; query/ranking не меняются;
+- special-character query `AZ-NO-RESULT-9F3C & "probe"` буквально сохранён в URL/searchbox/H1/empty state, product cards `0`, default notice отсутствует;
+- E2E empty-state scenario на `1440/390/360`: `3 passed`; axe serious/critical, no-overflow/runtime errors пройдены; actual screenshots сохранены;
+- full regression, включая multi-result search → PDP: `25` tests, `23 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к технически честному no-results состоянию. `PBL-002/006/012`, полные `TC-001—003`, `DG-001/018`, `DEC-003` и утверждённый search design остаются partial/open/blocked; `TC-001/002` не покрыты срезом.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
