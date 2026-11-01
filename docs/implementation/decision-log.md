@@ -1,0 +1,44 @@
+# Журнал технических решений
+
+Технические записи ниже обратимы и **не закрывают** `DEC-001…DEC-020` из `J:\vlad322\docs\00_index\decision_register.md`.
+
+| ID | Дата | Решение | Обоснование / последствия | Статус |
+|---|---|---|---|---|
+| TECH-001 | 2026-11-01 | WordPress + WooCommerce в закреплённых Docker images | Воспроизводимый фундамент; версии меняются отдельным тестируемым решением | принято для Iteration 1 |
+| TECH-002 | 2026-11-01 | Presentation в теме, settings/safety/adapters в core plugin | Не меняется core; будущие интеграции не привязываются к шаблонам | принято |
+| TECH-003 | 2026-11-01 | WooCommerce records Итерации 1 являются demo и маркируются | Не утверждает master data; checkout демо-позиций блокируется | принято |
+| TECH-004 | 2026-11-01 | Отдельные project/network/volume names `avtozakup_*` | Снижает риск конфликта с двумя существующими сайтами; требует server audit | принято, не проверено на сервере |
+| TECH-005 | 2026-11-01 | Production edge — Caddy на настраиваемом порту, admin по CIDR | Поддерживает IP-доступ без вмешательства в существующий proxy; isolated 200/403/200 + header drill PASS | принято локально; server preflight pending |
+| TECH-006 | 2026-11-01 | Пять initial adapter interfaces без implementations | Фиксирует границы catalog/availability/fitment/offers/VIN и не имитирует реальные ответы | принято |
+| TECH-007 | 2026-11-01 | Mobile layout реализуется provisional | В Paper нет mobile; нельзя считать design gap закрытым | принято как временное |
+| TECH-008 | 2026-11-01 | Git deployment только clean branch + ff-only + pre-backup + smoke | Исключает скрытый merge и сохраняет recovery path | принято; local package READY, remote end-to-end blocked без target |
+
+## Состояние DEC
+
+| DEC | Тема | Статус / влияние на Итерацию 1 |
+|---|---|---|
+| DEC-001 | юрлица/склады/города/каналы | `OPEN`; город и «наш склад» только demo/info |
+| DEC-002 | master data | `OPEN`; WooCommerce не объявляется master |
+| DEC-003 | товар/артикул/OEM/аналоги | `OPEN`; расширенный поиск blocked |
+| DEC-004 | применяемость | `OPEN`; vehicle picker не обещает fit |
+| DEC-005 | свежесть offer | `OPEN`; real supplier availability blocked |
+| DEC-006 | основной offer | `OPEN`; demo card не доказывает ranking |
+| DEC-007 | закупка | `OPEN`; procurement не реализуется |
+| DEC-008 | остаток/резерв | `OPEN`; WC stock demo, резерва нет |
+| DEC-009 | B2C/B2B price | `OPEN`; demo price не оферта |
+| DEC-010 | фиксация цены | `OPEN`; production checkout blocked |
+| DEC-011 | guest checkout/identity | `OPEN`; полноценный checkout/auth не принимается |
+| DEC-012 | mixed order | `OPEN`; один WC status не использовать как модель |
+| DEC-013 | payment/fiscalization | `OPEN`; PSP/FISC не подключены |
+| DEC-014 | delivery | `OPEN`; блок получения информационный |
+| DEC-015 | cancel/return/warranty | `OPEN`; только навигационный контент |
+| DEC-016 | B2B MVP | `OPEN`; баннер без onboarding/privileges |
+| DEC-017 | VIN fields/SLA/channel | `OPEN`; запрос не отправляется |
+| DEC-018 | privacy | `OPEN`; реальные ПДн не собирать |
+| DEC-019 | Paper baseline/gaps | `OPEN`; visual result provisional |
+| DEC-020 | SLO/volume/browser/a11y | `OPEN`; measurements informative, не acceptance SLO |
+
+## Правило добавления записи
+
+Запись включает контекст, варианты, решение, дату, автора/утвердившего, затронутые требования, миграцию и rollback. Изменение решения создаёт новую запись; старая не удаляется.
+

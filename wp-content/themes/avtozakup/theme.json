@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "color": {
+      "custom": false,
+      "palette": [
+        { "slug": "brand", "name": "Основной синий", "color": "#1262E8" },
+        { "slug": "ink", "name": "Тёмный текст", "color": "#14243D" },
+        { "slug": "muted", "name": "Вторичный текст", "color": "#63748B" },
+        { "slug": "surface", "name": "Светлый фон", "color": "#F7F9FC" },
+        { "slug": "white", "name": "Белый", "color": "#FFFFFF" }
+      ]
+    },
+    "layout": { "contentSize": "960px", "wideSize": "1280px" },
+    "spacing": { "units": ["px", "rem", "%", "vw"] },
+    "typography": {
+      "fontFamilies": [
+        { "slug": "inter", "name": "Inter", "fontFamily": "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }
+      ],
+      "fontSizes": [
+        { "slug": "small", "name": "Малый", "size": "12px" },
+        { "slug": "body", "name": "Основной", "size": "14px" },
+        { "slug": "title", "name": "Заголовок", "size": "25px" },
+        { "slug": "display", "name": "Крупный", "size": "31px" }
+      ]
+    }
+  },
+  "styles": {
+    "color": { "background": "#FFFFFF", "text": "#14243D" },
+    "typography": { "fontFamily": "var(--wp--preset--font-family--inter)", "fontSize": "14px", "lineHeight": "1.45" }
+  }
+}
+

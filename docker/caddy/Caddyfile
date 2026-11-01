@@ -1,0 +1,32 @@
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	encode zstd gzip
+
+	@blocked_admin {
+		path /wp-login.php /wp-admin /wp-admin/*
+		not path /wp-admin/admin-ajax.php
+		not remote_ip {env.ADMIN_ALLOWED_CIDR}
+	}
+	respond @blocked_admin "Administrative access is restricted." 403
+
+	header {
+		-Server
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), geolocation=(), microphone=()"
+	}
+
+	reverse_proxy wordpress:80 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

@@ -1,0 +1,126 @@
+name: avtozakup
+
+x-wordpress-environment: &wordpress-environment
+  WORDPRESS_DB_HOST: db:3306
+  WORDPRESS_DB_NAME: ${MARIADB_DATABASE:-avtozakup}
+  WORDPRESS_DB_USER: ${MARIADB_USER:-avtozakup}
+  WORDPRESS_DB_PASSWORD: ${MARIADB_PASSWORD:?Set MARIADB_PASSWORD in the environment file}
+  WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX:-wp_}
+  WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
+  WP_ENVIRONMENT_TYPE: ${WP_ENVIRONMENT_TYPE:-production}
+  WP_HOME: ${WP_HOME:-http://localhost:8080}
+  WP_SITEURL: ${WP_SITEURL:-http://localhost:8080}
+  WORDPRESS_FORCE_SSL_ADMIN: ${WORDPRESS_FORCE_SSL_ADMIN:-false}
+  WORDPRESS_CONFIG_EXTRA: |
+    if (getenv('WP_HOME')) {
+        define('WP_HOME', rtrim(getenv('WP_HOME'), '/'));
+    }
+    if (getenv('WP_SITEURL')) {
+        define('WP_SITEURL', rtrim(getenv('WP_SITEURL'), '/'));
+    }
+    define('WP_ENVIRONMENT_TYPE', getenv('WP_ENVIRONMENT_TYPE') ?: 'production');
+    define('DISALLOW_FILE_EDIT', true);
+    if (!empty($$_SERVER['HTTP_X_FORWARDED_PROTO']) && strpos($$_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+        $$_SERVER['HTTPS'] = 'on';
+    }
+    if (filter_var(getenv('WORDPRESS_FORCE_SSL_ADMIN') ?: 'false', FILTER_VALIDATE_BOOLEAN)) {
+        define('FORCE_SSL_ADMIN', true);
+    }
+  WP_ADMIN_USER: ${WP_ADMIN_USER:-avtozakup_admin}
+  WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD:?Set WP_ADMIN_PASSWORD in the environment file}
+  WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL:-admin@example.test}
+  WP_SITE_TITLE: ${WP_SITE_TITLE:-АВТОЗАКУП}
+  WP_LOCALE: ${WP_LOCALE:-ru_RU}
+  WP_TIMEZONE: ${WP_TIMEZONE:-Europe/Moscow}
+  WP_THEME: ${WP_THEME:-avtozakup}
+  WP_PLUGIN: ${WP_PLUGIN:-avtozakup-core}
+  WOOCOMMERCE_VERSION: ${WOOCOMMERCE_VERSION:-11.2.1}
+
+x-wordpress-volumes: &wordpress-volumes
+  - wordpress_data:/var/www/html
+  - uploads_data:/var/www/html/wp-content/uploads
+
+services:
+  db:
+    image: mariadb:11.4.13
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-avtozakup}
+      MARIADB_USER: ${MARIADB_USER:-avtozakup}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?Set MARIADB_PASSWORD in the environment file}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?Set MARIADB_ROOT_PASSWORD in the environment file}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: docker/wordpress/Dockerfile
+      args:
+        WOOCOMMERCE_VERSION: ${WOOCOMMERCE_VERSION:-11.2.1}
+    restart: unless-stopped
+    environment: *wordpress-environment
+    volumes: *wordpress-volumes
+    networks:
+      - edge
+      - database
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent --show-error http://127.0.0.1/wp-login.php >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    security_opt:
+      - no-new-privileges:true
+
+  wpcli:
+    image: wordpress:cli-2.12.0-php8.3
+    profiles: ["tools"]
+    user: "33:33"
+    environment:
+      <<: *wordpress-environment
+      HOME: /tmp
+      WP_CLI_CACHE_DIR: /tmp/wp-cli-cache
+      WP_CLI_ALLOW_ROOT: "1"
+    volumes:
+      - wordpress_data:/var/www/html
+      - uploads_data:/var/www/html/wp-content/uploads
+      - ./scripts:/workspace/scripts:ro
+    networks:
+      - edge
+      - database
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  db_data:
+    name: avtozakup_db_data
+  wordpress_data:
+    name: avtozakup_wordpress_data
+  uploads_data:
+    name: avtozakup_uploads_data
+
+networks:
+  edge:
+    name: avtozakup_edge
+  database:
+    name: avtozakup_database
+    internal: true

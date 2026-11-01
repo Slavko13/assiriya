@@ -1,0 +1,28 @@
+# Runtime environment and secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Runtime data belongs in named Docker volumes
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backups*/
+wp-content/debug.log
+
+# Local backups and deployment logs
+backups/
+*.sql
+*.sql.gz
+*.log
+
+# Tooling and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
+vendor/
+playwright-report/
+test-results/
