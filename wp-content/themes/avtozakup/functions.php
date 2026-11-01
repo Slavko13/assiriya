@@ -195,6 +195,81 @@ function avtozakup_is_catalog_shop_request(): bool {
 	return function_exists( 'is_shop' ) && is_shop() && ! is_search();
 }
 
+function avtozakup_product_search_label(): string {
+	$query = sanitize_text_field( get_search_query( false ) );
+	return sprintf( 'Поиск товаров: «%s»', $query );
+}
+
+function avtozakup_valid_shop_breadcrumb_url(): ?string {
+	if ( ! function_exists( 'wc_get_page_id' ) ) {
+		return null;
+	}
+
+	$shop_page_id = (int) wc_get_page_id( 'shop' );
+	$front_page_id = absint( get_option( 'page_on_front' ) );
+	if (
+		$shop_page_id <= 0
+		|| $shop_page_id === $front_page_id
+		|| 'page' !== get_post_type( $shop_page_id )
+		|| 'publish' !== get_post_status( $shop_page_id )
+	) {
+		return null;
+	}
+
+	$shop_url = get_permalink( $shop_page_id );
+	if ( ! is_string( $shop_url ) || '' === $shop_url ) {
+		return null;
+	}
+
+	return untrailingslashit( $shop_url ) === untrailingslashit( home_url( '/' ) ) ? null : $shop_url;
+}
+
+function avtozakup_woocommerce_breadcrumb_defaults( array $defaults ): array {
+	$defaults['home'] = 'Главная';
+	return $defaults;
+}
+
+function avtozakup_woocommerce_breadcrumb_trail( array $crumbs ): array {
+	$shop_url = avtozakup_valid_shop_breadcrumb_url();
+	if ( null !== $shop_url ) {
+		$normalized_shop_url = untrailingslashit( $shop_url );
+		foreach ( $crumbs as $index => $crumb ) {
+			if ( ! is_array( $crumb ) ) {
+				continue;
+			}
+			$crumb_url = isset( $crumb[1] ) && is_string( $crumb[1] ) ? $crumb[1] : '';
+			if (
+				isset( $crumb[0] )
+				&& is_string( $crumb[0] )
+				&& '' !== $crumb_url
+				&& untrailingslashit( $crumb_url ) === $normalized_shop_url
+			) {
+				$crumbs[ $index ][0] = 'Каталог товаров';
+			}
+		}
+	}
+
+	if ( avtozakup_is_product_search_request() && ! is_paged() && count( $crumbs ) >= 2 ) {
+		$last_index = array_key_last( $crumbs );
+		$last_crumb = null !== $last_index && isset( $crumbs[ $last_index ] ) ? $crumbs[ $last_index ] : null;
+		$expected_search_url = remove_query_arg( 'paged' );
+		if (
+			is_array( $last_crumb )
+			&& isset( $last_crumb[0] )
+			&& is_string( $last_crumb[0] )
+			&& array_key_exists( 1, $last_crumb )
+			&& is_string( $last_crumb[1] )
+			&& is_string( $expected_search_url )
+			&& '' !== $expected_search_url
+			&& $expected_search_url === $last_crumb[1]
+		) {
+			$crumbs[ $last_index ][0] = avtozakup_product_search_label();
+		}
+	}
+
+	return $crumbs;
+}
+
 function avtozakup_woocommerce_page_title( string $title ): string {
 	if ( avtozakup_is_catalog_shop_request() ) {
 		return 'Каталог товаров';
@@ -204,8 +279,7 @@ function avtozakup_woocommerce_page_title( string $title ): string {
 		return $title;
 	}
 
-	$query = sanitize_text_field( get_search_query( false ) );
-	return sprintf( 'Поиск товаров: «%s»', esc_html( $query ) );
+	return esc_html( avtozakup_product_search_label() );
 }
 
 function avtozakup_render_product_search_result_count(): void {
@@ -275,6 +349,8 @@ add_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_demo_loop_add_to_
 add_filter( 'woocommerce_product_description_tab_title', 'avtozakup_product_description_label' );
 add_filter( 'woocommerce_product_description_heading', 'avtozakup_product_description_label' );
 add_filter( 'woocommerce_page_title', 'avtozakup_woocommerce_page_title' );
+add_filter( 'woocommerce_breadcrumb_defaults', 'avtozakup_woocommerce_breadcrumb_defaults' );
+add_filter( 'woocommerce_get_breadcrumb', 'avtozakup_woocommerce_breadcrumb_trail' );
 
 add_action(
 	'woocommerce_before_shop_loop',

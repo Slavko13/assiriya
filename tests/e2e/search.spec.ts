@@ -39,6 +39,16 @@ test('shows a truthful product-search empty state', async ({ page }, testInfo) =
   await expect(page.locator('main h1').first()).toContainText(`Поиск товаров: «${query}»`);
   await expect(page.getByRole('searchbox', { name: 'Поиск товаров' })).toHaveValue(query);
 
+  const breadcrumb = page.locator('.woocommerce-breadcrumb');
+  await expect(breadcrumb).toContainText('Главная');
+  await expect(breadcrumb).toContainText('Каталог товаров');
+  await expect(breadcrumb).toContainText(`Поиск товаров: «${query}»`);
+  await expect(breadcrumb).not.toContainText(/Home|Shop|Search results/);
+  const breadcrumbHomeUrl = await breadcrumb.getByRole('link', { name: 'Главная' }).getAttribute('href');
+  const breadcrumbShopUrl = await breadcrumb.getByRole('link', { name: 'Каталог товаров' }).getAttribute('href');
+  expect(new URL(breadcrumbHomeUrl!, page.url()).pathname).toBe('/');
+  expect(new URL(breadcrumbShopUrl!, page.url()).pathname).toBe('/shop/');
+
   const emptyState = page.locator('[data-product-search-empty]');
   await expect(emptyState).toHaveCount(1);
   await expect(emptyState.getByRole('heading', { name: 'Товары не найдены' })).toBeVisible();
@@ -90,6 +100,11 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
   expect(resultUrl.searchParams.get('s')).toBe(query);
   await expect(page.locator('main h1').first()).toContainText(`Поиск товаров: «${query}»`);
   await expect(page.getByRole('searchbox', { name: 'Поиск товаров' })).toHaveValue(query);
+  const breadcrumb = page.locator('.woocommerce-breadcrumb');
+  await expect(breadcrumb).toContainText('Главная');
+  await expect(breadcrumb).toContainText('Каталог товаров');
+  await expect(breadcrumb).toContainText(`Поиск товаров: «${query}»`);
+  await expect(breadcrumb).not.toContainText(/Home|Shop|Search results/);
   await expect(page.locator('[data-product-search-empty]')).toHaveCount(0);
   await expect(page.locator('.az-shop-categories')).toHaveCount(0);
   await expect(page.locator('.woocommerce-ordering')).toHaveCount(0);

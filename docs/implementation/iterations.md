@@ -421,6 +421,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только test-harness target/write safety. Он не разрешает mutating E2E на production и не закрывает RBAC/security acceptance.
 
+### I2-S12 — scoped Woo breadcrumb copy
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-010/011/012/PBL-040 presentation partial`; business semantics, query и SEO не меняются.
+
+Критерии среза:
+
+- `woocommerce_breadcrumb_defaults` меняет только home label на «Главная»;
+- shop label меняется только по exact permalink валидной published configured shop page, не совпадающей с front page;
+- strict non-paged product search меняет только current crumb с exact Woo request URL на «Поиск товаров: «query»»;
+- query передаётся к Woo template без premature escaping; template выполняет `esc_html` один раз;
+- missing shop sentinel, pagination, malformed third-party crumbs и mixed/post-only search fail closed; category/product/page labels не меняются;
+- breadcrumb URLs/order/delimiter и query не меняются; named filters не используют `gettext`, template override или CSS hiding.
+
+Вне scope: full Woo/admin/account/cart/checkout localization, canonical/robots/sitemap/SEO policy, pagination translation и approved visual design.
+
+Выполнено и проверено:
+
+- installed Woo 11.2.1 hook/template contract сверен; visual breadcrumb и JSON-LD используют один filtered trail, URLs сохранены;
+- shop/category/PDP/positive + special-character product search проходят на `1440/390/360`; mixed/post-only product label не получают;
+- in-memory controls: Woo shop sentinel `-1` → `null`; paged product-search trail сохраняет `Page 2`;
+- targeted catalog/search/PDP: `18 passed`; PHP lint `PASS`; `15` screenshots обновлены, representative desktop/mobile просмотрены;
+- full regression: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус закрывает только scoped public breadcrumb copy. JSON-LD names следуют тем же labels намеренно; full localization, SEO/canonical и design approval остаются open.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

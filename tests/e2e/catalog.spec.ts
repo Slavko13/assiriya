@@ -30,6 +30,12 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await page.goto(shopUrl!, { waitUntil: 'networkidle' });
   await expect(page.getByRole('heading', { level: 1, name: 'Каталог товаров' })).toBeVisible();
 
+  const shopBreadcrumb = page.locator('.woocommerce-breadcrumb');
+  await expect(shopBreadcrumb).toHaveText(/^\s*Главная\s*\/\s*Каталог товаров\s*$/);
+  const shopHomeUrl = await shopBreadcrumb.getByRole('link', { name: 'Главная' }).getAttribute('href');
+  expect(shopHomeUrl).toBeTruthy();
+  expect(new URL(shopHomeUrl!, page.url()).pathname).toBe('/');
+
   const resultCount = page.locator('[data-shop-product-count]');
   await expect(resultCount).toHaveCount(1);
   await expect(resultCount).toHaveText(/^Товаров в каталоге: \d+$/);
@@ -88,7 +94,10 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await page.waitForLoadState('networkidle');
 
   await expect(page).toHaveURL(/\/product-category\//);
-  await expect(page.locator('.woocommerce-breadcrumb')).toContainText('Тормозная система');
+  const categoryBreadcrumb = page.locator('.woocommerce-breadcrumb');
+  await expect(categoryBreadcrumb).toContainText('Главная');
+  await expect(categoryBreadcrumb).toContainText('Тормозная система');
+  await expect(categoryBreadcrumb).not.toContainText(/\bHome\b/);
   await expect(page.getByRole('heading', { level: 1, name: 'Тормозная система' })).toBeVisible();
   await expect(page.locator('[data-shop-product-count]')).toHaveCount(0);
   await expect(page.locator('.woocommerce-result-count')).toHaveCount(1);
@@ -176,7 +185,10 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   const title = page.locator('h1.product_title');
   await expect(title).toHaveCount(1);
   await expect(title).toHaveText(expectedName);
-  await expect(page.locator('.woocommerce-breadcrumb')).toContainText(expectedName);
+  const productBreadcrumb = page.locator('.woocommerce-breadcrumb');
+  await expect(productBreadcrumb).toContainText('Главная');
+  await expect(productBreadcrumb).toContainText(expectedName);
+  await expect(productBreadcrumb).not.toContainText(/\bHome\b/);
 
   const productImage = page.locator('.woocommerce-product-gallery img').first();
   await expect(productImage).toBeVisible();

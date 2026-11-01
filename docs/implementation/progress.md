@@ -17,7 +17,7 @@
 | Demo provenance Woo | marked products явно подписаны на category/search cards и PDP; PDP показывает whitelisted Paper source, unknown raw meta не публикуется | реальные sources/freshness/offers только после DEC/интеграционных контрактов | `DONE / PROVISIONAL` для `I2-S3`; `PBL-011/FR-CAT-002/FR-OFR-002 partial` |
 | Technical demo PDP | exact seed SKU назван техническим, availability не выдаёт численный stock, action ведёт в демо-корзину, default related скрыт у marked demo | полный SCR-009, verified identifiers/relations/fitment/offers после DEC и контрактов | `DONE / PROVISIONAL` для `I2-S4`; `FR-CAT-002/003 partial` |
 | Product search baseline | neutral generic form; escaped query context/no-results; positive `Фильтр` → `2` product cards; shop category grid исключён; post-only/mixed scopes fail closed | field index/ranking/normalization/suggestions, generic mixed-search UX и утверждённый DG-001/018 | `DONE / PROVISIONAL` для `I2-S5/S6/S10`; `PBL-002/006/012` остаются blocked |
-| Scoped Woo public copy | shop H1/total, search count, demo loop action и PDP description labels локализованы named hooks; shop/search ordering UI снят до ranking contract | breadcrumb/full Woo/admin/account/cart/checkout translation; ranking/query | `DONE / PROVISIONAL` для `I2-S7/S9`; не полный i18n |
+| Scoped Woo public copy | shop H1/total, product-search count, breadcrumb, demo actions и PDP description labels локализованы named hooks; shop/search ordering UI снят до ranking contract | full Woo/admin/account/cart/checkout translation; ranking/query; SEO policy | `DONE / PROVISIONAL` для `I2-S7/S9/S12`; не полный i18n |
 | User-owned product isolation | authenticated temporary unmarked product сохраняет user SKU/stock/action/content и не получает demo UI; force-delete cleanup подтверждён | production master/RBAC/stock/lifecycle | `DONE / TECHNICAL` для `I2-S8`; не business acceptance |
 | E2E target/write safety | explicit safe `BASE_URL`; admin writes только с credential pair + `E2E_ALLOW_ADMIN_WRITES=1`; preflight `6 passed` | remote ownership/production authorization и RBAC | `DONE / TECHNICAL` для `I2-S11`; admin suite не production smoke |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
@@ -27,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -51,6 +51,7 @@
 - Generic product special-character no-results → escaped H1/searchbox/status, no product cards, configured `/shop/` return, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Generic `Фильтр` results → two fixture product cards with provenance/permalinks, no shop category grid, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Canonical shop → local total `10`, no ordering UI; category retains standard ordering, cards/URLs + axe/no-overflow/runtime на `1440/390/360` — `PASS`.
+- Woo breadcrumb → «Главная», configured shop «Каталог товаров», exact product-search label; category/product/page names и URLs preserved — `PASS`.
 - Post-only/mixed crafted search scopes → no product/shop presentation leakage, params preserved, no-overflow/runtime на `1440/390/360` — `PASS`.
 - Authenticated temporary unmarked product → no demo loop/PDP semantics, exact user SKU/stock/content, force-delete cleanup; post-full inventory `10/0` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.

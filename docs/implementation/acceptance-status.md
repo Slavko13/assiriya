@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S11:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S12:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -136,6 +136,19 @@ I2-S10 закрывает только fail-closed presentation scope. Generic/m
 | I2-S11-ACC-005 | Regression и cleanup не ухудшены | full `32`: `30 passed`, `2 intentional skipped`; post-full inventory `10/0` | `PASS` |
 
 I2-S11 закрывает только test-harness target/write safety. Opt-in не доказывает remote ownership, не разрешает production writes и не закрывает RBAC/`TC-037`.
+
+### I2-S12 — scoped Woo breadcrumb copy
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S12-ACC-001 | Known breadcrumb copy локализован | shop = «Главная / Каталог товаров»; category/PDP home localized; exact product search uses local label | `PASS` |
+| I2-S12-ACC-002 | URLs/data trail сохранены | home `/`, shop `/shop/`; category/product labels unchanged; no query/order mutation | `PASS` |
+| I2-S12-ACC-003 | Escaping однократно | `AZ-NO-RESULT-9F3C & "probe"` в browser text совпадает literally; Woo template выполняет `esc_html` | `PASS` |
+| I2-S12-ACC-004 | Fail-closed guards работают | shop sentinel `-1` → `null`; paged search keeps `Page 2`; mixed/post-only has no product label; malformed crumb shapes guarded | `PASS` |
+| I2-S12-ACC-005 | Responsive/a11y/runtime и visual не ухудшены | catalog/search `18 passed` на `1440/390/360`; existing axe/no-overflow/runtime; `15` screenshots updated/reviewed | `PASS` |
+| I2-S12-ACC-006 | Regression не ухудшен | full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S12 закрывает только scoped public breadcrumb copy. JSON-LD names следуют тем же labels, но URLs/order не меняются; full i18n, SEO/canonical и visual approval остаются open.
 
 ## Технические критерии Итерации 1
 

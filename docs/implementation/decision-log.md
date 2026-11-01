@@ -24,6 +24,7 @@
 | TECH-018 | 2026-11-01 | Canonical shop показывает local total и не показывает ordering UI до ranking contract | Named hooks меняют только presentation при `is_shop() && !is_search()`; query/default order/data не изменяются, category/search изолированы | принято для I2-S9; ranking и design open |
 | TECH-019 | 2026-11-01 | Custom product-search presentation включается только для exact product scope; post-only и mixed scopes fail closed | Исключает ложные product-specific count/empty/catalog semantics на crafted generic search URL, не меняя WordPress query и не проектируя generic search | принято для I2-S10; generic search UX remains outside scope |
 | TECH-020 | 2026-11-02 | Playwright не имеет implicit target; root URL обязателен; mutating admin E2E требует credential pair + `E2E_ALLOW_ADMIN_WRITES=1` | Предотвращает случайный browser/admin write против default, sibling root или чужого target; partial config падает до HTTP без supplied values; admin failure artifacts отключены | принято для I2-S11; opt-in не доказывает remote ownership и не production smoke |
+| TECH-021 | 2026-11-02 | Woo breadcrumb copy локализуется named filters: home default, exact valid shop URL, exact non-paged product-search request URL | Не меняет trail order/URLs/query/data; raw `-1` shop sentinel, paged `Page N` и third-party crumb shapes fail closed; Woo template сам экранирует label | принято для I2-S12; JSON-LD names follow labels intentionally, full i18n/SEO open |
 
 ## Состояние DEC
 
