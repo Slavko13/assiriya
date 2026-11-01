@@ -525,6 +525,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только accessible name shared category card. Полная accessibility acceptance остаётся partial.
 
+### I2-S16 — distinguishable category options in Settings
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** admin safety для I2-S14, `PBL-011/PBL-040 partial`; taxonomy/master-data scope не расширяется.
+
+Критерии среза:
+
+- каждая `product_cat` option в project Settings отображает escaped `name (#term_id)`;
+- numeric suffix точно совпадает с HTML option `value`, а имя остаётся непустым;
+- selected IDs, порядок public presentation и save value не меняются;
+- проверка read-only: настройки и taxonomy не сохраняются/не мутируются.
+
+Вне scope: глобальный Woo category editor, external/master IDs, legacy merge/delete/rename, canonical redirects и RBAC matrix.
+
+Выполнено и проверено:
+
+- category renderer приведён к уже используемому product option pattern `Name (#ID)`;
+- read-only admin identity scenario: `1 passed`; все options имеют suffix, равный value, selected/public checks сохранены;
+- PHP lint: `PASS`; full regression: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`;
+- ID документирован только как локальная identity текущего экземпляра, не переносимый master identifier.
+
+Статус закрывает только различимость одноимённых options в project Settings. Taxonomy cleanup и production master-data остаются open.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

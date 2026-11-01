@@ -60,12 +60,19 @@ test.describe('WordPress administration', () => {
     await page.goto('/wp-admin/admin.php?page=avtozakup');
 
     const categoryOptions = await page.locator('#category_ids option').evaluateAll((options) =>
-      options.map((option) => ({
-        id: (option as HTMLOptionElement).value,
-        name: (option.textContent ?? '').trim(),
-        selected: (option as HTMLOptionElement).selected,
-      })),
+      options.map((option) => {
+        const label = (option.textContent ?? '').trim();
+        const labelMatch = label.match(/^(.*) \(#(\d+)\)$/);
+        return {
+          id: (option as HTMLOptionElement).value,
+          name: labelMatch?.[1]?.trim() ?? '',
+          labelId: labelMatch?.[2] ?? '',
+          selected: (option as HTMLOptionElement).selected,
+        };
+      }),
     );
+    expect(categoryOptions.length).toBeGreaterThanOrEqual(8);
+    expect(categoryOptions.every(({ id, labelId, name }) => labelId === id && name !== '')).toBe(true);
     const selectedOptions = categoryOptions.filter(({ selected }) => selected);
     const selectedIds = selectedOptions.map(({ id }) => id);
     const unselectedIds = new Set(categoryOptions.filter(({ selected }) => !selected).map(({ id }) => id));

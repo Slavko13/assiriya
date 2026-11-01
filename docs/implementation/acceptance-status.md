@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S15:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S16:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -186,6 +186,18 @@ I2-S14 закрывает только curated identity boundary. Production tax
 | I2-S15-ACC-004 | Regression не ухудшен | PHP lint; full `33`: `31 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S15 закрывает только accessible name shared category card. Полный WC/admin/AT/browser accessibility audit и approved design остаются open.
+
+### I2-S16 — distinguishable category options in Settings
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S16-ACC-001 | Одноимённые terms различимы | каждая Settings option имеет escaped формат `name (#ID)` | `PASS` |
+| I2-S16-ACC-002 | Label ID соответствует value | browser assertion для всех options: parsed suffix = exact option value, name non-empty | `PASS` |
+| I2-S16-ACC-003 | Identity boundary сохранён | selected 8 IDs, homepage set и ordered shop snapshot продолжают проходить | `PASS` |
+| I2-S16-ACC-004 | Данные не мутированы | targeted admin test read-only; renderer не меняет option value/settings/taxonomy | `PASS` |
+| I2-S16-ACC-005 | Regression не ухудшен | PHP lint; targeted `1 passed`; full `33`: `31 passed`, `2 skipped`, `0 failed` | `PASS` |
+
+I2-S16 закрывает только различимость options в project Settings. Term ID instance-local; production master, legacy cleanup и RBAC остаются open.
 
 ## Технические критерии Итерации 1
 

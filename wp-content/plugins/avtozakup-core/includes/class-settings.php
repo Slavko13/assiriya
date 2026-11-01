@@ -395,7 +395,7 @@ final class Settings {
 				'<option value="%1$d" %2$s>%3$s</option>',
 				$term->term_id,
 				selected( in_array( $term->term_id, $selected, true ), true, false ),
-				esc_html( $term->name )
+				esc_html( sprintf( '%s (#%d)', $term->name, $term->term_id ) )
 			);
 		}
 		echo '</select>';

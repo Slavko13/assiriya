@@ -54,6 +54,7 @@
 | I2-S13 — user-owned strict-search isolation | PBL-002/011/PBL-040 regression safety; no new business scope | strict one-result page via scoped Woo filter; exact temporary product card/PDP; demo boundary; exact ID/SKU cleanup | targeted admin `1 passed`; PHP lint; full `30 passed / 2 skipped`; inventory `10/0` | `DONE / TECHNICAL`; index fields, ranking, master/RBAC/stock/lifecycle and search design remain open |
 | I2-S14 — curated category identity boundary | PBL-011/PBL-040 regression safety; no taxonomy mutation | escaped term ID on shared card; Settings set ↔ homepage; ordered homepage ↔ shop; unselected legacy exclusion | public `3 passed`; read-only admin `1 passed`; 8 selected / 50 same-name unselected; full `31 passed / 2 skipped` | `DONE / TECHNICAL`; taxonomy master, legacy merge/delete, redirects and design remain open |
 | I2-S15 — category-card accessible name | NFR-UX-002; PBL-010/PBL-040 partial | decorative CSS art `aria-hidden`; link name = visible category term | catalog `3 passed` on `1440/390/360`; existing axe gate; PHP lint; full `31 passed / 2 skipped` | `DONE / TECHNICAL`; full WC/AT/browser accessibility acceptance remains open |
+| I2-S16 — distinguishable category options | PBL-011/PBL-040 admin safety; supports I2-S14 | escaped `name (#ID)` option labels; suffix/value equality; read-only identity regression | admin targeted `1 passed`; PHP lint; full `31 passed / 2 skipped` | `DONE / TECHNICAL`; term ID is instance-local; master/legacy cleanup/RBAC remain open |
 
 ## Статусы исходного backlog
 
