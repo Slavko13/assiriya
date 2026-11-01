@@ -44,8 +44,10 @@ final class Demo_Seeder {
 		$media = $this->seed_media();
 		$categories = $this->seed_categories();
 		$products = $this->seed_products( $categories, $media );
-		$pages = $this->seed_pages();
-		$this->configure_core_pages( $pages, $force );
+		$demo_pages = $this->seed_pages();
+		$woocommerce_pages = $this->resolve_woocommerce_pages();
+		$pages = array_merge( $demo_pages, $woocommerce_pages );
+		$this->configure_front_page( $demo_pages['home'], $force );
 		$menu = $this->seed_menu( $pages, $categories, $force );
 		$this->update_homepage_settings( $categories, $products, $pages, $media, $force );
 
@@ -55,6 +57,8 @@ final class Demo_Seeder {
 			'categories'   => $categories,
 			'products'     => $products,
 			'attachments'  => $media,
+			'demo_pages'   => $demo_pages,
+			'woocommerce_pages' => $woocommerce_pages,
 			'pages'        => $pages,
 			'menu_id'      => $menu['menu_id'],
 			'menu_location'=> $menu['location'],
@@ -280,9 +284,6 @@ final class Demo_Seeder {
 	private function seed_pages(): array {
 		$definitions = array(
 			'home' => array( 'Автозакуп', 'home', '<!-- wp:paragraph --><p>Главная страница выводится темой «Автозакуп» и редактируется в разделе «Автозакуп → Главная».</p><!-- /wp:paragraph -->' ),
-			'shop' => array( 'Каталог', 'shop', '' ),
-			'cart' => array( 'Корзина', 'cart', '[woocommerce_cart]' ),
-			'checkout' => array( 'Оформление заказа', 'checkout', '[woocommerce_checkout]' ),
 			'delivery' => array( 'Доставка и оплата', 'delivery', '<!-- wp:heading --><h2>Доставка и оплата</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Страница подготовлена для демонстрации. Реальные способы, стоимость и сроки будут опубликованы после утверждения правил и подключения сервисов.</p><!-- /wp:paragraph -->' ),
 			'returns' => array( 'Возврат', 'returns', '<!-- wp:heading --><h2>Возврат</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Демонстрационная страница не заменяет утверждённые правила возврата. Онлайн-регистрация возвратов пока не выполняется.</p><!-- /wp:paragraph -->' ),
 			'vin' => array( 'Подбор по VIN', 'vin-request', '<!-- wp:heading --><h2>Подбор по VIN</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Функция ещё не подключена: эта страница не принимает и не сохраняет VIN или персональные данные.</p><!-- /wp:paragraph -->' ),
@@ -317,16 +318,56 @@ final class Demo_Seeder {
 		return $result;
 	}
 
-	/** @param array<string, int> $pages Page IDs. */
-	private function configure_core_pages( array $pages, bool $force ): void {
-		$this->set_page_option( 'woocommerce_shop_page_id', $pages['shop'], $force );
-		$this->set_page_option( 'woocommerce_cart_page_id', $pages['cart'], $force );
-		$this->set_page_option( 'woocommerce_checkout_page_id', $pages['checkout'], $force );
+	/** @return array<string, int> */
+	private function resolve_woocommerce_pages(): array {
+		$page_keys = array( 'shop', 'cart', 'checkout', 'myaccount' );
+		$pages = $this->read_woocommerce_pages( $page_keys );
+
+		if ( count( $pages ) !== count( $page_keys ) ) {
+			if ( ! class_exists( '\\WC_Install' ) ) {
+				throw new RuntimeException( 'WooCommerce page installer is unavailable.' );
+			}
+			\WC_Install::create_pages();
+			$pages = $this->read_woocommerce_pages( $page_keys );
+		}
+
+		if ( count( $pages ) !== count( $page_keys ) ) {
+			$missing = array_values( array_diff( $page_keys, array_keys( $pages ) ) );
+			throw new RuntimeException( sprintf( 'WooCommerce pages are not configured: %s.', implode( ', ', $missing ) ) );
+		}
+
+		return $pages;
+	}
+
+	/**
+	 * Read configured WooCommerce pages without changing valid administrator
+	 * choices. These pages are referenced by the demo, but are not demo-owned.
+	 *
+	 * @param array<int, string> $page_keys WooCommerce page keys.
+	 * @return array<string, int>
+	 */
+	private function read_woocommerce_pages( array $page_keys ): array {
+		$pages = array();
+		foreach ( $page_keys as $page_key ) {
+			$page_id = absint( wc_get_page_id( $page_key ) );
+			$page = get_post( $page_id );
+			if (
+				$page instanceof WP_Post
+				&& 'page' === $page->post_type
+				&& ! in_array( $page->post_status, array( 'trash', 'auto-draft' ), true )
+			) {
+				$pages[ $page_key ] = $page_id;
+			}
+		}
+		return $pages;
+	}
+
+	private function configure_front_page( int $home_page_id, bool $force ): void {
 
 		$current_front = absint( get_option( 'page_on_front' ) );
 		if ( $force || 0 === $current_front || $this->is_demo_post( $current_front ) ) {
 			update_option( 'show_on_front', 'page' );
-			update_option( 'page_on_front', $pages['home'] );
+			update_option( 'page_on_front', $home_page_id );
 		}
 	}
 
@@ -485,13 +526,6 @@ final class Demo_Seeder {
 		}
 
 		return array( 'available' => true, 'activated' => $activated, 'stylesheet' => 'avtozakup' );
-	}
-
-	private function set_page_option( string $option, int $page_id, bool $force ): void {
-		$current = absint( get_option( $option ) );
-		if ( $force || 0 === $current || ! get_post( $current ) || $this->is_demo_post( $current ) ) {
-			update_option( $option, $page_id );
-		}
 	}
 
 	private function assign_menu_location( int $menu_id, bool $force ): string {

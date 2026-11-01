@@ -12,6 +12,7 @@
 | TECH-006 | 2026-11-01 | Пять initial adapter interfaces без implementations | Фиксирует границы catalog/availability/fitment/offers/VIN и не имитирует реальные ответы | принято |
 | TECH-007 | 2026-11-01 | Mobile layout реализуется provisional | В Paper нет mobile; нельзя считать design gap закрытым | принято как временное |
 | TECH-008 | 2026-11-01 | Git deployment только clean branch + ff-only + pre-backup + smoke | Исключает скрытый merge и сохраняет recovery path | принято; local package READY, remote end-to-end blocked без target |
+| TECH-009 | 2026-11-01 | Demo seeder владеет только проектными pages; настроенные Woo core pages используются read-only | Не создаёт `*-2`, не перезаписывает выбор администратора и отделяет ownership в manifest; legacy cleanup допускается только отдельной fail-closed dry-run/confirm операцией | принято; prevention PASS, legacy repair pending |
 
 ## Состояние DEC
 

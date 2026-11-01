@@ -39,6 +39,7 @@
 | Slice | Требования / backlog | Реализация | Проверка | Статус и границы |
 |---|---|---|---|---|
 | I2-S1 — SCR-005 верхний каталог | FR-CAT-001 partial; UC-SRCH-001 шаги 1—3; PBL-011/PBL-040 partial; TC-039 partial | configured shop page: 8 curated top-level `product_cat`, reusable category card; Woo breadcrumb; category archive | Playwright `1440/390/360`: shop → «Тормозная система», products, no-overflow, runtime errors; `3 passed` | `DONE / PROVISIONAL`; canonical slug, search/filter/fitment/offers вне scope |
+| I2-S2A — Woo page ownership boundary | PBL-039 technical safety partial; PBL-040 regression support | seeder owns 6 demo pages and references 4 configured Woo pages read-only; split manifest with compatible aggregate | current legacy DB: seed ×2 preserves Woo options/hashes/page IDs; isolated fresh install: bootstrap ×2, canonical core slugs, no `*-2`, no demo meta | `DONE`; current legacy canonical repair remains separate; SEO policy and `PBL-039` remain open |
 
 ## Статусы исходного backlog
 

@@ -1,0 +1,28 @@
+services:
+  wordpress:
+    ports:
+      - "18086:80"
+    environment:
+      WP_HOME: http://localhost:18086
+      WP_SITEURL: http://localhost:18086
+      WP_ENVIRONMENT_TYPE: local
+      AVTOZAKUP_SYNC_CODE: "1"
+
+  wpcli:
+    environment:
+      WP_HOME: http://localhost:18086
+      WP_SITEURL: http://localhost:18086
+
+volumes:
+  db_data:
+    name: avtozakup_seedtest_db_data
+  wordpress_data:
+    name: avtozakup_seedtest_wordpress_data
+  uploads_data:
+    name: avtozakup_seedtest_uploads_data
+
+networks:
+  edge:
+    name: avtozakup_seedtest_edge
+  database:
+    name: avtozakup_seedtest_database

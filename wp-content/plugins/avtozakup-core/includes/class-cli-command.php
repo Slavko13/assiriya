@@ -57,7 +57,8 @@ final class CLI_Command {
 		\WP_CLI::log( sprintf( 'Categories: %d', count( $manifest['categories'] ) ) );
 		\WP_CLI::log( sprintf( 'Products: %d', count( $manifest['products'] ) ) );
 		\WP_CLI::log( sprintf( 'Attachments: %d', count( $manifest['attachments'] ) ) );
-		\WP_CLI::log( sprintf( 'Pages: %d', count( $manifest['pages'] ) ) );
+		\WP_CLI::log( sprintf( 'Demo pages: %d', count( $manifest['demo_pages'] ) ) );
+		\WP_CLI::log( sprintf( 'WooCommerce page references: %d', count( $manifest['woocommerce_pages'] ) ) );
 		\WP_CLI::log( sprintf( 'Menu ID: %d', $manifest['menu_id'] ) );
 
 		if ( ! $manifest['theme']['available'] ) {

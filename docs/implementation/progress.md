@@ -11,8 +11,9 @@
 | MariaDB | MariaDB `11.4.13`; restart persistence подтверждён | production monitoring/retention после deploy | `DONE` для локального persistence |
 | Theme SCR-002 | desktop `1440`, mobile `390` и `360` screenshots; sections, overflow, axe и browser errors проверены; Paper comparison задокументирован | утверждение assets/baseline после DEC-019 | `DONE` для Iteration 1; `DESIGN_REVIEW_REQUIRED`, не pixel-perfect |
 | Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены | negative capability/RBAC test | `DONE` для admin save/restore |
-| Demo catalog | повторный seed стабилен: `8` categories, `10` products, `10` attachments, `9` pages, menu `24` | бизнес-master-data только после DEC | `DONE` для технического seed; не production catalog |
+| Demo catalog | `8` categories, `10` products, `10` attachments; I2-S2A разделил `6` plugin-owned pages и `4` read-only Woo page references; legacy seed ×2 и fresh bootstrap ×2 идемпотентны | одноразовый fail-closed repair текущих `*-2`; бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency; не production catalog |
 | Catalog SCR-005 | configured Woo shop page показывает 8 выбранных top-level categories; общий category-card переиспользован; переход в «Тормозную систему» и breadcrumb проверены | отдельный срез canonical shop slug; затем demo provenance Woo cards/PDP | `DONE` для `I2-S1`; `PBL-011 partial / PROVISIONAL` |
+| Woo page ownership | seeder больше не создаёт и не переназначает валидные shop/cart/checkout/my-account pages; fresh install не создаёт `*-2` | repair текущей legacy-БД отдельной dry-run/confirm операцией | `DONE` для `I2-S2A`; legacy canonical URL ещё не исправлен |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks | утверждённый mobile-макет после DEC-019/020 | `DONE` для provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
@@ -39,7 +40,7 @@
 - Woo category/product CRUD с отражением на главной и cleanup, cart count/page, classic checkout guard и keyboard/focus entry point — `PASS`.
 - Configured shop page → curated categories → «Тормозная система» archive, breadcrumb, products и no-overflow на `1440/390/360` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.
-- Seed после повторного запуска: `8` categories, `10` products, `10` attachments, `9` pages, menu `24`.
+- Seed после I2-S2A: `8` categories, `10` products, `10` attachments, `6` plugin-owned pages + `4` Woo page references, menu `24`; legacy DB и isolated fresh bootstrap проверены двумя повторами.
 
 ## Правило отчётности
 
