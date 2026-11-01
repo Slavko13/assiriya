@@ -44,11 +44,7 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 		<div class="az-section__heading"><h2 id="az-catalog-title"><?php esc_html_e( 'Каталог', 'avtozakup' ); ?></h2><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Все категории', 'avtozakup' ); ?><?php echo avtozakup_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></div>
 		<div class="az-category-grid">
 			<?php foreach ( $categories as $index => $category ) : ?>
-				<?php $term_link = get_term_link( $category ); ?>
-				<a class="az-category-card" href="<?php echo esc_url( is_wp_error( $term_link ) ? $shop_url : $term_link ); ?>">
-					<?php echo avtozakup_category_illustration( (int) $index ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<span><?php echo esc_html( $category->name ); ?></span>
-				</a>
+				<?php avtozakup_category_card( $category, (int) $index ); ?>
 			<?php endforeach; ?>
 			<?php if ( ! $categories ) : ?>
 				<p class="az-empty-state"><?php esc_html_e( 'Категории появятся после запуска безопасного демо-импорта.', 'avtozakup' ); ?></p>

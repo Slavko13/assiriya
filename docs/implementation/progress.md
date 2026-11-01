@@ -1,7 +1,7 @@
 # Прогресс
 
 **Дата среза:** 2026-11-01  
-**Общий статус:** `READY_FOR_DEPLOYMENT / NOT_DEPLOYED`.
+**Общий статус:** Итерация 1 `READY_FOR_DEPLOYMENT`; Итерация 2 `IN_PROGRESS`; сервер `NOT_DEPLOYED`.
 
 | Область | Фактический результат в checkout | Следующее доказательство | Статус |
 |---|---|---|---|
@@ -12,6 +12,7 @@
 | Theme SCR-002 | desktop `1440`, mobile `390` и `360` screenshots; sections, overflow, axe и browser errors проверены; Paper comparison задокументирован | утверждение assets/baseline после DEC-019 | `DONE` для Iteration 1; `DESIGN_REVIEW_REQUIRED`, не pixel-perfect |
 | Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены | negative capability/RBAC test | `DONE` для admin save/restore |
 | Demo catalog | повторный seed стабилен: `8` categories, `10` products, `10` attachments, `9` pages, menu `24` | бизнес-master-data только после DEC | `DONE` для технического seed; не production catalog |
+| Catalog SCR-005 | configured Woo shop page показывает 8 выбранных top-level categories; общий category-card переиспользован; переход в «Тормозную систему» и breadcrumb проверены | отдельный срез canonical shop slug; затем demo provenance Woo cards/PDP | `DONE` для `I2-S1`; `PBL-011 partial / PROVISIONAL` |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks | утверждённый mobile-макет после DEC-019/020 | `DONE` для provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
@@ -19,7 +20,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | финальный Playwright: `13` tests, `11 passed`, `2 intentional skipped`, `0 failed`; три viewport-проекта, keyboard/focus и admin project; Paper report сохранён | утверждение visual baseline после DEC-019/020 | `DONE` для Iteration 1 automation; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `16` tests, `14 passed`, `2 intentional skipped`, `0 failed`; добавлен catalog journey на `1440/390/360` | утверждение visual baseline после DEC-019/020 | Iteration 1 PASS; `I2-S1` PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -28,13 +29,15 @@
 - Master systems, integration contracts, real server inventory и legal/privacy inputs отсутствуют.
 - Paper не содержит mobile и формальных tokens; screenshots `390/360` имеют `DESIGN_REVIEW_REQUIRED` и не объявляются pixel-perfect.
 - Git remote/branch и удалённый server target не подтверждены; deployment остаётся `BLOCKED / NOT_DEPLOYED`.
+- В локальной БД есть старые одноимённые `product_cat` вне выбранного demo-набора; `I2-S1` намеренно использует восемь curated IDs. Автоматическое объединение/удаление не выполняется до отдельного master-data решения.
 
 ## Последний подтверждённый прогон
 
-- Playwright: `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
+- Playwright: `16` tests = `14 passed`, `2 intentional skipped`, `0 failed`.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
 - Woo category/product CRUD с отражением на главной и cleanup, cart count/page, classic checkout guard и keyboard/focus entry point — `PASS`.
+- Configured shop page → curated categories → «Тормозная система» archive, breadcrumb, products и no-overflow на `1440/390/360` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.
 - Seed после повторного запуска: `8` categories, `10` products, `10` attachments, `9` pages, menu `24`.
 

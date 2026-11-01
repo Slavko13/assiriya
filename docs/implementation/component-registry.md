@@ -8,13 +8,13 @@
 | Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | desktop/mobile nav, contact dialog; город/search targets частичны | общий для всех страниц; `TESTING` |
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |
-| Catalog CTA/menu | UI-SCR002-002/012 | `header.php`, `front-page.php` | `product_cat` | empty + populated | общий; `TESTING` |
+| Catalog CTA/menu | UI-SCR002-002/012; SCR-005 | `header.php`, `front-page.php`, Woo archive hook | curated `product_cat` | empty + populated; configured shop → category проверен | общий; I2-S1 `PASS / PROVISIONAL` |
 | Product search | UI-SCR002-003—005 | `header.php` | WC product search | submit; нет DG-001 states | общий; `BLOCKED` |
 | Account/cart actions | UI-SCR002-006/007 | `header.php` | WC pages/session | AJAX add, count, cart page, guarded checkout проверены | общий; Iteration 1 `PASS` |
 | Vehicle picker | UI-SCR002-008—011 | `front-page.php` | будущий Fitment adapter | controls disabled + explanation | будущие SCR-003/008; `BLOCKED` |
 | Hero/promo | SCR-002 | `front-page.php`, Settings API | editable copy/media | normal + image fallback via defaults | homepage; `TESTING` |
 | Benefits row | SCR-002 | `front-page.php` | static presentation copy | normal | reusable card pattern; `TESTING` |
-| Category card/grid | UI-SCR002-012 | `front-page.php`, `helpers.php` | Woo category | populated + CRUD/render/cleanup | catalog screens later; Iteration 1 `PASS` |
+| Category card/grid | UI-SCR002-012; SCR-005 | shared `helpers.php`, homepage и shop hook | Woo category | populated + CRUD/render/cleanup; reused on configured shop page | I2-S1 `PASS / PROVISIONAL`; master taxonomy TBD |
 | Product card/row | UI-SCR002-013—015 | `helpers.php` | WC product | demo/real label, in/out stock, add/details; CRUD/render проверен | listings later; business meaning `BLOCKED`, UI `PASS` |
 | VIN entry block | UI-SCR002-016 | `front-page.php` | no persistence | partial input + status, no submit | SCR-004 later; `BLOCKED` |
 | B2B banner | UI-SCR002-017 | `front-page.php` | editable copy | info/status only | DG-009 later; `BLOCKED` |

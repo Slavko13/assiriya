@@ -2,7 +2,7 @@
 
 **Срез:** 2026-11-01  
 **Итерация:** 1 — Homepage MVP + WordPress + Docker + Git Deployment  
-**Общий статус:** `READY_FOR_DEPLOYMENT / NOT_DEPLOYED`; результаты ниже не являются закрытием открытых DEC.
+**Общий статус:** Итерация 1 `READY_FOR_DEPLOYMENT`; Итерация 2 `IN_PROGRESS`; сервер `NOT_DEPLOYED`. Результаты ниже не являются закрытием открытых DEC.
 
 ## Канонические источники
 
@@ -33,6 +33,12 @@
 | UI-SCR002-018, получение | FR-DLV-001/002; BR-010/013/014; BRULE-DLV-001 | PBL-021, 026 | информационный блок, без тарифа/адреса | visual + link smoke | — | `BLOCKED`: DEC-014, INT-DLV-001 |
 | UI-SCR002-019, изображения | декоративный | техническая декомпозиция PBL-011 | оптимизированные локальные assets и CSS art | размер файлов, alt/aria, visual diff | — | `TESTING` |
 | Mobile и системные состояния | NFR-UX-001—003; BR-025—027/030; все клиентские UC | PBL-010, 040 | responsive CSS/JS; mobile nav | 360/390/1440, axe, keyboard focus, no horizontal scroll | TC-039/040 | Iteration 1 `PASS`, mobile provisional / `DESIGN_REVIEW_REQUIRED` |
+
+## Срезы Итерации 2
+
+| Slice | Требования / backlog | Реализация | Проверка | Статус и границы |
+|---|---|---|---|---|
+| I2-S1 — SCR-005 верхний каталог | FR-CAT-001 partial; UC-SRCH-001 шаги 1—3; PBL-011/PBL-040 partial; TC-039 partial | configured shop page: 8 curated top-level `product_cat`, reusable category card; Woo breadcrumb; category archive | Playwright `1440/390/360`: shop → «Тормозная система», products, no-overflow, runtime errors; `3 passed` | `DONE / PROVISIONAL`; canonical slug, search/filter/fitment/offers вне scope |
 
 ## Статусы исходного backlog
 

@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **11 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **14 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -18,6 +18,7 @@
 - классическая тема `avtozakup` с desktop 1440 и provisional mobile 390/360;
 - плагин `avtozakup-core`: Settings API главной, безопасный demo seed, checkout guard и интерфейсы будущих адаптеров;
 - 8 демонстрационных категорий, 10 WooCommerce-товаров и 9 страниц;
+- первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
 - Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;
@@ -66,7 +67,7 @@ $env:WP_ADMIN_PASSWORD=(Get-Content .env | Where-Object { $_ -like 'WP_ADMIN_PAS
 npm run test:e2e
 ```
 
-Финальный локальный результат: **13 tests: 11 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет WooCommerce category/product CRUD с cleanup, AJAX cart → count → cart page → classic checkout guard и keyboard/focus entry point. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
+Текущий локальный результат: **16 tests: 14 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет WooCommerce category/product CRUD с cleanup, AJAX cart → count → cart page → classic checkout guard, keyboard/focus и первый срез configured shop page → category archive на `1440/390/360`. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
 
 ## Persistence, backup и restore
 

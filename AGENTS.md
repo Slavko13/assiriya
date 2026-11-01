@@ -26,7 +26,7 @@
 - `DESIGN_REVIEW_REQUIRED` — дополнительный qualifier для визуальной проверки; он не означает `DONE`, pixel-perfect соответствие или закрытие `DEC-019/020`.
 - `DONE` ставится только после выполненного критерия, сохранённого результата теста и ссылки на код/артефакт.
 - `PBL-006`, `PBL-007`, `PBL-010—019`, `PBL-029`, `PBL-031`, `PBL-036`, `PBL-037`, `PBL-039`, `PBL-040` не считать завершёнными в Итерации 1 без полного исходного AC.
-- Локальный технический фундамент подтверждён: dev/prod config/build/up, admin save/restore, Woo category/product CRUD с cleanup, повторный seed, cart/checkout guards, keyboard/focus, persistence, Caddy CIDR drill, парный DB+uploads backup/isolated restore и Playwright (`13`: `11 passed`, `2 intentional skipped`, `0 failed`). Статус пакета Итерации 1 — `READY_FOR_DEPLOYMENT`; mobile сохраняет qualifier `DESIGN_REVIEW_REQUIRED`, а все `DEC-001…020` остаются открытыми.
+- Локальный технический фундамент подтверждён: dev/prod config/build/up, admin save/restore, Woo category/product CRUD с cleanup, повторный seed, cart/checkout guards, keyboard/focus, persistence, Caddy CIDR drill, парный DB+uploads backup/isolated restore и текущий Playwright (`16`: `14 passed`, `2 intentional skipped`, `0 failed`). Статус пакета Итерации 1 — `READY_FOR_DEPLOYMENT`; Итерация 2 ведётся короткими backlog-срезами, mobile сохраняет qualifier `DESIGN_REVIEW_REQUIRED`, а все `DEC-001…020` остаются открытыми.
 - Текущий серверный статус — `BLOCKED / NOT_DEPLOYED`: серверный доступ и Git remote не предоставлены. Это не отменяет разрешённый исходным master prompt статус `READY_FOR_DEPLOYMENT`, но `DEPLOYED` требует server inventory, проверки CIDR/портов/существующих сайтов, доступного URL и подтверждённого production smoke.
 
 ## Перед изменением

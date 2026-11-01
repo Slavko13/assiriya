@@ -77,11 +77,43 @@ Remote inventory и реальный deployment выполняются толь�
 | 2026-11-01 | Завершён финальный Playwright | `13`: `11 passed`, `2 intentional skipped`, `0 failed`; `1440/390/360`; visual `DESIGN_REVIEW_REQUIRED` |
 | 2026-11-01 | Проверена готовность deployment package | Caddy drill PASS; Git remote/server access отсутствуют; package `READY_FOR_DEPLOYMENT`, server `NOT_DEPLOYED` |
 
+## Итерация 2 — Catalog / Search / PDP
+
+**Статус:** `IN_PROGRESS` короткими срезами примерно по 30 минут.
+
+**Принцип:** реализовывать только независимые части исходного backlog; не закрывать `PBL-011—017`, `DG-001/017/018` или `DEC-002—006` частичным UI.
+
+### I2-S1 — SCR-005: верхний уровень каталога
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-011 partial`, `PBL-040 partial`, `FR-CAT-001 partial`, `UC-SRCH-001` шаги 1—3, `TC-039 partial`.
+
+Выполнено:
+
+- настроенная WooCommerce shop page выводит восемь выбранных в Settings API top-level categories без hardcoded IDs;
+- category-card главной переиспользуется на странице каталога;
+- штатный WooCommerce breadcrumb добавлен в общий Woo shell;
+- переход «Тормозная система» открывает category archive с опубликованными demo-товарами;
+- actual screenshots сохранены для `1440/390/360`;
+- Playwright catalog journey: `3 passed`; полный regression: `16 tests`, `14 passed`, `2 intentional skipped`, `0 failed`.
+
+Не входит в срез:
+
+- поиск, ranking, no-results и `DG-001/018`;
+- фильтры, сортировка или придуманное дерево категорий;
+- fitment, offers, freshness, реальные цена/остаток;
+- очистка старых одноимённых terms: используются curated category IDs, автоматическое слияние запрещено без master-data решения.
+
+Следующий допустимый 30-минутный срез: явная demo provenance на стандартных WooCommerce archive/PDP, без изменения поиска, сортировки и коммерческой семантики.
+
+Отдельно зафиксировано: canonical shop slug ещё не нормализован (локальная установка использует URL, заданный WooCommerce page option); это не скрывается и не исправляется в I2-S1.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
 |---|---|---|
-| 2 | catalog/search/PDP: PBL-002, 006, 011—017 | DEC-002—006, DG-001/018, INT-CAT/ERP/SUP contracts |
+| 2 — `IN_PROGRESS` | catalog/search/PDP: PBL-002, 006, 011—017; I2-S1 завершён | DEC-002—006, DG-001/018, INT-CAT/ERP/SUP contracts |
 | 3 | cart/checkout/order: PBL-003—005, 018—023 | DEC-008—014, DG-004—008, PSP/DLV/WMS sandbox |
 | 4 | procurement/receiving/pickup: PBL-024—027/033 | operational ownership, ERP/WMS/SUP contracts, DG-013—016 |
 | 5 | account/VIN/B2B/returns: PBL-028—032/041 | DEC-015—018, CRM/IDP/legal, DG-002/003/009—011 |

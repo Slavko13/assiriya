@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.1.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.2.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -67,4 +67,31 @@ add_filter(
 );
 
 add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
+
+add_action(
+	'woocommerce_before_shop_loop',
+	static function (): void {
+		if ( ! function_exists( 'is_shop' ) || ! is_shop() ) {
+			return;
+		}
+
+		$categories = avtozakup_catalog_categories();
+		?>
+		<section class="az-shop-categories" aria-labelledby="az-shop-categories-title">
+			<div class="az-section__heading">
+				<h2 id="az-shop-categories-title"><?php esc_html_e( 'Каталог автозапчастей', 'avtozakup' ); ?></h2>
+			</div>
+			<div class="az-category-grid">
+				<?php foreach ( $categories as $index => $category ) : ?>
+					<?php avtozakup_category_card( $category, (int) $index ); ?>
+				<?php endforeach; ?>
+				<?php if ( ! $categories ) : ?>
+					<p class="az-empty-state"><?php esc_html_e( 'Опубликованные категории пока отсутствуют.', 'avtozakup' ); ?></p>
+				<?php endif; ?>
+			</div>
+		</section>
+		<?php
+	},
+	5
+);
 

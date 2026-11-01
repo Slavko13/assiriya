@@ -84,6 +84,16 @@ function avtozakup_home_categories(): array {
 	return is_wp_error( $terms ) ? array() : $terms;
 }
 
+/** @return WP_Term[] */
+function avtozakup_catalog_categories(): array {
+	return array_values(
+		array_filter(
+			avtozakup_home_categories(),
+			static fn ( WP_Term $term ): bool => 0 === (int) $term->parent
+		)
+	);
+}
+
 /** @return WC_Product[] */
 function avtozakup_home_products( string $setting_key ): array {
 	if ( ! function_exists( 'wc_get_products' ) ) {
@@ -127,6 +137,17 @@ function avtozakup_category_illustration( int $index ): string {
 	$kind = ( $index % 8 ) + 1;
 	$labels = array( 'Фильтр', 'Тормозной диск', 'Пружина', 'Ремень', 'Масло', 'Свеча', 'Автохимия', 'Инструменты' );
 	return sprintf( '<span class="az-category-art az-category-art--%d" role="img" aria-label="%s"><i></i><b></b><em></em></span>', $kind, esc_attr( $labels[ $kind - 1 ] ) );
+}
+
+function avtozakup_category_card( WP_Term $category, int $index ): void {
+	$term_link = get_term_link( $category );
+	$target = is_wp_error( $term_link ) ? avtozakup_wc_page_url( 'shop' ) : $term_link;
+	?>
+	<a class="az-category-card" href="<?php echo esc_url( $target ); ?>">
+		<?php echo avtozakup_category_illustration( $index ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<span><?php echo esc_html( $category->name ); ?></span>
+	</a>
+	<?php
 }
 
 function avtozakup_product_card( WC_Product $product ): void {

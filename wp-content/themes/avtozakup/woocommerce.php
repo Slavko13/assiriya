@@ -2,6 +2,11 @@
 /** WooCommerce shell. @package Avtozakup */
 get_header();
 ?>
-<main id="primary" class="az-content az-shop az-container"><?php woocommerce_content(); ?></main>
+<main id="primary" class="az-content az-shop az-container">
+	<?php if ( function_exists( 'woocommerce_breadcrumb' ) ) : ?>
+		<?php woocommerce_breadcrumb(); ?>
+	<?php endif; ?>
+	<?php woocommerce_content(); ?>
+</main>
 <?php get_footer(); ?>
 

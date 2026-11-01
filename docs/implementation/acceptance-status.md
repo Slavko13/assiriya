@@ -3,7 +3,9 @@
 **Состояние:** `READY_FOR_DEPLOYMENT / NOT_DEPLOYED`; `PASS` ниже относится только к явно проверенному критерию и не закрывает открытые DEC или будущую коммерческую функциональность.  
 **Главный источник:** `J:\vlad322\docs\07_delivery\test_acceptance_matrix.md`.
 
-**Последний Playwright:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
+
+**Текущий regression после I2-S1:** `16` tests = `14 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 1
 

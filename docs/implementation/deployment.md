@@ -107,7 +107,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Playwright: 13 tests, 11 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD, keyboard/focus, AJAX cart/count/page и classic/Store API guards.
+- Playwright: 16 tests, 14 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD, keyboard/focus, AJAX cart/count/page, classic/Store API guards и catalog I2-S1 journey.
 
 Эти результаты относятся к локальному адресу `http://localhost:8086/`. Реального server deployment не было: `NOT_DEPLOYED`.
 
