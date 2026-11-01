@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S7:** `28` tests = `26 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S8:** `29` tests = `27 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -89,6 +89,18 @@ I2-S6 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; field index c
 | I2-S7-ACC-005 | Regression не ухудшен | targeted `15 passed`; full `28`: `26 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S7 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; breadcrumb, shop result count/sorting и полная Woo/admin/account/cart/checkout локализация не закрыты.
+
+### I2-S8 — user-owned product isolation regression
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S8-ACC-001 | Fixture явно unmarked и user-owned | authenticated Woo REST create без demo meta; unique user SKU/stock/descriptions; published visible product | `PASS` |
+| I2-S8-ACC-002 | Demo loop semantics не протекают | newest shop card visible; demo provenance `0`; CTA не содержит «демо» | `PASS` |
+| I2-S8-ACC-003 | Demo PDP semantics не протекают | provenance/meta `0`; exact user SKU; stock contains `3` без demo text; action non-demo; descriptions intact | `PASS` |
+| I2-S8-ACC-004 | Cleanup обязателен и проверен | `finally` force-delete + exact-SKU REST absence; post-target/post-full: published products `10`, E2E user products `0` | `PASS` |
+| I2-S8-ACC-005 | Regression не ухудшен | targeted `1 passed`; full `29`: `27 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S8 закрывает только technical isolation regression; production master data, permissions matrix, stock truth, relations и lifecycle остаются open/blocked.
 
 ## Технические критерии Итерации 1
 

@@ -313,6 +313,35 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к четырём проверенным public labels. Breadcrumb, shop result count/sorting и остальные Woo/admin/account/cart/checkout strings остаются вне scope; visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
 
+### I2-S8 — user-owned product isolation regression
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** regression safety для I2-S3/S4/S7, `PBL-011/PBL-040 partial`; бизнес-функции не расширяются.
+
+Критерии среза:
+
+- authenticated Woo REST создаёт временный published unmarked simple product с user SKU/stock и возвращает permalink;
+- standard shop loop у временного товара не получает demo provenance или demo CTA;
+- PDP сохраняет user SKU и штатную availability/action, не получает demo provenance/technical meta и не теряет description content;
+- unconditional presentation-only label «Описание» допускается и явно отделён от demo semantics;
+- product удаляется `force=true` в `finally`, cleanup проверяет exact-SKU REST lookup; test не мутирует seed entities;
+- desktop admin project проверяет create → shop/PDP isolation → cleanup; runtime errors отсутствуют;
+- полный regression после cleanup не имеет failures.
+
+Вне scope: production product lifecycle, permissions matrix, real inventory truth, related-products semantics для unmarked data и server deployment.
+
+Выполнено и проверено:
+
+- serial admin E2E создаёт через authenticated Woo REST unmarked simple product с unique name/SKU, price, stock `3`, short/long descriptions и visible catalog status;
+- shop loop по newest order подтверждает отсутствие demo provenance/demo CTA у user-owned product;
+- PDP подтверждает отсутствие demo provenance/technical meta, сохранение exact user SKU, non-demo stock/action и обоих descriptions; global «Описание» остаётся только presentation label;
+- `finally` выполняет authenticated `force=true` delete и проверяет absence exact temporary SKU; targeted scenario `1 passed`;
+- post-target и post-full cleanup controls: `published_products=10`, `e2e_user_products=0`;
+- full regression: `29` tests, `27 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к автоматизированной isolation/regression границе. Он не утверждает production master data, RBAC matrix, real stock или lifecycle.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

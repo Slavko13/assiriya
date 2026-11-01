@@ -18,6 +18,7 @@
 | Technical demo PDP | exact seed SKU назван техническим, availability не выдаёт численный stock, action ведёт в демо-корзину, default related скрыт у marked demo | полный SCR-009, verified identifiers/relations/fitment/offers после DEC и контрактов | `DONE / PROVISIONAL` для `I2-S4`; `FR-CAT-002/003 partial` |
 | Product search baseline | neutral generic form; escaped query context/no-results; positive `Фильтр` → `2` product cards; shop category grid исключён из results | field index/ranking/normalization/suggestions и утверждённый DG-001/018 | `DONE / PROVISIONAL` для `I2-S5/S6`; `PBL-002/006/012` остаются blocked |
 | Scoped Woo public copy | shop H1, search count, demo loop action и PDP description labels локализованы named hooks без data mutation | breadcrumb/full Woo/admin/account/cart/checkout translation | `DONE / PROVISIONAL` для `I2-S7`; не полный i18n |
+| User-owned product isolation | authenticated temporary unmarked product сохраняет user SKU/stock/action/content и не получает demo UI; force-delete cleanup подтверждён | production master/RBAC/stock/lifecycle | `DONE / TECHNICAL` для `I2-S8`; не business acceptance |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks | утверждённый mobile-макет после DEC-019/020 | `DONE` для provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
@@ -25,7 +26,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `28` tests, `26 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `29` tests, `27 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -38,7 +39,7 @@
 
 ## Последний подтверждённый прогон
 
-- Playwright: `28` tests = `26 passed`, `2 intentional skipped`, `0 failed`.
+- Playwright: `29` tests = `27 passed`, `2 intentional skipped`, `0 failed`.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
 - Woo category/product CRUD с отражением на главной и cleanup, cart count, classic/Woo Blocks cart/checkout guard и keyboard/focus entry point — `PASS`.
@@ -47,6 +48,7 @@
 - DOM-selected marked product → technical SKU, unconfirmed demo availability, demo-cart action, no default related, image/descriptions/category, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Generic product special-character no-results → escaped H1/searchbox/status, no product cards, configured `/shop/` return, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Generic `Фильтр` results → two fixture product cards with provenance/permalinks, no shop category grid, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
+- Authenticated temporary unmarked product → no demo loop/PDP semantics, exact user SKU/stock/content, force-delete cleanup; post-full inventory `10/0` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.
 - Seed после I2-S2B: `8` categories, `10` products, `10` attachments, `6` plugin-owned pages + `4` Woo page references, menu `24`; options `4/5/6/7`, confirm no-op и seed ×2 подтверждены.
 

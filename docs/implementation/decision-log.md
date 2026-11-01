@@ -20,6 +20,7 @@
 | TECH-014 | 2026-11-01 | Curated shop category grid выводится только на shop, не на product search | Woo `is_shop()` включает search archive; явный `!is_search()` сохраняет смысл SCR-005 и не засоряет results unrelated navigation | принято для I2-S6; search design всё ещё provisional |
 | TECH-015 | 2026-11-01 | `Relevance` ordering control скрывается только на product search до ranking contract | Не создаёт ложного впечатления утверждённого ranking; underlying Woo/WP query и result count не меняются | принято для I2-S6; ranking остаётся blocked |
 | TECH-016 | 2026-11-01 | Четыре проверенных Woo public labels локализуются named hooks/filters без gettext/template override; demo loop CTA меняется только в direct-add state | Сужает blast radius, сохраняет labels out-of-stock/variable states и не меняет user-owned page/content/data; full translation catalog остаётся отдельной задачей | принято для I2-S7; partial public copy only |
+| TECH-017 | 2026-11-01 | Demo presentation boundary проверяется временным authenticated unmarked product с обязательным validated force-delete cleanup | Даёт browser-level доказательство отсутствия demo leakage в loop/PDP; exact-SKU REST check подтверждает cleanup в штатном test run | принято для I2-S8; production master/RBAC/lifecycle open |
 
 ## Состояние DEC
 

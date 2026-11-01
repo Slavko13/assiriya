@@ -83,6 +83,104 @@ test.describe('WordPress administration', () => {
     expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
   });
 
+  test('keeps user-owned products outside demo presentation semantics', async ({ page }) => {
+    const runtimeErrors = watchRuntimeErrors(page);
+    const marker = Date.now();
+    const productName = `E2E user product ${marker}`;
+    const sku = `USER-E2E-${marker}`;
+    let restNonce = '';
+    let productId = 0;
+
+    await logIn(page);
+    await page.goto('/wp-admin/');
+    restNonce = await page.evaluate(() => {
+      const settings = (window as Window & { wpApiSettings?: { nonce?: string } }).wpApiSettings;
+      return settings?.nonce ?? '';
+    });
+    expect(restNonce, 'WordPress REST nonce should be exposed to an authenticated administrator').not.toBe('');
+    const requestHeaders = { 'X-WP-Nonce': restNonce };
+
+    try {
+      const productResponse = await page.request.post('/wp-json/wc/v3/products', {
+        headers: requestHeaders,
+        data: {
+          name: productName,
+          slug: `e2e-user-product-${marker}`,
+          sku,
+          type: 'simple',
+          status: 'publish',
+          catalog_visibility: 'visible',
+          regular_price: '4321',
+          manage_stock: true,
+          stock_quantity: 3,
+          short_description: 'User-owned short description.',
+          description: 'User-owned long description.',
+        },
+      });
+      expect(productResponse.ok(), await productResponse.text()).toBeTruthy();
+      const createdProduct = await productResponse.json();
+      productId = Number(createdProduct.id);
+      expect(productId).toBeGreaterThan(0);
+      expect(createdProduct.permalink).toBeTruthy();
+
+      await page.goto('/shop/?orderby=date', { waitUntil: 'networkidle' });
+      const loopProduct = page.locator(`li.product.post-${productId}`);
+      await expect(loopProduct).toBeVisible();
+      await expect(loopProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+      const loopAction = loopProduct.locator('.add_to_cart_button');
+      await expect(loopAction).toHaveCount(1);
+      await expect(loopAction).toBeVisible();
+      await expect(loopAction).toContainText(/\S/);
+      await expect(loopAction).not.toContainText(/демо/i);
+
+      await page.goto(createdProduct.permalink, { waitUntil: 'networkidle' });
+      await expect(page.locator('body')).toHaveClass(/single-product/);
+      await expect(page.locator('h1.product_title')).toHaveText(productName);
+      await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+      await expect(page.locator('[data-demo-product-meta="product"]')).toHaveCount(0);
+      await expect(page.locator('.product_meta .sku')).toHaveText(sku);
+      await expect(page.locator('p.stock')).toContainText('3');
+      await expect(page.locator('p.stock')).not.toContainText('Демо-наличие');
+      const singleAction = page.locator('button.single_add_to_cart_button');
+      await expect(singleAction).toHaveCount(1);
+      await expect(singleAction).toBeVisible();
+      await expect(singleAction).toContainText(/\S/);
+      await expect(singleAction).not.toContainText(/демо/i);
+      await expect(page.locator('.woocommerce-product-details__short-description')).toContainText('User-owned short description.');
+      await expect(page.locator('.woocommerce-Tabs-panel--description')).toContainText('User-owned long description.');
+      await expect(page.locator('.woocommerce-tabs .description_tab')).toContainText('Описание');
+    } finally {
+      if (restNonce) {
+        const lookupUrl = `/wp-json/wc/v3/products?sku=${encodeURIComponent(sku)}&per_page=10`;
+        let cleanupIds = productId > 0 ? [productId] : [];
+
+        if (cleanupIds.length === 0) {
+          const lookupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
+          expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
+          const lookupProducts = await lookupResponse.json();
+          cleanupIds = lookupProducts
+            .filter((product: { id?: number; sku?: string }) => product.sku === sku && Number(product.id) > 0)
+            .map((product: { id: number }) => Number(product.id));
+        }
+
+        for (const cleanupId of [...new Set(cleanupIds)]) {
+          const deleteProductResponse = await page.request.delete(`/wp-json/wc/v3/products/${cleanupId}?force=true`, {
+            headers: requestHeaders,
+          });
+          expect(deleteProductResponse.ok(), await deleteProductResponse.text()).toBeTruthy();
+        }
+
+        const verifyCleanupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
+        expect(verifyCleanupResponse.ok(), await verifyCleanupResponse.text()).toBeTruthy();
+        const remainingProducts = await verifyCleanupResponse.json();
+        expect(remainingProducts.filter((product: { sku?: string }) => product.sku === sku)).toHaveLength(0);
+      }
+    }
+
+    expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+    expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+  });
+
   test('creates and edits WooCommerce records, renders them on the homepage, and cleans up', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
     const marker = Date.now();
