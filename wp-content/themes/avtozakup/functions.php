@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.5.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.6.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -214,6 +214,7 @@ function avtozakup_configure_product_search_page(): void {
 
 	remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
 	add_action( 'woocommerce_no_products_found', 'avtozakup_render_product_search_empty_state', 10 );
+	remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 }
 
 add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
@@ -227,7 +228,7 @@ add_filter( 'woocommerce_page_title', 'avtozakup_product_search_page_title' );
 add_action(
 	'woocommerce_before_shop_loop',
 	static function (): void {
-		if ( ! function_exists( 'is_shop' ) || ! is_shop() ) {
+		if ( ! function_exists( 'is_shop' ) || ! is_shop() || is_search() ) {
 			return;
 		}
 

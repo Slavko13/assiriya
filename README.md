@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **23 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **26 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -20,7 +20,7 @@
 - 8 демонстрационных категорий, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references;
 - первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
-- provisional product-title search empty state с escaped query и canonical возвратом в каталог; article/brand/ranking не заявлены;
+- provisional generic product search: escaped results/no-results context и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
 - Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;

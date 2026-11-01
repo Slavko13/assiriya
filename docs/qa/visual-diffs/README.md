@@ -12,6 +12,7 @@
 - `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP artifacts среза I2-S3; это функциональное доказательство явной demo provenance, а не утверждённый PDP baseline.
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
+- `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -34,6 +35,9 @@ product-technical-baseline-mobile-chrome-360.png
 product-search-empty-desktop-chrome-1440.png
 product-search-empty-mobile-chrome-390.png
 product-search-empty-mobile-chrome-360.png
+product-search-results-desktop-chrome-1440.png
+product-search-results-mobile-chrome-390.png
+product-search-results-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -90,11 +94,19 @@ report-home-YYYYMMDD.md
 
 ## Product search empty state I2-S5
 
-- header обещает только текущий product-title search; article/brand/OEM search не заявлен;
+- header обещает только generic product search без перечисления полей; article/brand/OEM search не заявлен;
 - special-character query проверяет single escaping в H1/searchbox/empty state, один status-блок и canonical catalog return;
 - scenario: `3 passed`; full regression: `25 tests`, `23 passed`, `2 intentional skipped`, `0 failed`;
 - axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`;
 - визуал `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: отдельного утверждённого search-results макета в Paper нет.
+
+## Generic product search results I2-S6
+
+- fixture audit подтверждает content matches, поэтому UI не называет поиск title-only и не обещает field contract;
+- `Фильтр` возвращает две fixture product cards с demo provenance/same-origin permalinks; title matching/order/ranking не asserted;
+- curated shop categories и unapproved ordering control на search page отсутствуют;
+- positive scenario: `3 passed`; search file: `6 passed`; full regression: `28 tests`, `26 passed`, `2 intentional skipped`, `0 failed`;
+- axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`; visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
 
 ## Отчёт
 

@@ -234,7 +234,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Критерии среза:
 
-- header form честно описывает текущую штатную возможность как поиск по названию товара и сохраняет `post_type=product`; артикул/бренд/нормализация не обещаются;
+- header form не обещает артикул/бренд/нормализацию и сохраняет `post_type=product`; после field-аудита I2-S6 copy нейтрализована до «По товарам» / «Введите запрос»;
 - product search page показывает escaped query context в H1 и сохраняет значение в searchbox;
 - zero-result product search показывает один понятный status-блок с escaped query и canonical ссылкой на configured shop;
 - empty state не предлагает выдуманные аналоги, fitment, offers или auto-corrections;
@@ -245,7 +245,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Выполнено и проверено:
 
-- header presentation больше не обещает поиск «по артикулу/номеру детали/бренду»: до согласованного индекса форма честно подписана как поиск по названию товара;
+- header presentation больше не обещает поиск «по артикулу/номеру детали/бренду»; финальная нейтральная copy I2-S6 не фиксирует неподтверждённые поля индекса;
 - product-only query context выводится через named `woocommerce_page_title` filter с explicit escaping raw query; значение searchbox сохраняется один раз без double escaping;
 - штатный Woo no-products notice заменяется только для product search на один escaped status-блок с configured shop link; query/ranking не меняются;
 - special-character query `AZ-NO-RESULT-9F3C & "probe"` буквально сохранён в URL/searchbox/H1/empty state, product cards `0`, default notice отсутствует;
@@ -253,6 +253,36 @@ Qualifier: это prevention-срез; одноразовая локальная
 - full regression, включая multi-result search → PDP: `25` tests, `23 passed`, `2 intentional skipped`, `0 failed`.
 
 Статус относится только к технически честному no-results состоянию. `PBL-002/006/012`, полные `TC-001—003`, `DG-001/018`, `DEC-003` и утверждённый search design остаются partial/open/blocked; `TC-001/002` не покрыты срезом.
+
+### I2-S6 — generic product-search results baseline
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-002/006/012 safety partial`, `FR-SRCH-001—003 presentation partial`, `UC-SRCH-001` submit/results/context; `TC-003 presentation partial`, `TC-001/002 blocked`.
+
+Критерии среза:
+
+- search form использует нейтральные «По товарам» / «Введите запрос» и не обещает конкретные index fields;
+- штатный Woo/WP query не модифицируется: fixture-аудит подтверждает, что он может учитывать content (`Демонстрационная` → `10`), поэтому title-only claim удаляется;
+- multi-result query `Фильтр` сохраняется в URL/searchbox/H1 и возвращает только product cards текущего fixture;
+- результатные cards имеют product links и explicit demo provenance; empty state отсутствует;
+- порядок/ranking не фиксируются и не выдаются за согласованный алгоритм; штатный `Relevance` ordering control скрыт на product search;
+- E2E `1440/390/360`: product-only multi-result context, axe serious/critical, no overflow/runtime errors, actual screenshots;
+- полный regression не ухудшается.
+
+Вне scope: field index contract, SKU/article/brand/OEM, normalization/transliteration, typo correction, ranking, suggestions, filters/sort, pagination contract, analytics, fitment/offers and approved search design. `DEC-002—006`, `DG-001/018`, `TC-001/002` остаются open/blocked.
+
+Выполнено и проверено:
+
+- read-only `WP_Query` fixture audit: generic content term `Демонстрационная` совпадает с `10` products, поэтому прежний title-only claim удалён из UI/документации;
+- header использует нейтральные «По товарам» / «Введите запрос»; search query/data/ranking не модифицированы;
+- `Фильтр` сохраняется в URL/searchbox/H1 и возвращает ровно `2` fixture product cards, обе с non-empty title, same-origin permalink и demo provenance; title matching/order не проверяются;
+- ошибочно появлявшийся curated shop category grid исключён из search results и защищён assertion;
+- `Relevance` ordering control исключён только из product search, поскольку ranking contract отсутствует; result count сохранён;
+- E2E search file на `1440/390/360`: `6 passed` (`2` сценария × `3` viewport); positive-result actual screenshots сохранены;
+- full regression: `28` tests, `26 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к generic fixture results presentation. Поля индекса, ranking и все перечисленные PBL/TC/DG/DEC остаются partial/open/blocked; visual имеет `DESIGN_REVIEW_REQUIRED`.
 
 ## Следующие итерации
 

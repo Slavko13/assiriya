@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S5:** `25` tests = `23 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S6:** `28` tests = `26 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -58,13 +58,25 @@ I2-S4 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full `SCR-009
 
 | ID | Критерий | Доказательство | Статус |
 |---|---|---|---|
-| I2-S5-ACC-001 | Form не обещает неподдерживаемый article/brand search | visible «По названию», placeholder «Название товара», hidden `post_type=product` | `PASS` |
+| I2-S5-ACC-001 | Form не обещает неподдерживаемый article/brand search | current neutral «По товарам» / «Введите запрос», hidden `post_type=product` | `PASS` |
 | I2-S5-ACC-002 | Query context escaped и сохраняется | special chars `&`/quotes буквально совпадают в searchbox, H1 и `[data-product-search-query]`; runtime errors `0` | `PASS` |
 | I2-S5-ACC-003 | No-results честный и ограниченный | один status-блок, `0` product cards, default Woo notice `0`, canonical `/shop/` return; suggestions отсутствуют | `PASS` |
 | I2-S5-ACC-004 | Три viewport технически безопасны | scenario `3 passed`; no overflow/runtime errors; axe serious/critical `0`; 3 actual screenshots | `PASS` |
 | I2-S5-ACC-005 | Regression не ухудшен | `25` tests: `23 passed`, `2 intentional skipped`, `0 failed`; existing multi-result search/PDP PASS | `PASS` |
 
 I2-S5 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; `TC-003` затронут только presentation/safety частью, `TC-001/002` не покрыты; `PBL-002/006/012`, полные `TC-001—003`, `DG-001/018`, `DEC-003`, index/ranking/normalization и утверждённый search design не закрыты.
+
+### I2-S6 — generic product-search results
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S6-ACC-001 | UI не фиксирует неподтверждённые index fields | neutral form copy; read-only WP_Query content term → `10`, title-only claim removed | `PASS` |
+| I2-S6-ACC-002 | Positive results остаются product-only и explicit | `Фильтр` URL/searchbox/H1; `2` fixture cards, non-empty titles, same-origin permalinks + provenance; title match/order не asserted | `PASS` |
+| I2-S6-ACC-003 | Shop/ranking presentation не создаёт ложных claims | `.az-shop-categories` и `.woocommerce-ordering` count `0` на results page | `PASS` |
+| I2-S6-ACC-004 | Три viewport технически безопасны | positive scenario `3 passed`; весь search file `6 passed`; no overflow/runtime; axe serious/critical `0`; 3 screenshots | `PASS` |
+| I2-S6-ACC-005 | Regression не ухудшен | `28` tests: `26 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S6 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; field index contract, ranking, SKU/OEM/brand, `TC-001/002`, `DG-001/018` и `DEC-003` остаются open/blocked.
 
 ## Технические критерии Итерации 1
 
@@ -115,6 +127,7 @@ I2-S5 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; `TC-003` за
 - Demo provenance PDP: `docs/qa/visual-diffs/product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`.
 - Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
 - Product search empty state: `docs/qa/visual-diffs/product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png`.
+- Product search results: `docs/qa/visual-diffs/product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 
 ## Условие финального статуса

@@ -41,8 +41,8 @@ $az_settings = avtozakup_home_settings();
 			<a class="az-catalog-button" href="<?php echo esc_url( avtozakup_wc_page_url( 'shop' ) ); ?>" aria-label="<?php esc_attr_e( 'Каталог товаров', 'avtozakup' ); ?>"><?php echo avtozakup_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php esc_html_e( 'Каталог товаров', 'avtozakup' ); ?></span></a>
 			<form class="az-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 				<label class="screen-reader-text" for="az-product-search"><?php esc_html_e( 'Поиск товаров', 'avtozakup' ); ?></label>
-				<span class="az-search__type"><?php esc_html_e( 'По названию', 'avtozakup' ); ?> <?php echo avtozakup_icon( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-				<input id="az-product-search" type="search" name="s" placeholder="<?php esc_attr_e( 'Название товара', 'avtozakup' ); ?>" value="<?php echo esc_attr( get_search_query( false ) ); ?>">
+				<span class="az-search__type"><?php esc_html_e( 'По товарам', 'avtozakup' ); ?> <?php echo avtozakup_icon( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<input id="az-product-search" type="search" name="s" placeholder="<?php esc_attr_e( 'Введите запрос', 'avtozakup' ); ?>" value="<?php echo esc_attr( get_search_query( false ) ); ?>">
 				<input type="hidden" name="post_type" value="product">
 				<button type="submit" aria-label="<?php esc_attr_e( 'Найти', 'avtozakup' ); ?>"><?php echo avtozakup_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
 			</form>

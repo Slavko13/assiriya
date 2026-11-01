@@ -9,7 +9,7 @@
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |
 | Catalog CTA/menu | UI-SCR002-002/012; SCR-005 | `header.php`, `front-page.php`, Woo archive hook | curated `product_cat` | empty + populated; configured shop → category проверен | общий; I2-S1 `PASS / PROVISIONAL` |
-| Product search | UI-SCR002-003—005 | `header.php`, named Woo hooks | WC product-title search | multi-result submit/PDP + provisional escaped no-results state; approved DG/index/ranking отсутствуют | общий; I2-S5 `PASS / PROVISIONAL`, overall `BLOCKED` |
+| Product search | UI-SCR002-003—005 | `header.php`, named Woo hooks | generic WC/WP product search | multi-result cards/PDP + provisional escaped no-results; field contract/DG/index/ranking отсутствуют, ordering control hidden | общий; I2-S5/S6 `PASS / PROVISIONAL`, overall `BLOCKED` |
 | Account/cart actions | UI-SCR002-006/007 | `header.php` | WC pages/session | AJAX add, count, cart page, guarded checkout проверены | общий; Iteration 1 `PASS` |
 | Vehicle picker | UI-SCR002-008—011 | `front-page.php` | будущий Fitment adapter | controls disabled + explanation | будущие SCR-003/008; `BLOCKED` |
 | Hero/promo | SCR-002 | `front-page.php`, Settings API | editable copy/media | normal + image fallback via defaults | homepage; `TESTING` |

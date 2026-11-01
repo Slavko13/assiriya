@@ -25,9 +25,9 @@ test('shows a truthful product-search empty state', async ({ page }, testInfo) =
   const query = 'AZ-NO-RESULT-9F3C & "probe"';
   await page.goto('/', { waitUntil: 'networkidle' });
 
-  await expect(page.locator('.az-search__type')).toContainText('По названию');
+  await expect(page.locator('.az-search__type')).toContainText('По товарам');
   const search = page.getByRole('searchbox', { name: 'Поиск товаров' });
-  await expect(search).toHaveAttribute('placeholder', 'Название товара');
+  await expect(search).toHaveAttribute('placeholder', 'Введите запрос');
   await expect(page.locator('.az-search input[name="post_type"]')).toHaveValue('product');
   await search.fill(query);
   await page.getByRole('button', { name: 'Найти' }).click();
@@ -61,6 +61,65 @@ test('shows a truthful product-search empty state', async ({ page }, testInfo) =
   await mkdir(visualDiffDirectory, { recursive: true });
   await page.screenshot({
     path: path.join(visualDiffDirectory, `product-search-empty-${testInfo.project.name}.png`),
+    fullPage: true,
+    animations: 'disabled',
+    style: '.az-skip-link { display: none !important; }',
+  });
+
+  const pageWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(pageWidth.scrollWidth).toBeLessThanOrEqual(pageWidth.clientWidth + 1);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});
+
+test('keeps generic product-search results scoped and explicit', async ({ page }, testInfo) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  const query = 'Фильтр';
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const search = page.getByRole('searchbox', { name: 'Поиск товаров' });
+  await search.fill(query);
+  await page.getByRole('button', { name: 'Найти' }).click();
+  await page.waitForLoadState('networkidle');
+
+  const resultUrl = new URL(page.url());
+  expect(resultUrl.searchParams.get('post_type')).toBe('product');
+  expect(resultUrl.searchParams.get('s')).toBe(query);
+  await expect(page.locator('main h1').first()).toContainText(`Поиск товаров: «${query}»`);
+  await expect(page.getByRole('searchbox', { name: 'Поиск товаров' })).toHaveValue(query);
+  await expect(page.locator('[data-product-search-empty]')).toHaveCount(0);
+  await expect(page.locator('.az-shop-categories')).toHaveCount(0);
+  await expect(page.locator('.woocommerce-ordering')).toHaveCount(0);
+
+  const products = page.locator('ul.products li.product');
+  await expect(products).toHaveCount(2);
+  for (let index = 0; index < await products.count(); index += 1) {
+    const product = products.nth(index);
+    const productTitle = product.locator('.woocommerce-loop-product__title');
+    await expect(productTitle).toBeVisible();
+    expect((await productTitle.innerText()).trim()).not.toBe('');
+    await expect(product.locator('[data-demo-provenance="product"]')).toContainText('Демонстрационный товар');
+    const productUrl = await product.locator('.woocommerce-loop-product__link').getAttribute('href');
+    expect(productUrl).toBeTruthy();
+    const parsedProductUrl = new URL(productUrl!, page.url());
+    expect(parsedProductUrl.origin).toBe(new URL(page.url()).origin);
+    expect(parsedProductUrl.pathname).not.toBe('/');
+  }
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
+  await mkdir(visualDiffDirectory, { recursive: true });
+  await page.screenshot({
+    path: path.join(visualDiffDirectory, `product-search-results-${testInfo.project.name}.png`),
     fullPage: true,
     animations: 'disabled',
     style: '.az-skip-link { display: none !important; }',
