@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.3.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.4.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -102,8 +102,82 @@ function avtozakup_render_single_demo_provenance(): void {
 	<?php
 }
 
+function avtozakup_is_current_demo_product_page( WC_Product $product ): bool {
+	return function_exists( 'is_product' )
+		&& is_product()
+		&& get_queried_object_id() === $product->get_id()
+		&& null !== avtozakup_demo_product_provenance( $product );
+}
+
+function avtozakup_render_demo_product_meta(): void {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+
+	$technical_sku = avtozakup_demo_technical_sku( $product );
+	if ( null === $technical_sku ) {
+		woocommerce_template_single_meta();
+		return;
+	}
+
+	$category_ids   = $product->get_category_ids();
+	$category_links = wc_get_product_category_list( $product->get_id(), ', ' );
+	?>
+	<div class="product_meta az-demo-product-meta" data-demo-product-meta="product">
+		<span class="sku_wrapper">
+			<?php esc_html_e( 'Технический демо-SKU:', 'avtozakup' ); ?>
+			<span class="sku" data-demo-technical-sku><?php echo esc_html( $technical_sku ); ?></span>
+		</span>
+		<span class="az-demo-product-meta__note"><?php esc_html_e( 'Внутренний идентификатор демо-записи; не OEM и не артикул производителя.', 'avtozakup' ); ?></span>
+		<?php if ( '' !== $category_links ) : ?>
+			<span class="posted_in">
+				<?php echo esc_html( 1 === count( $category_ids ) ? 'Категория:' : 'Категории:' ); ?>
+				<?php echo wp_kses_post( $category_links ); ?>
+			</span>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+
+function avtozakup_configure_demo_product_page(): void {
+	if ( ! function_exists( 'is_product' ) || ! is_product() || ! function_exists( 'wc_get_product' ) ) {
+		return;
+	}
+
+	$product = wc_get_product( get_queried_object_id() );
+	if ( ! $product instanceof WC_Product || null === avtozakup_demo_product_provenance( $product ) ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+	if ( null !== avtozakup_demo_technical_sku( $product ) ) {
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+		add_action( 'woocommerce_single_product_summary', 'avtozakup_render_demo_product_meta', 40 );
+	}
+}
+
+function avtozakup_demo_product_availability_text( string $availability, WC_Product $product ): string {
+	if ( ! avtozakup_is_current_demo_product_page( $product ) ) {
+		return $availability;
+	}
+
+	return 'Демо-наличие не подтверждено внешними системами';
+}
+
+function avtozakup_demo_single_add_to_cart_text( string $text, WC_Product $product ): string {
+	if ( ! avtozakup_is_current_demo_product_page( $product ) ) {
+		return $text;
+	}
+
+	return 'Добавить в демо-корзину';
+}
+
 add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
 add_action( 'woocommerce_single_product_summary', 'avtozakup_render_single_demo_provenance', 11 );
+add_action( 'wp', 'avtozakup_configure_demo_product_page' );
+add_filter( 'woocommerce_get_availability_text', 'avtozakup_demo_product_availability_text', 10, 2 );
+add_filter( 'woocommerce_product_single_add_to_cart_text', 'avtozakup_demo_single_add_to_cart_text', 10, 2 );
 
 add_action(
 	'woocommerce_before_shop_loop',

@@ -196,6 +196,36 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к явной demo provenance. `PBL-011`, `FR-CAT-002`, `FR-OFR-002`, перечисленные TC/DG/DEC остаются partial/open; visual имеет `DESIGN_REVIEW_REQUIRED`.
 
+### I2-S4 — technical demo PDP safety baseline
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-011 partial`, `PBL-040 partial`, `FR-CAT-002 partial`, `FR-CAT-003 safety partial`; полный `SCR-009` не реализуется.
+
+Критерии среза:
+
+- marked demo product сохраняет штатные Woo H1, image/placeholder, short/long description, breadcrumb и category links;
+- только точный seed identifier `AZ-DEMO-###` подписывается как «Технический демо-SKU» и не объявляется OEM, артикулом производителя или поставщика;
+- single-product availability не показывает подтверждённый численный остаток, а кнопка явно добавляет позицию в демо-корзину;
+- стандартный Woo `Related products` для marked demo PDP не выводится: совпадение category/tag не доказывает аналог или применяемость;
+- unmarked products не получают custom demo-meta и сохраняют штатное Woo-поведение;
+- E2E `1440/390/360`: product выбирается из DOM без hardcoded ID/slug; один корректный H1, image/placeholder, descriptions, category, technical SKU, provenance; related отсутствует; no overflow/runtime errors; axe serious/critical = 0; actual screenshots сохранены;
+- полный regression не имеет новых failures.
+
+Вне scope: OEM/article normalization, confirmed analogs, fitment, variants/fasovka, supplier offers/freshness/ranking, real price/stock/ETA, production checkout и полный Paper styling. `DEC-002—006`, `DG-001/006/017/018` и связанные TC остаются open.
+
+Выполнено и проверено:
+
+- для marked demo PDP сохранён штатный Woo content, а точный `AZ-DEMO-###` показан как технический demo-SKU с явным отрицанием OEM/артикула производителя;
+- численный stock assertion заменён на «Демо-наличие не подтверждено внешними системами», single-product action подписан «Добавить в демо-корзину»;
+- default `Related products` снят только для marked demo PDP; unmarked products сохраняют штатное Woo-поведение, а marked product с custom SKU — штатный meta UI;
+- in-memory predicate control: unmarked exact-looking SKU и marked custom SKU отклонены, только marked `AZ-DEMO-###` принят; CLI/non-product filters unchanged;
+- E2E technical PDP scenario на `1440/390/360`: `3 passed`; весь `catalog.spec.ts`: `9 passed`; H1/image/descriptions/category/provenance/SKU, отсутствие related, no-overflow/runtime и axe serious/critical проверены;
+- actual screenshots: `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`;
+- full regression: `22` tests, `20 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к технической безопасности marked demo PDP. `SCR-009`, `PBL-011`, `FR-CAT-002/003` и перечисленные DEC/DG/TC остаются partial/open; visual имеет `DESIGN_REVIEW_REQUIRED`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

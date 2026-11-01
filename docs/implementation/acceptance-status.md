@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S3:** `19` tests = `17 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S4:** `22` tests = `20 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -41,6 +41,18 @@ I2-S2B не удаляет Trash и не реализует redirect/SEO policy;
 | I2-S3-ACC-004 | Regression не ухудшен | `19` tests: `17 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S3 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; offers/search/fitment и соответствующие DEC/DG/TC не закрыты.
+
+### I2-S4 — technical demo PDP safety
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S4-ACC-001 | Technical SKU применяется fail-closed | in-memory: unmarked `AZ-DEMO-999` → `null`; marked `CUSTOM-001` → `null`; marked `AZ-DEMO-999` → accepted | `PASS` |
+| I2-S4-ACC-002 | Marked PDP не утверждает stock/relations | availability без числа и с «не подтверждено»; demo-cart action; `section.related.products` отсутствует | `PASS` |
+| I2-S4-ACC-003 | Штатные технические данные PDP сохранены | DOM-selected product: один matching H1, image/placeholder, short/long description, category link, provenance и technical SKU | `PASS` |
+| I2-S4-ACC-004 | Три viewport технически безопасны | scenario `3 passed`; no overflow/runtime errors; axe serious/critical `0`; 3 actual screenshots | `PASS` |
+| I2-S4-ACC-005 | Regression не ухудшен | `22` tests: `20 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S4 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full `SCR-009`, OEM/analogs/fitment/offers/real stock и соответствующие DEC/DG/TC не закрыты.
 
 ## Технические критерии Итерации 1
 
@@ -89,6 +101,7 @@ I2-S3 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; offers/search
 - Actual desktop: `docs/qa/visual-diffs/homepage-desktop-chrome-1440.png`.
 - Actual mobile: `docs/qa/visual-diffs/homepage-mobile-chrome-390.png`, `docs/qa/visual-diffs/homepage-mobile-chrome-360.png`.
 - Demo provenance PDP: `docs/qa/visual-diffs/product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`.
+- Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 
 ## Условие финального статуса

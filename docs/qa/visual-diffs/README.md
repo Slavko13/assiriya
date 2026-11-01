@@ -10,6 +10,7 @@
 - `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация.
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual artifacts среза I2-S1; отдельного утверждённого SCR-005 baseline в проекте реализации пока нет.
 - `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP artifacts среза I2-S3; это функциональное доказательство явной demo provenance, а не утверждённый PDP baseline.
+- `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -26,6 +27,9 @@ catalog-mobile-chrome-360.png
 product-demo-provenance-desktop-chrome-1440.png
 product-demo-provenance-mobile-chrome-390.png
 product-demo-provenance-mobile-chrome-360.png
+product-technical-baseline-desktop-chrome-1440.png
+product-technical-baseline-mobile-chrome-390.png
+product-technical-baseline-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -71,6 +75,14 @@ report-home-YYYYMMDD.md
 - путь category → multi-result search → PDP проверен на `1440/390/360`: provenance scenario `3 passed`; весь catalog file `6 passed` (`2` сценария × `3`), `0 failed`;
 - полный regression после среза: `19 tests`, `17 passed`, `2 intentional skipped`, `0 failed`;
 - визуал `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; скриншоты не закрывают полный SCR-006/007/009 и не подтверждают реальные цену, остаток, срок или применяемость.
+
+## Technical demo PDP I2-S4
+
+- DOM-selected marked product сохраняет Woo H1, image/placeholder, descriptions, breadcrumb/category и provenance;
+- technical demo-SKU, unconfirmed availability и demo-cart action видны; default related output отсутствует;
+- technical PDP scenario: `3 passed`; весь catalog file: `9 passed`; full regression: `22 tests`, `20 passed`, `2 intentional skipped`, `0 failed`;
+- axe serious/critical = `0`, no-overflow/runtime assertions прошли на `1440/390/360`;
+- визуал `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; full SCR-009, OEM/analogs/fitment/offers и реальные stock/ETA не реализованы.
 
 ## Отчёт
 

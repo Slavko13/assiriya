@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 type RuntimeErrors = {
@@ -101,6 +102,77 @@ test('shows explicit demo provenance through shop, product search and PDP', asyn
   await mkdir(visualDiffDirectory, { recursive: true });
   await page.screenshot({
     path: path.join(visualDiffDirectory, `product-demo-provenance-${testInfo.project.name}.png`),
+    fullPage: true,
+    animations: 'disabled',
+    style: '.az-skip-link { display: none !important; }',
+  });
+
+  const pageWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(pageWidth.scrollWidth).toBeLessThanOrEqual(pageWidth.clientWidth + 1);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});
+
+test('keeps the marked demo PDP technical and relation-safe', async ({ page }, testInfo) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
+  expect(shopUrl).toBeTruthy();
+  await page.goto(shopUrl!, { waitUntil: 'networkidle' });
+
+  const productCard = page.locator('ul.products li.product').filter({
+    has: page.locator('[data-demo-provenance="product"]'),
+  }).first();
+  await expect(productCard).toBeVisible();
+  const expectedName = (await productCard.locator('.woocommerce-loop-product__title').innerText()).trim();
+  await productCard.locator('.woocommerce-loop-product__link').click();
+  await page.waitForLoadState('networkidle');
+
+  await expect(page.locator('body')).toHaveClass(/single-product/);
+  const title = page.locator('h1.product_title');
+  await expect(title).toHaveCount(1);
+  await expect(title).toHaveText(expectedName);
+  await expect(page.locator('.woocommerce-breadcrumb')).toContainText(expectedName);
+
+  const productImage = page.locator('.woocommerce-product-gallery img').first();
+  await expect(productImage).toBeVisible();
+  const image = await productImage.evaluate((element: HTMLImageElement) => ({
+    alt: element.alt.trim(),
+    src: element.currentSrc || element.src,
+  }));
+  expect(image.src).toBeTruthy();
+  expect(image.alt.length > 0 || image.src.includes('placeholder'), 'Product image needs meaningful alt text or the Woo placeholder').toBe(true);
+
+  await expect(page.locator('.woocommerce-product-details__short-description')).toBeVisible();
+  await expect(page.locator('.woocommerce-Tabs-panel--description')).toBeVisible();
+  await expect(page.locator('[data-demo-provenance="product"]')).toBeVisible();
+
+  const demoMeta = page.locator('[data-demo-product-meta="product"]');
+  await expect(demoMeta).toBeVisible();
+  await expect(demoMeta).toContainText('Технический демо-SKU');
+  await expect(demoMeta).toContainText('не OEM и не артикул производителя');
+  await expect(demoMeta.locator('[data-demo-technical-sku]')).toHaveText(/^AZ-DEMO-\d{3}$/);
+  await expect(demoMeta.locator('.posted_in a')).toHaveAttribute('href', /\/product-category\//);
+
+  await expect(page.locator('p.stock')).toContainText('Демо-наличие не подтверждено внешними системами');
+  await expect(page.locator('button.single_add_to_cart_button')).toContainText('Добавить в демо-корзину');
+  await expect(page.locator('section.related.products')).toHaveCount(0);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
+  await mkdir(visualDiffDirectory, { recursive: true });
+  await page.screenshot({
+    path: path.join(visualDiffDirectory, `product-technical-baseline-${testInfo.project.name}.png`),
     fullPage: true,
     animations: 'disabled',
     style: '.az-skip-link { display: none !important; }',

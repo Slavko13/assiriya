@@ -175,6 +175,19 @@ function avtozakup_demo_product_provenance( WC_Product $product ): ?array {
 	);
 }
 
+/**
+ * Return the synthetic SKU owned by the demo seeder.
+ * A marked product with any other SKU keeps the standard WooCommerce meta UI.
+ */
+function avtozakup_demo_technical_sku( WC_Product $product ): ?string {
+	if ( null === avtozakup_demo_product_provenance( $product ) ) {
+		return null;
+	}
+
+	$sku = (string) $product->get_sku();
+	return 1 === preg_match( '/\AAZ-DEMO-\d{3}\z/', $sku ) ? $sku : null;
+}
+
 function avtozakup_product_card( WC_Product $product ): void {
 	$provenance = avtozakup_demo_product_provenance( $product );
 	$demo = null !== $provenance;

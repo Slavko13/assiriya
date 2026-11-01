@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **14 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **20 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -17,8 +17,9 @@
 
 - классическая тема `avtozakup` с desktop 1440 и provisional mobile 390/360;
 - плагин `avtozakup-core`: Settings API главной, безопасный demo seed, checkout guard и интерфейсы будущих адаптеров;
-- 8 демонстрационных категорий, 10 WooCommerce-товаров и 9 страниц;
+- 8 демонстрационных категорий, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references;
 - первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards и переходом в category archive;
+- technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability и отсутствие неподтверждённых related products;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
 - Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;
