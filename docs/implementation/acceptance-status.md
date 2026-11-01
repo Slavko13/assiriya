@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S8:** `29` tests = `27 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S9:** `29` tests = `27 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -101,6 +101,18 @@ I2-S7 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; breadcrumb, s
 | I2-S8-ACC-005 | Regression не ухудшен | targeted `1 passed`; full `29`: `27 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S8 закрывает только technical isolation regression; production master data, permissions matrix, stock truth, relations и lifecycle остаются open/blocked.
+
+### I2-S9 — truthful canonical shop controls
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S9-ACC-001 | Shop count локален и truthful | one `[data-shop-product-count]` = «Товаров в каталоге: 10»; total >= visible cards | `PASS` |
+| I2-S9-ACC-002 | Unapproved ordering UI не показан | `.woocommerce-ordering` = `0` только на canonical shop; query/order filters не менялись | `PASS` |
+| I2-S9-ACC-003 | Search/category изолированы | search own count/no-ordering проходит; category has no shop marker и retains standard ordering | `PASS` |
+| I2-S9-ACC-004 | Responsive/a11y/runtime не ухудшены | catalog `3 passed` на `1440/390/360`; axe serious/critical `0`; no overflow/runtime; screenshots reviewed | `PASS` |
+| I2-S9-ACC-005 | Regression не ухудшен | full `29`: `27 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S9 закрывает только canonical-shop presentation. Ranking contract, query/data behavior, full localization и visual approval остаются open.
 
 ## Технические критерии Итерации 1
 

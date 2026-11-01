@@ -30,12 +30,48 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await page.goto(shopUrl!, { waitUntil: 'networkidle' });
   await expect(page.getByRole('heading', { level: 1, name: 'Каталог товаров' })).toBeVisible();
 
+  const resultCount = page.locator('[data-shop-product-count]');
+  await expect(resultCount).toHaveCount(1);
+  await expect(resultCount).toHaveText(/^Товаров в каталоге: \d+$/);
+  await expect(page.locator('.woocommerce-ordering')).toHaveCount(0);
+
+  const visibleProducts = page.locator('ul.products li.product');
+  const visibleProductCount = await visibleProducts.count();
+  expect(visibleProductCount, 'The canonical catalog should render published products').toBeGreaterThan(0);
+  const totalProductCount = Number((await resultCount.innerText()).match(/\d+$/)?.[0] ?? 0);
+  expect(totalProductCount, 'The catalog total should cover every product visible on the current page').toBeGreaterThanOrEqual(visibleProductCount);
+  const productHrefs = await visibleProducts.locator('.woocommerce-loop-product__link').evaluateAll((links) =>
+    links.map((link) => (link as HTMLAnchorElement).href),
+  );
+  expect(productHrefs).toHaveLength(visibleProductCount);
+  const shopOrigin = new URL(page.url()).origin;
+  expect(
+    productHrefs.every((href) => {
+      const productUrl = new URL(href);
+      return productUrl.origin === shopOrigin && productUrl.pathname.length > 1;
+    }),
+    'Every catalog card should retain a same-origin product URL',
+  ).toBe(true);
+
   const catalog = page.locator('.az-shop-categories');
   await expect(catalog).toBeVisible();
   await expect(catalog.getByRole('heading', { name: 'Каталог автозапчастей' })).toBeVisible();
 
   const categoryCards = catalog.locator('.az-category-card');
   expect(await categoryCards.count(), 'The seeded top-level catalog should expose its eight demo categories').toBeGreaterThanOrEqual(8);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  const shopPageWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(shopPageWidth.scrollWidth).toBeLessThanOrEqual(shopPageWidth.clientWidth + 1);
 
   const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
   await mkdir(visualDiffDirectory, { recursive: true });
@@ -54,6 +90,9 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await expect(page).toHaveURL(/\/product-category\//);
   await expect(page.locator('.woocommerce-breadcrumb')).toContainText('Тормозная система');
   await expect(page.getByRole('heading', { level: 1, name: 'Тормозная система' })).toBeVisible();
+  await expect(page.locator('[data-shop-product-count]')).toHaveCount(0);
+  await expect(page.locator('.woocommerce-result-count')).toHaveCount(1);
+  await expect(page.locator('.woocommerce-ordering')).toHaveCount(1);
   expect(await page.locator('ul.products li.product').count(), 'The published category should contain demo products').toBeGreaterThan(0);
 
   const pageWidth = await page.evaluate(() => ({

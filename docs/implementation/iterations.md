@@ -342,6 +342,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к автоматизированной isolation/regression границе. Он не утверждает production master data, RBAC matrix, real stock или lifecycle.
 
+### I2-S9 — truthful canonical shop controls
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `SCR-005`, `PBL-010/PBL-012 partial`; presentation/ranking safety без новой business semantics.
+
+Критерии среза:
+
+- canonical shop определяется fail-closed как `is_shop() && !is_search()`;
+- default Woo result count заменяется named renderer «Товаров в каталоге: N» из `wc_get_loop_prop('total')`;
+- ordering control снимается только с canonical shop; query, default order, URL `orderby` и data не меняются;
+- product search сохраняет own scoped count/no-ordering; category archive сохраняет standard ordering;
+- `1440/390/360`: cards/URLs/category journey, axe serious/critical, no overflow/runtime errors и screenshots проходят.
+
+Вне scope: ranking contract, изменение query/order, category/tag localization, pagination wording, full i18n и approved visual design.
+
+Выполнено и проверено:
+
+- named shop predicate/config/count renderer добавлены без template override, `gettext` и CSS hiding;
+- shop показывает `data-shop-product-count` = «Товаров в каталоге: 10», `.woocommerce-ordering` отсутствует;
+- visible product cards и links сохранены; category archive не получает shop marker и сохраняет ordering;
+- targeted catalog: `3 passed`; PHP lint: `PASS`; screenshots обновлены и просмотрены;
+- full regression: `29` tests, `27 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус закрывает только truthful canonical-shop presentation. Ranking/query/data и visual approval остаются open.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

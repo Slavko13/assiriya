@@ -15,6 +15,7 @@
 | Hero/promo | SCR-002 | `front-page.php`, Settings API | editable copy/media | normal + image fallback via defaults | homepage; `TESTING` |
 | Benefits row | SCR-002 | `front-page.php` | static presentation copy | normal | reusable card pattern; `TESTING` |
 | Category card/grid | UI-SCR002-012; SCR-005 | shared `helpers.php`, homepage и shop hook | Woo category | populated + CRUD/render/cleanup; reused on configured shop page | I2-S1 `PASS / PROVISIONAL`; master taxonomy TBD |
+| Catalog archive controls | SCR-005; PBL-010/012 partial | named Woo hooks in `functions.php` | Woo loop total | canonical shop: local total count, no ordering UI; search/category scopes isolated | I2-S9 `PASS / PROVISIONAL`; ranking/query/design open |
 | Product card/row | UI-SCR002-013—015 | `helpers.php`, Woo filters | WC product | demo/real label, in/out stock; standard Woo direct-add loop имеет explicit demo action; CRUD/render проверен | I2-S3/S7 `PASS / PROVISIONAL`; business meaning `BLOCKED` |
 | Product detail technical baseline | SCR-009 partial | Woo hooks/filters, no template override | WC product + demo marker | provenance, technical SKU, unconfirmed availability, demo action, description labels; related suppressed for demo; unmarked isolation E2E | I2-S3/S4/S7/S8 `PASS / PROVISIONAL`; full PDP `BLOCKED` |
 | VIN entry block | UI-SCR002-016 | `front-page.php` | no persistence | partial input + status, no submit | SCR-004 later; `BLOCKED` |
