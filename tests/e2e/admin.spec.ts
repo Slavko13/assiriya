@@ -54,6 +54,60 @@ test.describe('WordPress administration', () => {
     expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
   });
 
+  test('keeps selected category identities isolated from unselected legacy terms', async ({ page }, testInfo) => {
+    const runtimeErrors = watchRuntimeErrors(page);
+    await logIn(page);
+    await page.goto('/wp-admin/admin.php?page=avtozakup');
+
+    const categoryOptions = await page.locator('#category_ids option').evaluateAll((options) =>
+      options.map((option) => ({
+        id: (option as HTMLOptionElement).value,
+        name: (option.textContent ?? '').trim(),
+        selected: (option as HTMLOptionElement).selected,
+      })),
+    );
+    const selectedOptions = categoryOptions.filter(({ selected }) => selected);
+    const selectedIds = selectedOptions.map(({ id }) => id);
+    const unselectedIds = new Set(categoryOptions.filter(({ selected }) => !selected).map(({ id }) => id));
+
+    expect(selectedIds).toHaveLength(8);
+    expect(selectedIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+    expect(new Set(selectedIds).size).toBe(8);
+
+    const selectedNames = new Set(selectedOptions.map(({ name }) => name));
+    const legacyDuplicateIds = categoryOptions
+      .filter(({ name, selected }) => !selected && selectedNames.has(name))
+      .map(({ id }) => id);
+    testInfo.annotations.push({ type: 'legacy-duplicate-category-count', description: String(legacyDuplicateIds.length) });
+
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const homeCategories = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+      cards.map((card) => ({
+        id: card.getAttribute('data-category-id') ?? '',
+        href: (card as HTMLAnchorElement).href,
+      })),
+    );
+    const homeIds = homeCategories.map(({ id }) => id);
+    expect(homeIds).toHaveLength(8);
+    expect([...homeIds].sort()).toEqual([...selectedIds].sort());
+    expect(homeIds.filter((id) => unselectedIds.has(id))).toEqual([]);
+    expect(legacyDuplicateIds.filter((id) => homeIds.includes(id))).toEqual([]);
+
+    const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
+    expect(shopUrl).toBeTruthy();
+    await page.goto(shopUrl!, { waitUntil: 'networkidle' });
+    const shopCategories = await page.locator('.az-shop-categories .az-category-card').evaluateAll((cards) =>
+      cards.map((card) => ({
+        id: card.getAttribute('data-category-id') ?? '',
+        href: (card as HTMLAnchorElement).href,
+      })),
+    );
+    expect(shopCategories).toEqual(homeCategories);
+
+    expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+    expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+  });
+
   test('saves homepage presentation content and restores the original value', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
     await logIn(page);

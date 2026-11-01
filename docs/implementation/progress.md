@@ -11,8 +11,8 @@
 | MariaDB | MariaDB `11.4.13`; restart persistence подтверждён | production monitoring/retention после deploy | `DONE` для локального persistence |
 | Theme SCR-002 | desktop `1440`, mobile `390` и `360` screenshots; sections, overflow, axe и browser errors проверены; Paper comparison задокументирован | утверждение assets/baseline после DEC-019 | `DONE` для Iteration 1; `DESIGN_REVIEW_REQUIRED`, не pixel-perfect |
 | Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены | negative capability/RBAC test | `DONE` для admin save/restore |
-| Demo catalog | `8` categories, `10` products, `10` attachments; `6` plugin-owned pages + `4` read-only Woo references; fresh bootstrap и post-repair seed ×2 идемпотентны | бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency; не production catalog |
-| Catalog SCR-005 | configured `/shop/` показывает 8 выбранных top-level categories; общий category-card переиспользован; переход в «Тормозную систему» и breadcrumb проверены | demo provenance Woo cards/PDP | `DONE` для `I2-S1`; `PBL-011 partial / PROVISIONAL` |
+| Demo catalog | `8` selected categories, `10` products, `10` attachments; `6` plugin-owned pages + `4` read-only Woo references; fresh bootstrap и post-repair seed ×2 идемпотентны; legacy taxonomy не мутируется | бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency и I2-S14 identity boundary; не production catalog |
+| Catalog SCR-005 | configured `/shop/` и homepage показывают те же 8 selected top-level term IDs в одном порядке/URL; одноимённые unselected legacy terms исключены; переход в «Тормозную систему» и breadcrumb проверены | demo provenance Woo cards/PDP | `DONE` для `I2-S1/S14`; `PBL-011 partial / PROVISIONAL` |
 | Woo page ownership | seeder не создаёт/переназначает core pages; fail-closed repair переключил локальные options на `/shop/`, `/cart/`, `/checkout/`; старые marked IDs в Trash | SEO redirects/canonical policy только отдельным решением | `DONE` для `I2-S2A/B`; `PBL-039 partial` |
 | Demo provenance Woo | marked products явно подписаны на category/search cards и PDP; PDP показывает whitelisted Paper source, unknown raw meta не публикуется | реальные sources/freshness/offers только после DEC/интеграционных контрактов | `DONE / PROVISIONAL` для `I2-S3`; `PBL-011/FR-CAT-002/FR-OFR-002 partial` |
 | Technical demo PDP | exact seed SKU назван техническим, availability не выдаёт численный stock, action ведёт в демо-корзину, default related скрыт у marked demo | полный SCR-009, verified identifiers/relations/fitment/offers после DEC и контрактов | `DONE / PROVISIONAL` для `I2-S4`; `FR-CAT-002/003 partial` |
@@ -27,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `32` tests, `30 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned strict-search isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys на `1440/390/360` + desktop user-owned/category identity isolation | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -40,7 +40,7 @@
 
 ## Последний подтверждённый прогон
 
-- Playwright: `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`.
+- Playwright: `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`.
 - Playwright env preflight: `6 passed`; no-target/unsafe-target/partial-admin states fail closed before browser.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
@@ -52,6 +52,7 @@
 - Generic `Фильтр` results → two fixture product cards with provenance/permalinks, no shop category grid, axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Canonical shop → local total `10`, no ordering UI; category retains standard ordering, cards/URLs + axe/no-overflow/runtime на `1440/390/360` — `PASS`.
 - Woo breadcrumb → «Главная», configured shop «Каталог товаров», exact product-search label; category/product/page names и URLs preserved — `PASS`.
+- Settings selected category IDs → exact homepage set → identical ordered shop IDs/URLs; 50 same-name unselected legacy terms excluded — `PASS`.
 - Post-only/mixed crafted search scopes → no product/shop presentation leakage, params preserved, no-overflow/runtime на `1440/390/360` — `PASS`.
 - Authenticated temporary unmarked product → exact strict one-result card and PDP without demo semantics, exact user SKU/stock/content, force-delete cleanup; post-full inventory `10/0` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.

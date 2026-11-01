@@ -14,7 +14,7 @@
 | Vehicle picker | UI-SCR002-008—011 | `front-page.php` | будущий Fitment adapter | controls disabled + explanation | будущие SCR-003/008; `BLOCKED` |
 | Hero/promo | SCR-002 | `front-page.php`, Settings API | editable copy/media | normal + image fallback via defaults | homepage; `TESTING` |
 | Benefits row | SCR-002 | `front-page.php` | static presentation copy | normal | reusable card pattern; `TESTING` |
-| Category card/grid | UI-SCR002-012; SCR-005 | shared `helpers.php`, homepage и shop hook | Woo category | populated + CRUD/render/cleanup; reused on configured shop page | I2-S1 `PASS / PROVISIONAL`; master taxonomy TBD |
+| Category card/grid | UI-SCR002-012; SCR-005 | shared `helpers.php`, homepage и shop hook | curated Woo term IDs | exactly 8 selected identities/order/URLs on homepage + shop; unselected legacy terms excluded | I2-S1/S14 `PASS / PROVISIONAL`; master taxonomy TBD |
 | Catalog archive controls | SCR-005; PBL-010/012 partial | named Woo hooks in `functions.php` | Woo loop total | canonical shop: local total count, no ordering UI; search/category scopes isolated | I2-S9 `PASS / PROVISIONAL`; ranking/query/design open |
 | Woo breadcrumb | SCR-005/006/009; PBL-010/011/012 partial | named Woo breadcrumb filters | configured shop URL + exact product-search request | «Главная», «Каталог товаров», product-search label; category/product/page crumbs preserved | I2-S12 `PASS / PROVISIONAL`; full i18n/SEO/design open |
 | Product card/row | UI-SCR002-013—015 | `helpers.php`, Woo filters | WC product | demo/real label, in/out stock; standard Woo direct-add loop имеет explicit demo action; CRUD/render проверен | I2-S3/S7 `PASS / PROVISIONAL`; business meaning `BLOCKED` |

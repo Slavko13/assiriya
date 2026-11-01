@@ -9,6 +9,11 @@ type RuntimeErrors = {
   page: string[];
 };
 
+type CategoryCardSnapshot = {
+  id: string;
+  href: string;
+};
+
 function watchRuntimeErrors(page: Page): RuntimeErrors {
   const errors: RuntimeErrors = { console: [], page: [] };
   page.on('console', (message) => {
@@ -20,9 +25,33 @@ function watchRuntimeErrors(page: Page): RuntimeErrors {
   return errors;
 }
 
+async function readCategoryCards(page: Page, selector: string): Promise<CategoryCardSnapshot[]> {
+  return page.locator(selector).evaluateAll((cards) =>
+    cards.map((card) => ({
+      id: card.getAttribute('data-category-id') ?? '',
+      href: (card as HTMLAnchorElement).href,
+    })),
+  );
+}
+
 test('opens the dynamic catalog and a published WooCommerce category', async ({ page }, testInfo) => {
   const runtimeErrors = watchRuntimeErrors(page);
   await page.goto('/', { waitUntil: 'networkidle' });
+
+  const homeCategoryCards = page.locator('#catalog .az-category-card');
+  await expect(homeCategoryCards).toHaveCount(8);
+  const homeCategories = await readCategoryCards(page, '#catalog .az-category-card');
+  const homeOrigin = new URL(page.url()).origin;
+  const homeCategoryIds = homeCategories.map(({ id }) => id);
+  expect(homeCategoryIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+  expect(new Set(homeCategoryIds).size).toBe(8);
+  expect(
+    homeCategories.every(({ href }) => {
+      const categoryUrl = new URL(href);
+      return categoryUrl.origin === homeOrigin && /^\/product-category\/[^/]+\/$/.test(categoryUrl.pathname);
+    }),
+    'Every selected homepage category should retain a same-origin WooCommerce taxonomy URL',
+  ).toBe(true);
 
   const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
   expect(shopUrl, 'The header must expose the configured WooCommerce shop URL').toBeTruthy();
@@ -64,7 +93,9 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await expect(catalog.getByRole('heading', { name: 'Каталог автозапчастей' })).toBeVisible();
 
   const categoryCards = catalog.locator('.az-category-card');
-  expect(await categoryCards.count(), 'The seeded top-level catalog should expose its eight demo categories').toBeGreaterThanOrEqual(8);
+  await expect(categoryCards, 'The canonical shop should expose exactly the eight selected top-level categories').toHaveCount(8);
+  const shopCategories = await readCategoryCards(page, '.az-shop-categories .az-category-card');
+  expect(shopCategories, 'Homepage and shop must preserve the same selected category identities, order and URLs').toEqual(homeCategories);
 
   const accessibility = await new AxeBuilder({ page }).analyze();
   const blockingViolations = accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));

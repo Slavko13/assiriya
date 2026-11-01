@@ -474,6 +474,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус относится только к isolation и стабильной one-result presentation. Он не доказывает поля/полноту/ранжирование поиска и не является business acceptance.
 
+### I2-S14 — curated category identity boundary
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** regression safety для I2-S1, `PBL-011/PBL-040 partial`; taxonomy/master-data scope не расширяется.
+
+Критерии среза:
+
+- shared category card публикует escaped numeric `data-category-id` из `WP_Term::term_id` без visual/data mutation;
+- homepage и canonical shop показывают ровно восемь unique positive IDs, одинаковые identities/order/same-origin taxonomy URLs;
+- admin Settings selected IDs сравниваются с public DOM как set, поскольку option DOM order не является сохранённым presentation order;
+- любой unselected term, включая одноимённые legacy duplicates, не попадает в homepage/shop;
+- terms не удаляются, не объединяются, не переименовываются и не перемаркировываются.
+
+Вне scope: production taxonomy master, canonical slug/redirect policy, legacy cleanup/merge, external IDs, hierarchy redesign и approved visual design.
+
+Выполнено и проверено:
+
+- shared `helpers.php` card получила только `data-category-id`; PHP lint: `PASS`;
+- public catalog identity journey на `1440/390/360`: `3 passed`; homepage/shop snapshots exact-equal по ID/order/href;
+- read-only admin identity scenario: `1 passed`; selected set содержит восемь unique IDs и не пересекается с unselected set;
+- WP-CLI evidence текущей БД: selected `[93,90,87,94,91,89,88,92]`, `50` unselected terms имеют имя одной из selected categories;
+- full regression: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`; post-full inventory `10` published / `0` temporary;
+- screenshot changes от offscreen lazy-load не относились к срезу и не включены; DOM/visual layout production-кодом не менялся.
+
+Статус закрывает только curated identity boundary. Legacy taxonomy остаётся неизменённой до отдельного master-data решения.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

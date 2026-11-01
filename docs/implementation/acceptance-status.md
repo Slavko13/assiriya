@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S13:** `32` tests = `30 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S14:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -162,6 +162,19 @@ I2-S12 закрывает только scoped public breadcrumb copy. JSON-LD na
 | I2-S13-ACC-006 | Regression не ухудшен | targeted `1 passed`; PHP lint; full `32`: `30 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
 
 I2-S13 закрывает только user-owned isolation и scoped one-result presentation. Search fields/completeness/ranking, production master/RBAC/stock/lifecycle и approved design остаются open.
+
+### I2-S14 — curated category identity boundary
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S14-ACC-001 | Public category identities явные и валидные | homepage: ровно 8 unique positive numeric `data-category-id`; links same-origin `/product-category/.../` | `PASS` |
+| I2-S14-ACC-002 | Homepage и shop не расходятся | ordered `{id, href}` snapshots exact-equal на `1440/390/360` | `PASS` |
+| I2-S14-ACC-003 | Settings — источник curated set | read-only admin: 8 selected option IDs; public set exact-equal независимо от option DOM order | `PASS` |
+| I2-S14-ACC-004 | Legacy terms не протекают | public IDs не пересекаются с unselected; current DB audit: 50 same-name unselected IDs | `PASS` |
+| I2-S14-ACC-005 | Taxonomy не мутирована | отсутствуют delete/merge/rename/meta writes; production change только escaped data attribute | `PASS` |
+| I2-S14-ACC-006 | Regression не ухудшен | PHP lint; targeted public `3 passed`; admin `1 passed`; full `33`: `31 passed`, `2 skipped`; inventory `10/0` | `PASS` |
+
+I2-S14 закрывает только curated identity boundary. Production taxonomy master, legacy cleanup/redirects и design approval остаются open.
 
 ## Технические критерии Итерации 1
 

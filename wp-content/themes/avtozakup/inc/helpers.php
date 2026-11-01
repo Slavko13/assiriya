@@ -143,7 +143,7 @@ function avtozakup_category_card( WP_Term $category, int $index ): void {
 	$term_link = get_term_link( $category );
 	$target = is_wp_error( $term_link ) ? avtozakup_wc_page_url( 'shop' ) : $term_link;
 	?>
-	<a class="az-category-card" href="<?php echo esc_url( $target ); ?>">
+	<a class="az-category-card" href="<?php echo esc_url( $target ); ?>" data-category-id="<?php echo esc_attr( (string) absint( $category->term_id ) ); ?>">
 		<?php echo avtozakup_category_illustration( $index ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<span><?php echo esc_html( $category->name ); ?></span>
 	</a>
