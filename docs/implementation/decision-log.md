@@ -14,6 +14,7 @@
 | TECH-008 | 2026-11-01 | Git deployment только clean branch + ff-only + pre-backup + smoke | Исключает скрытый merge и сохраняет recovery path | принято; local package READY, remote end-to-end blocked без target |
 | TECH-009 | 2026-11-01 | Demo seeder владеет только проектными pages; настроенные Woo core pages используются read-only | Не создаёт `*-2`, не перезаписывает выбор администратора и отделяет ownership в manifest | принято; fresh/bootstrap + post-repair seed PASS |
 | TECH-010 | 2026-11-01 | Legacy Woo page repair — отдельная dry-run/confirm CLI с atomic lock, fail-closed ownership/signature/revision/Trash guards и exact rollback | Немаркированные pages не редактируются; только точные demo-дубли перемещаются в recoverable Trash после backup; ambiguous/concurrent state блокирует apply | принято; isolated suite + local repair PASS, SEO policy open |
+| TECH-011 | 2026-11-01 | Demo provenance определяется единым predicate; наружу выводятся только whitelisted public source labels | Archive/search/PDP не расходятся по demo-статусу и не раскрывают произвольные meta; это не объявляет Woo master-системой или данные актуальными | принято для I2-S3; DEC-002/003/005/006 open |
 
 ## Состояние DEC
 

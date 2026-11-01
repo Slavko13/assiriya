@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.2.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.3.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -67,6 +67,43 @@ add_filter(
 );
 
 add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
+
+function avtozakup_render_loop_demo_provenance(): void {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+	$provenance = avtozakup_demo_product_provenance( $product );
+	if ( null === $provenance ) {
+		return;
+	}
+	printf(
+		'<div class="az-demo-provenance az-demo-provenance--loop" data-demo-provenance="product">%s</div>',
+		esc_html( $provenance['loop'] )
+	);
+}
+
+function avtozakup_render_single_demo_provenance(): void {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+	$provenance = avtozakup_demo_product_provenance( $product );
+	if ( null === $provenance ) {
+		return;
+	}
+	?>
+	<div class="az-demo-provenance az-demo-provenance--single" data-demo-provenance="product" role="note">
+		<strong><?php echo esc_html( $provenance['single'] ); ?></strong>
+		<?php if ( '' !== $provenance['source'] ) : ?>
+			<span class="az-demo-provenance__source"><?php echo esc_html( $provenance['source'] ); ?></span>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+
+add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
+add_action( 'woocommerce_single_product_summary', 'avtozakup_render_single_demo_provenance', 11 );
 
 add_action(
 	'woocommerce_before_shop_loop',

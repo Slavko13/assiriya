@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S2B:** `16` tests = `14 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S3:** `19` tests = `17 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -30,6 +30,17 @@ I2-S2A — технический prevention-срез. Он не нормали�
 | I2-S2B-ACC-006 | Canonical browser journey и demo safety | `/shop/`, `/cart/`, `/checkout/` на `1440/390/360`; classic/Woo Blocks notice; Store API `403`; full `14 passed / 2 skipped` | `PASS` |
 
 I2-S2B не удаляет Trash и не реализует redirect/SEO policy; `PBL-039` остаётся partial.
+
+### I2-S3 — demo provenance
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S3-ACC-001 | Provenance видна только у marked product | unsaved unmarked WC product → `null`; marked unknown source → label без raw source | `PASS` |
+| I2-S3-ACC-002 | Archive/search/PDP используют единый predicate | Woo hooks + homepage helper; category/search loop label и PDP disclaimer/source | `PASS` |
+| I2-S3-ACC-003 | Путь проверен на трёх viewport | category → multi-result search «Фильтр» → PDP, no-overflow/runtime errors: provenance scenario `3 passed`; весь catalog file `6 passed` (`2` сценария × `3`) | `PASS` |
+| I2-S3-ACC-004 | Regression не ухудшен | `19` tests: `17 passed`, `2 intentional skipped`, `0 failed` | `PASS` |
+
+I2-S3 имеет qualifier `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; offers/search/fitment и соответствующие DEC/DG/TC не закрыты.
 
 ## Технические критерии Итерации 1
 
@@ -77,6 +88,7 @@ I2-S2B не удаляет Trash и не реализует redirect/SEO policy;
 - Paper reference: `docs/qa/visual-diffs/paper-home-desktop-1440.png`.
 - Actual desktop: `docs/qa/visual-diffs/homepage-desktop-chrome-1440.png`.
 - Actual mobile: `docs/qa/visual-diffs/homepage-mobile-chrome-390.png`, `docs/qa/visual-diffs/homepage-mobile-chrome-360.png`.
+- Demo provenance PDP: `docs/qa/visual-diffs/product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 
 ## Условие финального статуса

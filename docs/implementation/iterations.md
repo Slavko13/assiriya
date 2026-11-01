@@ -167,6 +167,35 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Удаление из WordPress Trash не выполнялось. SEO redirects для старых `*-2` URL и общий canonical policy остаются вне scope и не закрывают `PBL-039`.
 
+### I2-S3 — explicit demo provenance на Woo surfaces
+
+**Статус:** `DONE / PROVISIONAL`
+
+**Связь:** `PBL-011 partial`, `PBL-040 partial`, `FR-CAT-002 partial`, `FR-OFR-002 safety partial`, `UC-SRCH-001` только шаги 3/7/8, `TC-039 partial`.
+
+Критерии среза:
+
+- единый helper распознаёт только явно marked demo products и не публикует произвольные raw meta;
+- стандартные Woo shop/category/search cards показывают: «Демонстрационный товар · цена и наличие не подтверждены»;
+- PDP показывает: «Демонстрационный товар. Цена, остаток, срок поставки и применяемость не подтверждены внешними системами.»;
+- для текущего whitelist source показывается «Источник демо-данных: Paper SCR-002, SCR-006, SCR-007, SCR-009»;
+- unmarked product не получает provenance, а homepage custom card использует тот же predicate;
+- E2E `1440/390/360`: `/shop/` → marked loop card → поиск по названию «Фильтр» (несколько результатов, без single-result redirect) → marked search result → PDP provenance/source; no overflow/runtime errors; actual screenshots сохранены;
+- полный regression не имеет новых failures.
+
+Вне scope: OEM/SKU normalization, ranking/no-results, filters/sort, fitment, supplier offers/freshness, real price/stock/ETA, production checkout и закрытие `DEC-002/003/005/006/019/020`, `DG-001/006/017/018`, `TC-001—006`.
+
+Выполнено и проверено:
+
+- centralized helper распознаёт `_avtozakup_demo=1` и legacy `_az_demo_product=yes`; homepage card и стандартные Woo surfaces используют один predicate;
+- unknown raw source meta не публикуется; только текущий whitelist source отображается как Paper SCR-002/006/007/009;
+- category/search loops и single product summary получают provenance через именованные Woo hooks без template override;
+- E2E на `1440/390/360`: каталог → «Тормозная система» → marked card → multi-result product-name search «Фильтр» → marked result → PDP disclaimer/source; provenance scenario `3 passed`, весь `catalog.spec.ts` `6 passed` (`2` сценария × `3` viewport), `0 failed`;
+- actual PDP screenshots: `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`;
+- full regression: `19` tests, `17 passed`, `2 intentional skipped`, `0 failed`.
+
+Статус относится только к явной demo provenance. `PBL-011`, `FR-CAT-002`, `FR-OFR-002`, перечисленные TC/DG/DEC остаются partial/open; visual имеет `DESIGN_REVIEW_REQUIRED`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

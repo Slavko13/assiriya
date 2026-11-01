@@ -150,8 +150,34 @@ function avtozakup_category_card( WP_Term $category, int $index ): void {
 	<?php
 }
 
+/**
+ * Return public-safe provenance for an explicitly marked demo product.
+ * Unknown source metadata is intentionally not exposed.
+ *
+ * @return array{loop:string,single:string,source:string}|null
+ */
+function avtozakup_demo_product_provenance( WC_Product $product ): ?array {
+	$is_demo = '1' === (string) $product->get_meta( '_avtozakup_demo', true )
+		|| 'yes' === (string) $product->get_meta( '_az_demo_product', true );
+	if ( ! $is_demo ) {
+		return null;
+	}
+
+	$source_key = strtolower( preg_replace( '/\s+/', '', (string) $product->get_meta( '_avtozakup_demo_source', true ) ) );
+	$source_labels = array(
+		'paper:scr-002,scr-006,scr-007,scr-009' => 'Источник демо-данных: Paper SCR-002, SCR-006, SCR-007, SCR-009',
+	);
+
+	return array(
+		'loop'   => 'Демонстрационный товар · цена и наличие не подтверждены',
+		'single' => 'Демонстрационный товар. Цена, остаток, срок поставки и применяемость не подтверждены внешними системами.',
+		'source' => $source_labels[ $source_key ] ?? '',
+	);
+}
+
 function avtozakup_product_card( WC_Product $product ): void {
-	$demo = '1' === $product->get_meta( '_avtozakup_demo', true ) || 'yes' === $product->get_meta( '_az_demo_product', true );
+	$provenance = avtozakup_demo_product_provenance( $product );
+	$demo = null !== $provenance;
 	$available = $product->is_in_stock();
 	$brand = (string) $product->get_attribute( 'pa_brand' );
 	$article = $product->get_sku();
