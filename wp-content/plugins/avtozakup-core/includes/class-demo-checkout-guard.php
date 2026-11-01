@@ -24,7 +24,7 @@ final class Demo_Checkout_Guard {
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'render_notice' ) );
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_classic_checkout' ), 10, 2 );
 		add_filter( 'woocommerce_order_button_html', array( $this, 'filter_order_button_html' ) );
-		add_filter( 'render_block', array( $this, 'filter_checkout_block' ), 10, 2 );
+		add_filter( 'render_block', array( $this, 'filter_commerce_block' ), 10, 2 );
 		add_filter( 'rest_pre_dispatch', array( $this, 'block_store_api_checkout' ), 10, 3 );
 	}
 
@@ -85,8 +85,11 @@ final class Demo_Checkout_Guard {
 	 * @param string               $block_content Rendered block HTML.
 	 * @param array<string, mixed> $block         Parsed block.
 	 */
-	public function filter_checkout_block( string $block_content, array $block ): string {
-		if ( 'woocommerce/checkout' !== ( $block['blockName'] ?? '' ) || ! $this->should_block_checkout() ) {
+	public function filter_commerce_block( string $block_content, array $block ): string {
+		if (
+			! in_array( $block['blockName'] ?? '', array( 'woocommerce/cart', 'woocommerce/checkout' ), true )
+			|| ! $this->should_block_checkout()
+		) {
 			return $block_content;
 		}
 

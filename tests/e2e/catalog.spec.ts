@@ -25,6 +25,7 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
 
   const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
   expect(shopUrl, 'The header must expose the configured WooCommerce shop URL').toBeTruthy();
+  expect(new URL(shopUrl!, page.url()).pathname, 'The repaired catalog route must use the canonical WooCommerce slug').toBe('/shop/');
   await page.goto(shopUrl!, { waitUntil: 'networkidle' });
 
   const catalog = page.locator('.az-shop-categories');

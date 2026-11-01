@@ -3,7 +3,7 @@
  * Plugin Name:       Автозакуп Core
  * Plugin URI:        https://example.invalid/avtozakup
  * Description:       Настройки главной страницы, демонстрационные данные и границы будущих интеграций магазина «Автозакуп».
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 7.1
  * Requires PHP:      8.3
  * WC requires at least: 11.2
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_CORE_VERSION', '0.2.0' );
+define( 'AVTOZAKUP_CORE_VERSION', '0.3.0' );
 define( 'AVTOZAKUP_CORE_FILE', __FILE__ );
 define( 'AVTOZAKUP_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'AVTOZAKUP_CORE_URL', plugin_dir_url( __FILE__ ) );
@@ -34,6 +34,7 @@ require_once AVTOZAKUP_CORE_PATH . 'includes/Contracts/VinRequestAdapterInterfac
 require_once AVTOZAKUP_CORE_PATH . 'includes/class-settings.php';
 require_once AVTOZAKUP_CORE_PATH . 'includes/class-demo-checkout-guard.php';
 require_once AVTOZAKUP_CORE_PATH . 'includes/class-demo-seeder.php';
+require_once AVTOZAKUP_CORE_PATH . 'includes/class-woo-page-repair.php';
 require_once AVTOZAKUP_CORE_PATH . 'includes/class-cli-command.php';
 require_once AVTOZAKUP_CORE_PATH . 'includes/class-plugin.php';
 

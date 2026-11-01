@@ -134,7 +134,38 @@ Remote inventory и реальный deployment выполняются толь�
 - полный текущий Playwright regression после изменения: `16` tests, `14 passed`, `2 intentional skipped`, `0 failed`;
 - временные контейнеры, сети и три test-only volume удалены после проверки; основной runtime не затронут.
 
-Qualifier: это prevention-срез. Текущие legacy `/shop-2`, `/cart-2`, `/checkout-2` остаются до отдельного fail-closed repair; I2-S2A не заявляет SEO/canonical policy и не закрывает `PBL-039`.
+Qualifier: это prevention-срез; одноразовая локальная миграция legacy URL выполнена отдельно в I2-S2B. I2-S2A не заявляет SEO/canonical policy и не закрывает `PBL-039`.
+
+### I2-S2B — fail-closed repair legacy Woo pages
+
+**Статус:** `DONE`
+
+**Цель:** отдельной CLI-командой перевести только доказанный legacy-набор с demo `*-2` pages на существующие штатные Woo pages; dry-run является режимом по умолчанию.
+
+Критерии среза:
+
+- dry-run показывает option ID, candidate ID, slug и план, не меняя options, posts, meta, settings или manifest;
+- настроенная немаркированная Woo page всегда сохраняется без изменений, даже при `--confirm`;
+- переключение допустимо только если текущая option page имеет обе точные demo-метки, а canonical candidate — опубликованная немаркированная page с точным slug и консервативной Woo signature;
+- любая неоднозначность блокирует весь repair до записи; частичный repair запрещён;
+- `--confirm` сначала переключает Woo options, точечно обновляет `hero_primary_url` только при точном совпадении со старым demo permalink, обновляет manifest и перемещает только доказанные demo-дубли в WordPress Trash;
+- при исключении выполняется rollback options/settings/manifest и уже перемещённых demo pages;
+- повторный dry-run/confirm после успешного repair является no-op; seed ×2 не восстанавливает дубли;
+- перед локальным `--confirm` создаётся проверенная парная DB+uploads backup.
+
+Вне scope: redirect/SEO policy, удаление из Trash, изменение title/content/meta немаркированных pages и любые production/server действия.
+
+Выполнено и проверено:
+
+- `wp avtozakup repair-woo-pages` по умолчанию выполняет zero-write dry-run; `--confirm` доступен только после полного fail-closed preflight;
+- guard блокирует concurrent confirm через atomic lock, ambiguous markers, missing/multiple candidates, custom title/content, revisions, reused IDs и отключённый WordPress Trash; canonical target hashes проверяются до/после;
+- isolated fixture: dry-run zero-write, rollback до cleanup и после первого successful Trash, lock contention, ambiguous fail-closed, custom configured shop preservation, successful confirm, повторный no-op и seed ×2 — `PASS`;
+- перед основной локальной миграцией создана и проверена парная backup `20261101T182214Z`;
+- основная база: Woo options `30/31/32 → 4/5/6`, `hero_primary_url → /shop/`, manifest обновлён, только marked demo IDs `30/31/32` находятся в Trash; повторный confirm — no-op, seed ×2 не создаёт дубли;
+- штатные Woo Cart/Checkout Blocks сохранены без изменения; demo notice расширен на Cart Block, Store API guard остаётся `403`;
+- canonical journey `/shop/ → /cart/ → /checkout/` прошёл на `1440/390/360`; полный regression: `16` tests, `14 passed`, `2 intentional skipped`, `0 failed`.
+
+Удаление из WordPress Trash не выполнялось. SEO redirects для старых `*-2` URL и общий canonical policy остаются вне scope и не закрывают `PBL-039`.
 
 ## Следующие итерации
 

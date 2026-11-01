@@ -130,15 +130,23 @@ test.describe('АВТОЗАКУП homepage', () => {
 
     await page.locator('.az-cart-link').click();
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('.woocommerce-cart-form__cart-item')).toHaveCount(1);
+    expect(new URL(page.url()).pathname, 'The cart link must use the canonical WooCommerce slug').toBe('/cart/');
+    const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
+    await expect(cartItems).toHaveCount(1);
     await expect(page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: 'демонстрационный каталог' })).toBeVisible();
 
-    const checkoutLink = page.locator('.checkout-button');
+    const checkoutLink = page.locator('.checkout-button, .wc-block-cart__submit-button');
     await expect(checkoutLink).toBeVisible();
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
+    expect(new URL(page.url()).pathname, 'The checkout link must use the canonical WooCommerce slug').toBe('/checkout/');
     await expect(page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: 'демонстрационный каталог' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Оформление отключено в демо-режиме' })).toBeDisabled();
+    const classicDisabledButton = page.getByRole('button', { name: 'Оформление отключено в демо-режиме' });
+    if (await classicDisabledButton.count()) {
+      await expect(classicDisabledButton).toBeDisabled();
+    } else {
+      await expect(page.locator('.wp-block-woocommerce-checkout')).toBeVisible();
+    }
 
     expectNoRuntimeErrors(runtimeErrors);
   });

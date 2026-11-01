@@ -4,7 +4,7 @@ Tags: woocommerce, homepage, demo-data
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 0.1.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,6 +19,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 * выбор нескольких категорий и двух подборок товаров WooCommerce;
 * публичный API `avtozakup_get_homepage_settings()` для темы;
 * идемпотентную команду `wp avtozakup seed-demo`;
+* fail-closed dry-run/confirm repair для legacy WooCommerce page duplicates;
 * безопасную блокировку checkout в demo-окружении и для отмеченных demo-товаров;
 * интерфейсы адаптеров для будущих каталога, остатков, применяемости, поставщиков и VIN workflow.
 
@@ -35,11 +36,19 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 `wp avtozakup seed-demo`
 
-Создаёт или обновляет только сущности с метками `_avtozakup_demo=1` и стабильным `_avtozakup_demo_key`. Команда создаёт 8 категорий, 10 товаров, служебные страницы и меню, выбирает demo-сущности в настройках и активирует тему `avtozakup`, если она установлена.
+Создаёт или обновляет только сущности с метками `_avtozakup_demo=1` и стабильным `_avtozakup_demo_key`. Команда создаёт 8 категорий, 10 товаров, шесть принадлежащих проекту страниц и меню, использует настроенные WooCommerce core pages read-only, выбирает demo-сущности в настройках и активирует тему `avtozakup`, если она установлена.
 
 `wp avtozakup seed-demo --force`
 
-Дополнительно назначает demo-страницы, меню и подборки вместо текущей конфигурации. Содержимое без demo-метки команда не изменяет.
+Дополнительно назначает plugin-owned front page, меню и подборки вместо текущей demo-конфигурации. Валидные WooCommerce shop/cart/checkout/my-account pages и содержимое без demo-метки команда не изменяет.
+
+`wp avtozakup repair-woo-pages`
+
+Выполняет zero-write dry-run legacy page repair. Команда блокируется при неоднозначных owner-метках, изменённом canonical candidate, revisions или отключённом WordPress Trash.
+
+`wp avtozakup repair-woo-pages --confirm`
+
+После проверенной backup применяет свежий план, обновляет только Woo page references и перемещает точные marked demo-дубли в recoverable Trash. Повторный запуск является no-op.
 
 Если локальные изображения присутствуют в теме `avtozakup/assets/images`, seeder импортирует их в медиатеку через WordPress Media API. MAHLE CU 2939 намеренно остаётся с placeholder, как в макете.
 
@@ -64,6 +73,11 @@ Checkout блокируется, если:
 При удалении плагина удаляются его options, но demo-контент сохраняется. Для явного удаления только маркированных demo-сущностей перед uninstall задайте `AVTOZAKUP_REMOVE_DEMO_DATA_ON_UNINSTALL=true`.
 
 == Changelog ==
+
+= 0.3.0 =
+* WooCommerce core pages are referenced read-only and no longer duplicated by demo seed.
+* Fail-closed dry-run/confirm repair for marked legacy page duplicates.
+* Demo notice compatibility for classic and WooCommerce Cart/Checkout Blocks.
 
 = 0.1.0 =
 * Homepage settings, media uploader and WooCommerce selections.

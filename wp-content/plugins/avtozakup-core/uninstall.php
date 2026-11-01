@@ -20,6 +20,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 function avtozakup_core_uninstall_site(): void {
 	delete_option( 'avtozakup_homepage' );
 	delete_option( 'avtozakup_demo_manifest' );
+	delete_option( 'avtozakup_woo_page_repair_lock' );
 
 	if ( ! defined( 'AVTOZAKUP_REMOVE_DEMO_DATA_ON_UNINSTALL' ) || ! AVTOZAKUP_REMOVE_DEMO_DATA_ON_UNINSTALL ) {
 		return;
@@ -29,7 +30,7 @@ function avtozakup_core_uninstall_site(): void {
 		$ids = get_posts(
 			array(
 				'post_type' => $post_type,
-				'post_status' => 'attachment' === $post_type ? 'inherit' : 'any',
+				'post_status' => 'attachment' === $post_type ? 'inherit' : array_keys( get_post_stati() ),
 				'posts_per_page' => -1,
 				'fields' => 'ids',
 				'meta_key' => '_avtozakup_demo',

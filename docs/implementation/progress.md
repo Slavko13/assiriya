@@ -11,9 +11,9 @@
 | MariaDB | MariaDB `11.4.13`; restart persistence подтверждён | production monitoring/retention после deploy | `DONE` для локального persistence |
 | Theme SCR-002 | desktop `1440`, mobile `390` и `360` screenshots; sections, overflow, axe и browser errors проверены; Paper comparison задокументирован | утверждение assets/baseline после DEC-019 | `DONE` для Iteration 1; `DESIGN_REVIEW_REQUIRED`, не pixel-perfect |
 | Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены | negative capability/RBAC test | `DONE` для admin save/restore |
-| Demo catalog | `8` categories, `10` products, `10` attachments; I2-S2A разделил `6` plugin-owned pages и `4` read-only Woo page references; legacy seed ×2 и fresh bootstrap ×2 идемпотентны | одноразовый fail-closed repair текущих `*-2`; бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency; не production catalog |
-| Catalog SCR-005 | configured Woo shop page показывает 8 выбранных top-level categories; общий category-card переиспользован; переход в «Тормозную систему» и breadcrumb проверены | отдельный срез canonical shop slug; затем demo provenance Woo cards/PDP | `DONE` для `I2-S1`; `PBL-011 partial / PROVISIONAL` |
-| Woo page ownership | seeder больше не создаёт и не переназначает валидные shop/cart/checkout/my-account pages; fresh install не создаёт `*-2` | repair текущей legacy-БД отдельной dry-run/confirm операцией | `DONE` для `I2-S2A`; legacy canonical URL ещё не исправлен |
+| Demo catalog | `8` categories, `10` products, `10` attachments; `6` plugin-owned pages + `4` read-only Woo references; fresh bootstrap и post-repair seed ×2 идемпотентны | бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency; не production catalog |
+| Catalog SCR-005 | configured `/shop/` показывает 8 выбранных top-level categories; общий category-card переиспользован; переход в «Тормозную систему» и breadcrumb проверены | demo provenance Woo cards/PDP | `DONE` для `I2-S1`; `PBL-011 partial / PROVISIONAL` |
+| Woo page ownership | seeder не создаёт/переназначает core pages; fail-closed repair переключил локальные options на `/shop/`, `/cart/`, `/checkout/`; старые marked IDs в Trash | SEO redirects/canonical policy только отдельным решением | `DONE` для `I2-S2A/B`; `PBL-039 partial` |
 | Demo safety | AJAX add, badge, cart page, classic disabled checkout и direct Store API 403 прошли; demo маркировка сохранена | production commerce остаётся blocked до DEC | `DONE` для demo safety Итерации 1 |
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks | утверждённый mobile-макет после DEC-019/020 | `DONE` для provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
@@ -37,10 +37,10 @@
 - Playwright: `16` tests = `14 passed`, `2 intentional skipped`, `0 failed`.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
-- Woo category/product CRUD с отражением на главной и cleanup, cart count/page, classic checkout guard и keyboard/focus entry point — `PASS`.
+- Woo category/product CRUD с отражением на главной и cleanup, cart count, classic/Woo Blocks cart/checkout guard и keyboard/focus entry point — `PASS`.
 - Configured shop page → curated categories → «Тормозная система» archive, breadcrumb, products и no-overflow на `1440/390/360` — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.
-- Seed после I2-S2A: `8` categories, `10` products, `10` attachments, `6` plugin-owned pages + `4` Woo page references, menu `24`; legacy DB и isolated fresh bootstrap проверены двумя повторами.
+- Seed после I2-S2B: `8` categories, `10` products, `10` attachments, `6` plugin-owned pages + `4` Woo page references, menu `24`; options `4/5/6/7`, confirm no-op и seed ×2 подтверждены.
 
 ## Правило отчётности
 
