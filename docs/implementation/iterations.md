@@ -60,7 +60,7 @@ Remote inventory и реальный deployment выполняются толь�
 
 - mobile имеет `DESIGN_REVIEW_REQUIRED`, а desktop не заявляется pixel-perfect до утверждения baseline/assets;
 - все `DEC-001…DEC-020` остаются `OPEN`;
-- Git remote, server inventory/access и remote deployment отсутствуют; сервер `NOT_DEPLOYED`.
+- Git remote и target теперь известны; server inventory/access и remote deployment отсутствуют, поэтому сервер `NOT_DEPLOYED`.
 
 ### История
 
@@ -1272,6 +1272,23 @@ Qualifier: это prevention-срез; одноразовая локальная
 - post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
 
 Статус закрывает только current Woo-injected password type/accessibility-label client round-trip в Chrome.
+
+### OPS-QT-001 — isolated one-command Quick Tunnel preview
+
+**Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
+
+**Связь:** `I1-ACC-017/018`, `PBL-040`, deployment partial `NFR-SEC-003`; коммерческий production scope не расширяется.
+
+Критерии среза:
+
+- installer получает exact expected IPv4 и два фактических existing-site URL, fail-closed проверяя их до и после;
+- Compose project `avtozakup` не публикует host ports, не использует foreign networks/Caddy и не выполняет global removal/prune;
+- random secrets остаются в mode-600 untracked env; repeat deploy создаёт парный DB/uploads backup;
+- `cloudflared` pinned, случайный URL атомарно становится `PUBLIC_URL`, bootstrap/smoke повторяемы;
+- public admin routes exact `403`; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
+- remote proof требуется до статуса `DEPLOYED`.
+
+Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; deployment preflight вместе с Playwright env `10 passed`. Server run сознательно не заявлен.
 
 ## Следующие итерации
 

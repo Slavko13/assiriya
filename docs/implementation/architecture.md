@@ -1,13 +1,14 @@
 # Архитектура WordPress/WooCommerce
 
 **Статус:** технический baseline Итерации 1, локальный контур проверен; серверный статус `NOT_DEPLOYED`.  
-**Версии контейнеров:** WordPress 7.1.4 / PHP 8.3, WooCommerce 11.2.1, MariaDB 11.4.13, Caddy 2.10.2.
+**Версии контейнеров:** WordPress 7.1.4 / PHP 8.3, WooCommerce 11.2.1, MariaDB 11.4.13, Caddy 2.10.2, cloudflared 2026.10.7 для временного preview.
 
 ## Границы
 
 ```text
 Browser
-  → Caddy (production edge, admin CIDR restriction)
+  → Caddy (production HTTP edge, admin CIDR restriction)
+    OR Cloudflare Quick Tunnel → project Caddy (preview, public admin denied)
     → WordPress + WooCommerce
       → theme/avtozakup          presentation, responsive UI
       → plugin/avtozakup-core    settings, demo safety, adapter contracts
@@ -18,6 +19,7 @@ Browser
 - `compose.yaml` задаёт базовые сервисы `db`, `wordpress`, `wpcli`, внутреннюю DB network и именованные volumes.
 - `compose.dev.yaml` публикует только локальный WordPress port и только в dev использует bind mounts исходников темы и плагина.
 - `compose.prod.yaml` добавляет Caddy; WordPress только `expose`, MariaDB наружу не публикуется.
+- `compose.quick-tunnel.yaml` добавляет project-owned Caddy и outbound-only `cloudflared`; host ports отсутствуют, foreign Caddy/network не используются.
 - Production-код темы и плагина встраивается в WordPress image при build, после чего entrypoint синхронизирует его в рабочее дерево контейнера. Production не зависит от bind mounts Git checkout.
 - WordPress core хранится в volume; uploads и DB имеют отдельные volumes и образуют единую пару для backup/restore.
 - Settings API хранит только presentation content. Категории/товары редактируются штатным WooCommerce.
@@ -56,12 +58,13 @@ Browser
 
 - `DISALLOW_FILE_EDIT`; секреты только в untracked env; DB network internal; `no-new-privileges`.
 - Caddy ограничивает `/wp-admin` и `/wp-login.php` по `ADMIN_ALLOWED_CIDR`; `admin-ajax.php` оставлен доступным.
+- Quick Tunnel Caddy всегда возвращает `403` для public admin routes и передаёт WordPress `X-Forwarded-Proto: https`; случайный URL нельзя использовать для администрирования.
 - Изолированный security drill подтвердил public `200`, внешний admin `403`, trusted admin `200` и header `nosniff`; удалённая CIDR-проверка выполняется только после server inventory.
 - Текущий Caddy profile — HTTP/IP demo с `auto_https off`; это не подтверждает `NFR-SEC-003`. Публичный доступ к административной панели допустим только через VPN, SSH tunnel либо HTTPS с доверенным сертификатом.
 - Backup и restore обрабатывают согласованную пару DB + uploads; restore требует явный `--confirm` и предварительный safety backup.
 - Изолированное локальное restore drill выполнено со статусом `PASS`: восстановление не затрагивало другие Compose-проекты.
 - Smoke-проверки `/`, `/wp-json/` и WooCommerce Store API выполнены со статусом `PASS`.
-- Серверный доступ не предоставлен: reverse proxy, порты, два существующих сайта и реальные server resources не проверялись; статус остаётся `NOT_DEPLOYED`.
+- Target и origin известны, а Quick Tunnel package локально проверен, но server run отсутствует: reverse proxy, порты, два существующих сайта и реальные resources не проверялись; статус остаётся `NOT_DEPLOYED`.
 
 ## Архитектурные ограничения до DEC
 

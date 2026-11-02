@@ -1,0 +1,58 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(testDirectory, '../..');
+
+async function projectFile(relativePath) {
+  return readFile(path.join(projectRoot, relativePath), 'utf8');
+}
+
+test('Quick Tunnel Compose is outbound-only and pinned', async () => {
+  const compose = await projectFile('compose.quick-tunnel.yaml');
+
+  assert.match(compose, /cloudflare\/cloudflared:2026\.10\.7/);
+  assert.match(compose, /http:\/\/caddy:8080/);
+  assert.match(compose, /Caddyfile\.quick-tunnel/);
+  assert.match(compose, /^  cloudflared:[\s\S]*?restart: "no"/m);
+  assert.doesNotMatch(compose, /^\s+ports:/m);
+  assert.doesNotMatch(compose, /network_mode:\s*host/);
+});
+
+test('Quick Tunnel edge blocks public administration', async () => {
+  const caddyfile = await projectFile('docker/caddy/Caddyfile.quick-tunnel');
+
+  assert.match(caddyfile, /path \/wp-login\.php \/wp-login\.php\/\* \/wp-admin \/wp-admin\/\*/);
+  assert.match(caddyfile, /respond @blocked_admin .* 403/);
+  assert.match(caddyfile, /header_up X-Forwarded-Proto "https"/);
+  assert.match(caddyfile, /@health path \/__avtozakup_health/);
+});
+
+test('deployment guardrails preserve foreign services', async () => {
+  const deploy = await projectFile('scripts/deploy-quick-tunnel.sh');
+
+  assert.match(deploy, /EXISTING_SITE_URLS must contain exactly two/);
+  assert.match(deploy, /EXPECTED_SERVER_IP is required/);
+  assert.match(deploy, /snapshot_foreign_containers/);
+  assert.match(deploy, /docker ps -aq --no-trunc > "\$STATE_DIR\/containers\.before\.ids" \|\| fail/);
+  assert.match(deploy, /RestartCount/);
+  assert.match(deploy, /Listeners on host ports 80\/443 changed/);
+  assert.match(deploy, /avtozakup-quick-tunnel\.lock/);
+  assert.match(deploy, /docker volume inspect avtozakup_db_data/);
+  assert.doesNotMatch(deploy, /docker\s+compose[^\n]*(?:down|--remove-orphans)/);
+  assert.doesNotMatch(deploy, /docker\s+(?:system\s+)?prune/);
+  assert.doesNotMatch(deploy, /done < <\(docker ps/);
+});
+
+test('one-command installer is fixed to the intended repository and branch', async () => {
+  const installer = await projectFile('scripts/install-quick-tunnel.sh');
+
+  assert.match(installer, /https:\/\/github\.com\/Slavko13\/assiriya\.git/);
+  assert.match(installer, /DEPLOY_BRANCH="main"/);
+  assert.match(installer, /pull --ff-only/);
+  assert.match(installer, /avtozakup-quick-tunnel-install\.lock/);
+  assert.match(installer, /"\$INSTALL_DIR\/scripts\/deploy-quick-tunnel\.sh"/);
+});

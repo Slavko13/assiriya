@@ -1,6 +1,6 @@
 # Матрица требований реализации
 
-**Срез:** 2026-11-01  
+**Срез:** 2026-11-02
 **Итерация:** 1 — Homepage MVP + WordPress + Docker + Git Deployment  
 **Общий статус:** Итерация 1 `READY_FOR_DEPLOYMENT`; Итерация 2 `IN_PROGRESS`; сервер `NOT_DEPLOYED`. Результаты ниже не являются закрытием открытых DEC.
 
@@ -83,6 +83,7 @@
 | I2-S42 — responsive primary-navigation toggle | PBL-010/PBL-040; NFR-UX-001/002 technical partial; no navigation content change | exact button→panel binding; desktop hidden toggle/visible panel; mobile exact accessible name and collapsed→open→collapsed state/visibility round-trip | targeted `3 passed`; full `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `DONE / TECHNICAL`; current renderer toggle only, not menu destinations, keyboard/focus/Escape/outside-click, resize/orientation, persistence, other browsers or production acceptance |
 | I2-S43 — header city status-dialog keyboard contract | PBL-021/026/PBL-040; FR-DLV-001/NFR-UX-002 technical safety partial; no real delivery behavior | exact visible delivery trigger; closed labelled dialog; Enter open; exact DEC-001/014 copy; close auto-focus; Enter close + trigger focus restore | targeted `3 passed`; full `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `DONE / TECHNICAL`; Chrome/current theme blocked-state only, not city selection/persistence, geolocation, delivery methods/cost, other dialogs, Escape/backdrop, AT/browser matrix or production delivery |
 | I2-S44 — guest password-visibility toggle wiring | PBL-009/PBL-040; FR-AUTH-002/NFR-SEC-005 technical partial; no auth mutation | exact password→sibling non-submit button binding; non-empty state accessible names; password→text→password and changed→original label round-trip | targeted `3 passed`; full `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `DONE / TECHNICAL`; current Woo/Chrome client control only, not localization/value/keyboard/auth/session/OS/autofill/password-manager/AT/browser/cross-version or production security |
+| OPS-QT-001 — isolated Quick Tunnel deployment | I1-ACC-017/018; PBL-040/NFR-SEC-003 deployment partial | one-command clean/ff-only install; exact server-IP guard; mandatory two-site before/after health; foreign container/listener snapshot; `0` host ports; project Caddy public-admin deny; paired backup on repeat | Bash syntax; Compose config `0` published ports; Caddy validate; official cloudflared image/version; preflight `10 passed` | `TESTING / SERVER_VALIDATION_REQUIRED`; remote inventory/run, two real URLs, stable DNS/SLA и production admin остаются open |
 
 ## Статусы исходного backlog
 

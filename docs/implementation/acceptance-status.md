@@ -536,6 +536,20 @@ I2-S43 закрывает только current theme-owned blocked-state copy, n
 
 I2-S44 закрывает только current Woo-injected DOM/client type/accessibility-label round-trip в Chrome. Exact localization, credential value, keyboard/focus, submit/POST/auth/session, OS capture, clipboard/autofill/password managers, AT/browser matrix, cross-version и production security остаются вне scope.
 
+### OPS-QT-001 — isolated Quick Tunnel deployment package
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| OPS-QT-001-ACC-001 | Preview не занимает host ports | rendered Compose JSON: published port entries `0` | `PASS` локально |
+| OPS-QT-001-ACC-002 | Edge config валиден и public admin deny сохранён | `caddy:2.10.2-alpine caddy validate`; static assertions для `/wp-admin`/`wp-login` → `403` | `PASS` локально |
+| OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
+| OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
+| OPS-QT-001-ACC-005 | Guardrails зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot и forbidden global removal checks | `PASS` локально |
+| OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до server run с двумя реальными URL |
+| OPS-QT-001-ACC-007 | Public preview и admin guard работают через Cloudflare | remote smoke `/`, REST, Store API и exact `/wp-admin/` `403` | `BLOCKED` до server run |
+
+Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а server остаётся `NOT_DEPLOYED`. Случайный `trycloudflare.com` URL — public/ephemeral preview без production SLA или stable DNS.
+
 ## Технические критерии Итерации 1
 
 | ID | Критерий | Доказательство | Статус |
@@ -556,8 +570,8 @@ I2-S44 закрывает только current Woo-injected DOM/client type/acce
 | I1-ACC-014 | Production Compose/Caddy проходит config checks | prod config/build/up PASS; isolated drill: public 200, external admin 403, trusted admin 200, `nosniff` | `PASS` локально; remote preflight при доступе |
 | I1-ACC-015 | Backup создаётся и проверяется | парные `.sql.gz` + `.uploads.tar.gz`, integrity check | `PASS` |
 | I1-ACC-016 | Restore возвращает контрольную запись | isolated DB+uploads restore drill | `PASS` |
-| I1-ACC-017 | Git deployment проходит на staging/disposable host | локальный Git и deploy mechanism подготовлены; remote log/URL невозможны без target | `BLOCKED` только для remote: нет Git origin и server/staging access |
-| I1-ACC-018 | Два существующих сайта не затронуты | before/after inventory and health | `BLOCKED` только для remote: server access не предоставлен |
+| I1-ACC-017 | Git deployment проходит на staging/disposable host | origin/target и one-command mechanism подготовлены; remote log/URL отсутствуют до server run | `BLOCKED` только для remote execution |
+| I1-ACC-018 | Два существующих сайта не затронуты | mandatory before/after URL, foreign-container и listener guards реализованы | `BLOCKED` до server run с двумя фактическими URL |
 
 ## Связь с 42 аналитическими TC
 
@@ -590,5 +604,5 @@ I2-S44 закрывает только current Woo-injected DOM/client type/acce
 
 ## Условие финального статуса
 
-Локальная Итерация 1 выполнила применимые критерии и имеет разрешённый master prompt статус `READY_FOR_DEPLOYMENT`. Пункты I1-ACC-017/018 требуют отсутствующего server/staging access, поэтому серверный статус остаётся `BLOCKED / NOT_DEPLOYED`; `DEPLOYED` не заявляется. Открытые `DEC-001…020` ограничивают будущий коммерческий scope, но не отменяют завершение независимого технического baseline.
+Локальная Итерация 1 выполнила применимые критерии и имеет разрешённый master prompt статус `READY_FOR_DEPLOYMENT`. Пункты I1-ACC-017/018 требуют фактического server run и before/after evidence, поэтому серверный статус остаётся `BLOCKED / NOT_DEPLOYED`; `DEPLOYED` не заявляется. Открытые `DEC-001…020` ограничивают будущий коммерческий scope, но не отменяют завершение независимого технического baseline.
 

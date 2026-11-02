@@ -24,10 +24,10 @@
 | Mobile | `390` и `360` проходят no-overflow, axe baseline и browser-error checks; primary-nav toggle exact-linked с panel, имеет mobile accessible name и сохраняет collapsed→open→collapsed aria/class/visibility state; desktop hidden-toggle/visible-panel boundary отделён | menu keyboard/focus/Escape/outside-click, resize/orientation и утверждённый mobile-макет после DEC-019/020 | `DONE / TECHNICAL` для `I2-S42` и provisional adaptation; `DESIGN_REVIEW_REQUIRED` |
 | Header city blocked-state | visible delivery trigger имеет exact semantics/name; Enter открывает labelled native dialog с exact DEC-001/014 copy; close auto-focused и Enter exact-restores closed state/trigger focus на `1440/390/360` | real city/geolocation/delivery methods/cost, other dialogs, Escape/backdrop, AT/browser matrix и production delivery | `DONE / TECHNICAL` для `I2-S43`; `FR-DLV-001 partial`, DEC-001/014 open |
 | Local Docker | dev config/build/up и restart persistence пройдены | повторять после инфраструктурных изменений | `DONE` для локального контура |
-| Production Docker | prod config/build/up, smoke и изолированный Caddy CIDR/header drill пройдены локально | remote inventory/preflight и production smoke при появлении доступа | `DONE` для подготовленного контура; server `BLOCKED` |
+| Production Docker | prod config/build/up, smoke и isolated Caddy drill пройдены; отдельный Quick Tunnel override имеет `0` published ports, pinned cloudflared и public-admin deny | выполнить installer на target и сохранить remote before/after evidence | `TESTING / SERVER_VALIDATION_REQUIRED`; server `NOT_DEPLOYED` |
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
-| Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
-| Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
+| Git deployment | `origin/main` и target `176.98.184.23` известны; ff-only production deploy и однокомандный fail-closed Quick Tunnel installer подготовлены | push текущего commit, затем server run | `TESTING`; не DEPLOYED |
+| Server | target известен, но доступ/диагностика и URL двух существующих сайтов не зафиксированы | выполнить installer с двумя URL и сохранить inventory/smoke | `BLOCKED / NOT_DEPLOYED` до remote evidence |
 | Guest My Account | canonical same-origin `/my-account/`; desktop-visible «Войти», mobile-hidden DOM entry; guest login exact POST/action, username/password semantics, nonce/referer, submit и lost-password route; password visibility exact type/accessible-label round-trip; remember-me direct-child checkbox initial unchecked и text-label round-trip; axe/no-overflow/runtime на `1440/390/360` | login/logout, reset, password keyboard/OS/autofill/manager behavior, remember-me POST/server/cookie/session behavior, server-side nonce/CSRF, rate limit, IDOR, roles/orders/privacy и production IAM | `DONE / TECHNICAL` для `I2-S30/S33/S41/S44`; `PBL-009/TC-037/038 partial` |
 | E2E/a11y/visual | текущий Playwright: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; responsive nav/city-dialog, guest My Account/password/remember-me, exact catalog/search/cart/marked+unmarked PDP/category-archive wiring, exact hero restore, AJAX request/cart/checkout guard contracts, exact fixture/user cleanups, marked/unmarked custom-card boundaries, RBAC capability subset и 18 stabilized screenshots проходят; Windows local suite serial | утверждение visual baseline после DEC-019/020; full security/cart/auth matrix/audit | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17/S18/S19/S20/S21/S22/S23/S24/S25/S26/S27/S28/S29/S30/S31/S32/S33/S34/S35/S36/S37/S38/S39/S40/S41/S42/S43/S44 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
@@ -37,13 +37,14 @@
 - `DG-001`, `DG-002`, `DG-009`, `DG-010`, `DG-017`, `DG-018` не закрыты.
 - Master systems, integration contracts, real server inventory и legal/privacy inputs отсутствуют.
 - Paper не содержит mobile и формальных tokens; screenshots `390/360` имеют `DESIGN_REVIEW_REQUIRED` и не объявляются pixel-perfect.
-- Git remote/branch и удалённый server target не подтверждены; deployment остаётся `BLOCKED / NOT_DEPLOYED`.
+- Git remote/branch и target подтверждены; отсутствуют server inventory, два фактических site URL и remote run, поэтому deployment остаётся `NOT_DEPLOYED`.
 - В локальной БД есть старые одноимённые `product_cat` вне выбранного demo-набора; `I2-S1` намеренно использует восемь curated IDs. Автоматическое объединение/удаление не выполняется до отдельного master-data решения.
 
 ## Последний подтверждённый прогон
 
 - Playwright: `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`.
-- Playwright env preflight: `6 passed`; no-target/unsafe-target/partial-admin states fail closed before browser.
+- Playwright/deployment preflight: `10 passed`; no-target/unsafe-target/partial-admin states и Quick Tunnel isolation guards fail closed.
+- Quick Tunnel local package: Bash syntax `PASS`; Compose config `PASS` с `0` published ports; Caddy validation `PASS`; official cloudflared `2026.10.7` image/version `PASS`; remote execution не выполнялось.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Visual evidence: исторические два последовательных I2-S17 targeted-прогона по 18 capture points прошли `18/18`; два I2-S20 targeted run прошли `19/19` (comparator + 18 captures) без hash changes, serial Windows full regression также сохранил все 19 repository PNG.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.

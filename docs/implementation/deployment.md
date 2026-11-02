@@ -1,7 +1,7 @@
 # Развёртывание
 
 **Текущий серверный статус:** `NOT_DEPLOYED`.  
-Серверный доступ не предоставлен. Два существующих сайта, занятые порты, reverse proxy и ресурсы целевого сервера фактически не проверялись. Локальные проверки не меняют статус на `DEPLOYED`.
+Target `176.98.184.23` и Git `origin` подтверждены, но серверный запуск не выполнялся. Два существующих сайта, занятые порты, reverse proxy и ресурсы target фактически не проверялись. Локальные проверки не меняют статус на `DEPLOYED`.
 
 ## Локальный запуск
 
@@ -60,6 +60,32 @@ docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml config 
 
 Caddy profile предназначен только для контролируемого HTTP/IP demo-доступа и ограничивает admin по CIDR. Для публичной административной панели обязателен VPN, SSH tunnel либо согласованный HTTPS/TLS edge с доверенным сертификатом; `auto_https off` не выполняет `NFR-SEC-003`.
 
+## Однокомандный Quick Tunnel preview
+
+Этот вариант предназначен для временной демонстрации без изменения host Caddy и без публикации нового server port. Требования на сервере: Docker Engine с Compose v2, Git, curl, OpenSSL, gzip и tar. После push commit выполнить на `176.98.184.23`, заменив оба placeholder URL:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://SITE_1.EXAMPLE https://SITE_2.EXAMPLE' bash
+```
+
+Оба URL обязательны: фактические домены двух сайтов отсутствуют в репозитории и истории, поэтому скрипт не угадывает их. Он fail-closed проверяет их HTTP(S)-health до любых Docker-изменений и после запуска.
+
+Workflow:
+
+1. проверить публичный IPv4 target, clean checkout, свободное место и два существующих URL;
+2. снять read-only snapshot foreign containers и listeners 80/443;
+3. отклонить конфликтующие containers/networks/volumes `avtozakup_*`;
+4. создать mode-600 `.env.quick` со случайными секретами либо сохранить существующий;
+5. при повторном deploy создать парный DB/uploads backup;
+6. запустить outbound-only `cloudflared`, получить новый `https://*.trycloudflare.com` и атомарно сохранить его как `PUBLIC_URL`;
+7. build/start/recreate только services Compose-проекта `avtozakup`, выполнить идемпотентный bootstrap и public smoke;
+8. подтвердить public admin `403`, неизменность двух URL, foreign container IDs/states и listeners 80/443;
+9. вывести `AVTOZAKUP_PREVIEW_URL=...` последней строкой.
+
+Маршрут: `Cloudflare edge → cloudflared → project Caddy:8080 → WordPress:80`. `compose.quick-tunnel.yaml` не содержит `ports`, не использует host networking и не подключается к сетям двух существующих сайтов. Project Caddy полностью блокирует публичные `/wp-admin/` и `/wp-login.php`, потому что за `cloudflared` нельзя безопасно применять исходное CIDR-правило по адресу посетителя.
+
+Quick Tunnel является временным публичным preview без SLA: URL прекращает работу вместе с connector и обычно меняется после его пересоздания. Автоперезапуск `cloudflared` выключен, чтобы после Docker/host restart не возникал новый URL при старом `WP_HOME`; для восстановления нужно повторить ту же one-command установку. Для стабильного DNS нужен named Cloudflare Tunnel или согласованный production edge; ограничения Quick Tunnel описаны в [официальной документации Cloudflare](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/).
+
 ## Playwright target safety
 
 Playwright всегда требует явный absolute root `BASE_URL`; fallback target отсутствует. URL с subpath, credentials, query, fragment или non-HTTP(S) scheme отклоняется до запуска browser, потому что suite использует root-relative routes.
@@ -115,8 +141,8 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Playwright env preflight: 6 unit tests passed; missing/unsafe target и partial admin-write opt-in fail closed.
-- Playwright: 36 tests, 34 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, demo guards и bounded visual comparator.
+- Playwright/deployment preflight: 10 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены.
+- Playwright: 39 tests, 37 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, demo guards и bounded visual comparator.
 
-Эти результаты относятся к локальному адресу `http://localhost:8086/`. Реального server deployment не было: `NOT_DEPLOYED`.
+Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Реального server deployment не было: `NOT_DEPLOYED`.
 

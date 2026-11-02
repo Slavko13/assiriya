@@ -7,7 +7,7 @@
 ## Текущий статус
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
-- сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
+- сервер: `NOT_DEPLOYED` — target `176.98.184.23` и Git `origin` подтверждены, но server inventory и реальный deploy ещё не выполнялись;
 - последний локальный Playwright-прогон: **37 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
@@ -103,9 +103,21 @@ ENV_FILE=/opt/avtozakup/.env.prod ./scripts/deploy.sh
 
 HTTP по IP допустим только для ограниченной демонстрации без клиентских/платёжных данных. Удалённая админка требует VPN/SSH tunnel либо доверенного HTTPS edge.
 
-Текущая production-конфигурация является HTTP demo-контуром, а не публичным магазином: TLS edge не настроен, сервер не предоставлен, Git `origin` отсутствует, два существующих сайта не инвентаризировались. Реальные поиск и применяемость, VIN/B2B, резервы, checkout, оплата, доставка и возвраты остаются заблокированы открытыми `DEC-001…DEC-020` и отсутствующими интеграционными контрактами.
+Текущая production-конфигурация является demo-контуром, а не публичным магазином: target и Git `origin` известны, но server inventory и реальный запуск отсутствуют, а два существующих сайта ещё не проверялись. Реальные поиск и применяемость, VIN/B2B, резервы, checkout, оплата, доставка и возвраты остаются заблокированы открытыми `DEC-001…DEC-020` и отсутствующими интеграционными контрактами.
 
 Подробный runbook: [`docs/implementation/deployment.md`](docs/implementation/deployment.md).
+
+### Однокомандный временный preview через Cloudflare
+
+После push текущего commit выполнить **на сервере `176.98.184.23`** одну команду, подставив реальные публичные URL двух уже работающих сайтов:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://SITE_1.EXAMPLE https://SITE_2.EXAMPLE' bash
+```
+
+Установщик использует `/opt/avtozakup`, clean `main` и только fast-forward update. Отдельный Compose-проект не публикует host ports, не подключается к сетям существующего Caddy и не выполняет `down`, prune или `--remove-orphans`. До и после запуска проверяются оба URL, foreign container IDs/states и listeners 80/443. При первом запуске создаётся untracked `/opt/avtozakup/.env.quick` с режимом `600` и случайными секретами; при повторном запуске файл и данные сохраняются, а работающий DB/uploads-контур предварительно резервируется.
+
+Последняя строка успешного запуска имеет вид `AVTOZAKUP_PREVIEW_URL=https://...trycloudflare.com`. Это временная публичная preview-ссылка, а не постоянный DNS. Автоперезапуск connector выключен, чтобы не получить новый URL при старом `WP_HOME`; после Docker/host restart нужно повторить ту же команду. Публичные `/wp-admin/`, `/wp-login.php` и login PATH_INFO variants возвращают `403`; Quick Tunnel не используется для администрирования или production-трафика.
 
 ## Документация
 
@@ -121,4 +133,4 @@ HTTP по IP допустим только для ограниченной де�
 - [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md) — правила visual QA и provisional baseline;
 - аналитический источник остаётся в `J:\vlad322\README.md` и `J:\vlad322\docs`.
 
-Итог: локальный пакет имеет статус `READY_FOR_DEPLOYMENT`; серверный статус — `NOT_DEPLOYED`.
+Итог: локальный пакет и изолированный Quick Tunnel installer имеют статус `READY_FOR_DEPLOYMENT`; серверный статус — `NOT_DEPLOYED` до успешного server run и before/after проверок двух сайтов.
