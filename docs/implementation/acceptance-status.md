@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S50:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S51:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -612,6 +612,18 @@ I2-S49 closes only Escape plus the outside-rectangle primary-pointer path for th
 | I2-S50-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
 
 I2-S50 closes only the current pinned Woo/Chrome DOM/keyboard/type/accessibility-label/focus handoff for the guest password-visibility control. It does not prove credentials, submit/POST, successful or failed login, session/cookie/CSRF enforcement, localization, visible-focus manual review, OS capture, autofill/password-manager behavior, screen-reader/AT/browser matrix, cross-Woo-version compatibility or production IAM/security acceptance.
+
+### I2-S51 — guest remember-me keyboard/focus contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S51-ACC-001 | Exact local Tab order | focused password input plus Tab reaches the exact visibility button; the next Tab reaches exact `#rememberme` on `1440/390/360` | `PASS` |
+| I2-S51-ACC-002 | Computed focus style exists | keyboard-focused checkbox has a computed non-`none` box-shadow or non-`none` positive-width outline | `PASS / TECHNICAL` |
+| I2-S51-ACC-003 | Native Space round-trip exact | Space checks then unchecks; checkbox retains focus and the exact visible-label-derived accessible name after both activations | `PASS` |
+| I2-S51-ACC-004 | No auth/navigation mutation | username/password remain empty and pathname remains exact `/my-account/`; pointer S41 round-trip remains passing | `PASS` |
+| I2-S51-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; traceability review finding excluded checkout `TC-040` from claims | `PASS` |
+
+I2-S51 closes only the current pinned Woo/Chrome native checkbox Tab/Space/focus/name round-trip and computed focus-style presence. It does not prove focus contrast or actual rendered visibility, the full form tab order, Enter behavior, credential entry, submit/POST, remember-cookie/session persistence, login/auth/server handling, localization, screen-reader/AT/browser matrix, cross-Woo-version compatibility, full WCAG acceptance or production IAM/security.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -126,10 +126,42 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   await expect(rememberText).toHaveCount(1);
   await expect(rememberText).toBeVisible();
   await expect(rememberText).toContainText(/\S/);
+  const rememberAccessibleName = (await rememberText.innerText()).trim();
+  expect(rememberAccessibleName).toBeTruthy();
+  await expect(rememberCheckbox).toHaveAccessibleName(rememberAccessibleName);
   await rememberText.click();
   await expect(rememberCheckbox).toBeChecked();
   await rememberText.click();
   await expect(rememberCheckbox).not.toBeChecked();
+
+  await password.focus();
+  await page.keyboard.press('Tab');
+  await expect(passwordToggle).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(rememberCheckbox).toBeFocused();
+  const rememberFocusStyle = await rememberCheckbox.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+    return {
+      boxShadow: style.boxShadow,
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+    };
+  });
+  expect(
+    rememberFocusStyle.boxShadow !== 'none' ||
+      (rememberFocusStyle.outlineStyle !== 'none' && rememberFocusStyle.outlineWidth !== '0px'),
+  ).toBe(true);
+  await page.keyboard.press('Space');
+  await expect(rememberCheckbox).toBeChecked();
+  await expect(rememberCheckbox).toBeFocused();
+  await expect(rememberCheckbox).toHaveAccessibleName(rememberAccessibleName);
+  await page.keyboard.press('Space');
+  await expect(rememberCheckbox).not.toBeChecked();
+  await expect(rememberCheckbox).toBeFocused();
+  await expect(rememberCheckbox).toHaveAccessibleName(rememberAccessibleName);
+  expect(await username.inputValue()).toBe('');
+  expect(await password.inputValue()).toBe('');
+  expect(new URL(page.url()).pathname).toBe('/my-account/');
 
   const loginButton = loginForm.locator('button[name="login"]');
   await expect(loginButton).toBeVisible();

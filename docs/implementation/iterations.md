@@ -1419,6 +1419,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Woo/Chrome password-toggle keyboard/type/name/focus-handoff renderer contract.
 
+### I2-S51 — guest remember-me keyboard/focus contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S41`; `PBL-009/PBL-040`, `FR-AUTH-002` renderer/control partial и `NFR-A11Y-002` technical partial; direct Paper control mapping отсутствует. `DG-018` остаётся open; checkout `TC-040`, `TC-037/038` и `NFR-SEC-*` этим срезом не принимаются.
+
+Критерии среза:
+
+- от focused password input первый Tab достигает exact visibility button, второй — exact remember-me checkbox;
+- keyboard-focused checkbox имеет computed non-none box-shadow либо non-none positive-width outline;
+- native Space даёт unchecked→checked→unchecked, сохраняя checkbox focus и exact visible-label-derived accessible name;
+- username/password остаются пустыми, pathname — exact `/my-account/`; existing pointer-label round-trip сохраняется.
+
+Вне scope: focus contrast/actual rendered visibility, full form tab order, Enter, credential entry, submit/POST, remember cookie/session persistence, login/auth/server handling, localization, screen-reader/AT/browser matrix, other Woo/browser versions, full WCAG и production IAM/security acceptance.
+
+Выполнено и проверено:
+
+- production code unchanged: native checkbox, browser Space semantics и existing theme focus style уже удовлетворяют узкому контракту;
+- targeted account scenario: `3 passed` на `1440/390/360`;
+- independent review: code findings отсутствуют; traceability finding закрыт исключением checkout `TC-040` из claims;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Woo/Chrome remember-me native keyboard/focus/name/computed-style renderer contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
