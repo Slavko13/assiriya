@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S17:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S18:** `34` tests = `32 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -210,6 +210,18 @@ I2-S16 закрывает только различимость options в proje
 | I2-S17-ACC-005 | Visual scope заявлен честно | representative artifacts просмотрены; production presentation не менялась; `PROVISIONAL / DESIGN_REVIEW_REQUIRED` сохранён | `PASS` |
 
 I2-S17 закрывает только воспроизводимость actual screenshots. Pixel-perfect/approved baseline не заявляется и остаётся за `DEC-019/020`.
+
+### I2-S18 — curated category input boundary
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S18-ACC-001 | Settings предлагает только root-категории | self-contained temporary root option виден; его child option отсутствует; help явно говорит «до 8 … верхнего уровня» | `PASS` |
+| I2-S18-ACC-002 | Forged input фильтруется fail closed | raw POST: child + duplicate root + 9 roots; сохранены первые 8 unique existing roots в порядке первого вхождения | `PASS` |
+| I2-S18-ACC-003 | Homepage/shop держат один invariant | homepage IDs exact-equal ожидаемому порядку, child отсутствует; shop snapshot exact-equal homepage | `PASS` |
+| I2-S18-ACC-004 | Транзакция полностью обратима | исходный homepage order exact-restored; exact child → root delete; оба GET после cleanup = `404` | `PASS` |
+| I2-S18-ACC-005 | Regression/data/visual не ухудшены | PHP lint; targeted `1 passed`; existing CRUD `1 passed`; full `34`: `32 passed`, `2 skipped`; 18 hashes unchanged; inventory products/temp SKU/temp categories `10/0/0` | `PASS` |
+
+I2-S18 закрывает только Settings/runtime top-level/max-8 boundary. Production taxonomy master, hierarchy design, legacy merge/delete/redirect policy и RBAC остаются open.
 
 ## Технические критерии Итерации 1
 

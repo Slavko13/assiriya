@@ -38,6 +38,32 @@ test.describe('WordPress administration', () => {
     ]);
   }
 
+  async function submitCategoryIds(page: Page, categoryIds: string[]): Promise<void> {
+    await page.goto('/wp-admin/admin.php?page=avtozakup');
+    const categorySelect = page.locator('#category_ids');
+    await expect(categorySelect).toBeVisible();
+    await categorySelect.evaluate((element, ids) => {
+      const select = element as HTMLSelectElement;
+      const form = select.form;
+      if (!form) {
+        throw new Error('Category select must belong to the Settings form');
+      }
+
+      select.disabled = true;
+      ids.forEach((id) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = select.name;
+        input.value = id;
+        form.appendChild(input);
+      });
+    }, categoryIds);
+    await Promise.all([
+      page.waitForURL(/settings-updated=true/),
+      page.locator('#submit').click(),
+    ]);
+  }
+
   test('logs in and exposes the Автозакуп menu without modifying data', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
 
@@ -110,6 +136,159 @@ test.describe('WordPress administration', () => {
       })),
     );
     expect(shopCategories).toEqual(homeCategories);
+
+    expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+    expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+  });
+
+  test('enforces the top-level eight-category boundary and restores the original order', async ({ page }, testInfo) => {
+    testInfo.setTimeout(60_000);
+    const runtimeErrors = watchRuntimeErrors(page);
+    const marker = Date.now();
+    const rootName = `E2E корневая категория ${marker}`;
+    const childName = `E2E дочерняя категория ${marker}`;
+    let restNonce = '';
+    let rootCategoryId = 0;
+    let childCategoryId = 0;
+    let originalCaptured = false;
+    let originalCategoryIds: string[] = [];
+
+    await logIn(page);
+    await page.goto('/wp-admin/');
+    restNonce = await page.evaluate(() => {
+      const settings = (window as Window & { wpApiSettings?: { nonce?: string } }).wpApiSettings;
+      return settings?.nonce ?? '';
+    });
+    expect(restNonce, 'WordPress REST nonce should be exposed to an authenticated administrator').not.toBe('');
+    const requestHeaders = { 'X-WP-Nonce': restNonce };
+
+    try {
+      await page.goto('/', { waitUntil: 'networkidle' });
+      originalCategoryIds = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('data-category-id') ?? ''),
+      );
+      originalCaptured = true;
+      expect(originalCategoryIds).toHaveLength(8);
+      expect(originalCategoryIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+
+      await page.goto('/wp-admin/admin.php?page=avtozakup');
+      await expect(page.locator('#category_ids + .description')).toHaveText('Можно выбрать до 8 категорий верхнего уровня.');
+      const existingRootCategoryIds = await page.locator('#category_ids option').evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value),
+      );
+      expect(existingRootCategoryIds.length).toBeGreaterThanOrEqual(8);
+      const selectedBefore = await page.locator('#category_ids option:checked').evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value),
+      );
+      expect([...selectedBefore].sort()).toEqual([...originalCategoryIds].sort());
+
+      const rootResponse = await page.request.post('/wp-json/wc/v3/products/categories', {
+        headers: requestHeaders,
+        data: {
+          name: rootName,
+          slug: `e2e-root-category-${marker}`,
+          parent: 0,
+        },
+      });
+      expect(rootResponse.ok(), await rootResponse.text()).toBeTruthy();
+      const rootCategory = await rootResponse.json();
+      rootCategoryId = Number(rootCategory.id);
+      expect(rootCategoryId).toBeGreaterThan(0);
+      expect(Number(rootCategory.parent)).toBe(0);
+
+      const childResponse = await page.request.post('/wp-json/wc/v3/products/categories', {
+        headers: requestHeaders,
+        data: {
+          name: childName,
+          slug: `e2e-child-category-${marker}`,
+          parent: rootCategoryId,
+        },
+      });
+      expect(childResponse.ok(), await childResponse.text()).toBeTruthy();
+      const childCategory = await childResponse.json();
+      childCategoryId = Number(childCategory.id);
+      expect(childCategoryId).toBeGreaterThan(0);
+      expect(Number(childCategory.parent)).toBe(rootCategoryId);
+
+      await page.goto('/wp-admin/admin.php?page=avtozakup');
+      await expect(page.locator(`#category_ids option[value="${rootCategoryId}"]`)).toHaveCount(1);
+      await expect(page.locator(`#category_ids option[value="${childCategoryId}"]`)).toHaveCount(0);
+
+      const submittedRootIds = [String(rootCategoryId), ...originalCategoryIds];
+      expect(new Set(submittedRootIds).size).toBe(9);
+      const expectedCategoryIds = submittedRootIds.slice(0, 8);
+      await submitCategoryIds(page, [
+        String(childCategoryId),
+        submittedRootIds[0],
+        ...submittedRootIds,
+      ]);
+
+      const selectedAfter = await page.locator('#category_ids option:checked').evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value),
+      );
+      expect([...selectedAfter].sort()).toEqual([...expectedCategoryIds].sort());
+      await expect(page.locator(`#category_ids option[value="${childCategoryId}"]`)).toHaveCount(0);
+
+      await page.goto('/', { waitUntil: 'networkidle' });
+      const homeCategories = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+        cards.map((card) => ({
+          id: card.getAttribute('data-category-id') ?? '',
+          href: (card as HTMLAnchorElement).href,
+        })),
+      );
+      expect(homeCategories.map(({ id }) => id)).toEqual(expectedCategoryIds);
+      expect(homeCategories.some(({ id }) => id === String(childCategoryId))).toBe(false);
+
+      const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
+      expect(shopUrl).toBeTruthy();
+      await page.goto(shopUrl!, { waitUntil: 'networkidle' });
+      const shopCategories = await page.locator('.az-shop-categories .az-category-card').evaluateAll((cards) =>
+        cards.map((card) => ({
+          id: card.getAttribute('data-category-id') ?? '',
+          href: (card as HTMLAnchorElement).href,
+        })),
+      );
+      expect(shopCategories).toEqual(homeCategories);
+    } finally {
+      try {
+        if (originalCaptured) {
+          await submitCategoryIds(page, originalCategoryIds);
+          await page.goto('/', { waitUntil: 'networkidle' });
+          const restoredCategoryIds = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+            cards.map((card) => card.getAttribute('data-category-id') ?? ''),
+          );
+          expect(restoredCategoryIds).toEqual(originalCategoryIds);
+        }
+      } finally {
+        try {
+          if (childCategoryId > 0 && restNonce) {
+            const deleteResponse = await page.request.delete(
+              `/wp-json/wc/v3/products/categories/${childCategoryId}?force=true`,
+              { headers: requestHeaders },
+            );
+            expect(deleteResponse.ok(), await deleteResponse.text()).toBeTruthy();
+            const verifyCleanupResponse = await page.request.get(
+              `/wp-json/wc/v3/products/categories/${childCategoryId}`,
+              { headers: requestHeaders },
+            );
+            expect(verifyCleanupResponse.status()).toBe(404);
+          }
+        } finally {
+          if (rootCategoryId > 0 && restNonce) {
+            const deleteResponse = await page.request.delete(
+              `/wp-json/wc/v3/products/categories/${rootCategoryId}?force=true`,
+              { headers: requestHeaders },
+            );
+            expect(deleteResponse.ok(), await deleteResponse.text()).toBeTruthy();
+            const verifyCleanupResponse = await page.request.get(
+              `/wp-json/wc/v3/products/categories/${rootCategoryId}`,
+              { headers: requestHeaders },
+            );
+            expect(verifyCleanupResponse.status()).toBe(404);
+          }
+        }
+      }
+    }
 
     expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
     expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);

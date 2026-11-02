@@ -73,7 +73,7 @@ function avtozakup_heading_lines( string $value, bool $accent_first = false ): v
 function avtozakup_home_categories(): array {
 	$settings = avtozakup_home_settings();
 	$ids = array_values( array_filter( array_map( 'absint', (array) $settings['featured_category_ids'] ) ) );
-	$args = array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'number' => 8 );
+	$args = array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'parent' => 0, 'number' => 8 );
 	if ( $ids ) {
 		$args['include'] = $ids;
 		$args['orderby'] = 'include';

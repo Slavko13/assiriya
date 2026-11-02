@@ -30,6 +30,7 @@
 | TECH-024 | 2026-11-02 | CSS category illustration является декоративной и исключается из accessibility tree | Произвольный art label не описывает действие ссылки и загрязнял accessible name; видимый term name остаётся единственным именем category link | принято для I2-S15; полный WC/a11y audit продолжается |
 | TECH-025 | 2026-11-02 | Category options в project Settings показывают локальный term ID рядом с именем | В текущей БД много одноимённых legacy terms; `name (#ID)` позволяет администратору различить записи и сверить selected identity без изменения value/taxonomy | принято для I2-S16; ID остаётся instance-local, master/merge policy open |
 | TECH-026 | 2026-11-02 | Actual screenshots проходят единый fail-fast stabilization и сериализованный capture | Параллельные full-page captures конкурировали за lazy-load/paint и меняли 2 из 18 PNG; helper временно отключает smooth scroll, ждёт fonts, прокручивает страницу, проверяет visible images/decoded pixels, возвращает scroll/focus и берёт межпроцессный lock | принято для I2-S17; visual baseline остаётся provisional до DEC-019/020 |
+| TECH-027 | 2026-11-02 | Curated category Settings принимают только 8 существующих root terms в порядке первого вхождения | UI, sanitizer и runtime обязаны одинаково держать I2-S1 top-level/max-8 invariant; forged child/duplicate/9th IDs fail closed без taxonomy mutation | принято для I2-S18; production taxonomy master/legacy cleanup остаются open |
 
 ## Состояние DEC
 

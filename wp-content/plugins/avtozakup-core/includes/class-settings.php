@@ -325,7 +325,7 @@ final class Settings {
 			'hero_secondary_url'   => $this->field( 'hero', 'url', 'Вторая кнопка — ссылка' ),
 			'catalog_title'        => $this->field( 'catalog', 'text', 'Заголовок' ),
 			'catalog_text'         => $this->field( 'catalog', 'textarea', 'Описание' ),
-			'category_ids'         => $this->field( 'catalog', 'categories', 'Категории', 'Можно выбрать несколько категорий.' ),
+			'category_ids'         => $this->field( 'catalog', 'categories', 'Категории', 'Можно выбрать до 8 категорий верхнего уровня.' ),
 			'popular_title'        => $this->field( 'popular', 'text', 'Заголовок' ),
 			'popular_text'         => $this->field( 'popular', 'textarea', 'Описание' ),
 			'popular_product_ids'  => $this->field( 'popular', 'products', 'Товары', 'Показываются только выбранные записи WooCommerce.' ),
@@ -380,7 +380,13 @@ final class Settings {
 			return;
 		}
 
-		$terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
+				'parent'     => 0,
+			)
+		);
 		if ( is_wp_error( $terms ) ) {
 			echo '<p>' . esc_html__( 'Не удалось загрузить категории.', 'avtozakup-core' ) . '</p>';
 			return;
@@ -451,12 +457,20 @@ final class Settings {
 			return array();
 		}
 
-		return array_values(
-			array_filter(
-				$ids,
-				static fn ( int $term_id ): bool => term_exists( $term_id, 'product_cat' ) !== null
-			)
-		);
+		$clean = array();
+		foreach ( $ids as $term_id ) {
+			$term = get_term( $term_id, 'product_cat' );
+			if ( ! $term instanceof WP_Term || 0 !== (int) $term->parent ) {
+				continue;
+			}
+
+			$clean[] = $term_id;
+			if ( 8 === count( $clean ) ) {
+				break;
+			}
+		}
+
+		return $clean;
 	}
 
 	/**

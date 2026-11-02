@@ -575,6 +575,34 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает воспроизводимость actual visual evidence. Утверждение дизайна остаётся заблокировано `DEC-019/020`.
 
+### I2-S18 — curated category input boundary
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040`, enforcement уже заявленного I2-S1 top-level/max-8 invariant; taxonomy/master-data scope не расширяется.
+
+Критерии среза:
+
+- Settings показывает только `product_cat` с `parent=0` и объясняет лимит 8;
+- sanitizer принимает только существующие `WP_Term` той же taxonomy с `parent=0`;
+- unique IDs сохраняют порядок первого вхождения, девятый valid root отбрасывается;
+- homepage повторно применяет `parent=0` и `number=8`, shop filter остаётся defense-in-depth;
+- taxonomy не переименовывается, не объединяется и не очищается.
+
+Вне scope: production taxonomy master, допустимая коммерческая иерархия, legacy cleanup/merge, canonical redirects, external IDs и RBAC matrix.
+
+Выполнено и проверено:
+
+- category Settings query ограничен roots; description изменён на «Можно выбрать до 8 категорий верхнего уровня»;
+- sanitizer последовательно проверяет `get_term`, taxonomy/root identity и останавливается после восьмого valid unique ID;
+- self-contained admin E2E создаёт exact temporary root + child и отправляет hostile payload `child + duplicate root + 9 roots`;
+- targeted boundary `1 passed`; child option отсутствует, root option виден, homepage/shop получают первые 8 roots в точном порядке;
+- исходный homepage order exact-restored; child и root удалены в правильном порядке, оба GET = `404`;
+- PHP lint: `PASS`; existing Woo CRUD `1 passed`; full regression: `34` tests, `32 passed`, `2 intentional skipped`, `0 failed`; 18 visual hashes unchanged;
+- post-full inventory: `10` published products / `0` temporary product SKU / `0` temporary root-or-child category fixtures.
+
+Статус закрывает только fail-closed category selection boundary. Taxonomy master-data и legacy policy остаются open.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
