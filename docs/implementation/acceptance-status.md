@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S48:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S49:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -587,6 +587,19 @@ I2-S47 closes only the current theme/Chrome fail-closed status renderer for alre
 | I2-S48-ACC-006 | Responsive/regression gates preserved | PHP/JS syntax `PASS`; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; analyst review no findings | `PASS` |
 
 I2-S48 closes only the current provisional 390/360 Chrome computed accessible-name round-trip. It does not prove announcement by a real screen reader, live-region behavior, AT/browser matrix, visible icon/text state, focus trap/outside-click, resize/orientation, approved mobile design, full WCAG/TC-040 or production navigation acceptance.
+
+### I2-S49 — native dialog Escape/outside-pointer dismissal
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S49-ACC-001 | Contact Escape dismissal exact | exact contact opener reopens labelled native dialog; Escape hides/removes `open` and returns focus opener | `PASS` |
+| I2-S49-ACC-002 | Contact outside-pointer path exact | child title click preserves open; helper derives an actual viewport corner outside dialog rect and real mouse click closes/restores opener | `PASS` |
+| I2-S49-ACC-003 | Mobile nav independence exact | after both contact dismissals mobile nav remains expanded/visible with name `Закрыть меню`; explicit final click restores collapsed/open-label state | `PASS` |
+| I2-S49-ACC-004 | Shared status Escape dismissal exact | exact city opener reopens shared status dialog; Escape closes/removes `open` and returns city focus | `PASS` |
+| I2-S49-ACC-005 | Shared status outside-pointer path exact | status child-title click stays open; real dynamically outside-rect pointer click closes and restores city focus | `PASS` |
+| I2-S49-ACC-006 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; read-only audit confirms no production change needed | `PASS` |
+
+I2-S49 closes only Escape plus the outside-rectangle primary-pointer path for the two current theme-owned native dialogs in pinned Chrome. Bare-dialog padding/border targets, touch-specific gestures, mobile-nav outside-click, all other openers/keys, cancel interception, nested/dirty dialogs, scroll lock/animation/resize/back, AT/browser matrix and real contact/delivery acceptance remain outside scope.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

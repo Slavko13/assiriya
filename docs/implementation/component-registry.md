@@ -23,8 +23,8 @@
 | B2B banner | UI-SCR002-017 | `front-page.php` | editable copy | info + exact DEC-016 status/focus only | I2-S47 renderer `PASS / TECHNICAL`; DG-009/domain `BLOCKED` |
 | Pickup/delivery block | UI-SCR002-018 | `front-page.php` | editable copy, no tariff | illustrative map/status | SCR-011/012 later; `BLOCKED` |
 | Footer | SCR-002 and full pages | `footer.php` | menus/contact settings | fallback menus/contact modal | общий; `TESTING` |
-| Contact dialog | SCR-001/UI-SCR001-003/004/006 | `header.php`, `footer.php`, `main.js` | contact settings | opener dialog semantics; keyboard open/close; visible phone/email renderer relation; focus returns to actual opener | общий; I2-S45 `PASS / TECHNICAL` renderer partial; channel business acceptance `TESTING` |
-| Status dialog | DG-safe placeholder | `footer.php`, `main.js` | own-key local message allowlist only | vehicle/VIN/B2B/delivery exact explanations; opener focus round-trip; unknown/inherited keys fail closed | I2-S43/S47 `PASS / TECHNICAL`; не считать business UI |
+| Contact dialog | SCR-001/UI-SCR001-003/004/006 | `header.php`, `footer.php`, `main.js` | contact settings | opener semantics; keyboard close; Escape/outside-rect pointer + child-content boundary; visible phone/email renderer relation; opener focus restore | общий; I2-S45/S49 `PASS / TECHNICAL` renderer partial; channel business acceptance `TESTING` |
+| Status dialog | DG-safe placeholder | `footer.php`, `main.js` | own-key local message allowlist only | vehicle/VIN/B2B/delivery exact explanations; close/Escape/outside-rect pointer focus round-trip; unknown/inherited keys fail closed | I2-S43/S47/S49 `PASS / TECHNICAL`; не считать business UI |
 | Button/icon/input primitives | повторяются во всех SCR | `helpers.php`, `main.css` | presentation | default/disabled + keyboard skip-link/focus ring проверены | common library; Iteration 1 `PASS`, полный state set развивается |
 
 ## Визуальные основы

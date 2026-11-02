@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { captureStableVisual } from './visual';
 
@@ -27,6 +27,25 @@ function watchRuntimeErrors(page: Page): RuntimeErrors {
 function expectNoRuntimeErrors(errors: RuntimeErrors): void {
   expect(errors.console, `Browser console errors:\n${errors.console.join('\n')}`).toEqual([]);
   expect(errors.page, `Uncaught page errors:\n${errors.page.join('\n')}`).toEqual([]);
+}
+
+async function clickOutsideDialogRect(page: Page, dialog: Locator): Promise<void> {
+  const point = await dialog.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const inset = 4;
+    const candidates = [
+      { x: inset, y: inset },
+      { x: window.innerWidth - inset, y: inset },
+      { x: inset, y: window.innerHeight - inset },
+      { x: window.innerWidth - inset, y: window.innerHeight - inset },
+    ];
+    const outside = candidates.find(
+      ({ x, y }) => x < rect.left || x > rect.right || y < rect.top || y > rect.bottom,
+    );
+    if (!outside) throw new Error('No viewport corner is outside the dialog rectangle');
+    return outside;
+  });
+  await page.mouse.click(point.x, point.y);
 }
 
 async function expectExactDemoCheckoutNotice(page: Page): Promise<void> {
@@ -253,6 +272,32 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(await contactDialog.getAttribute('open')).toBeNull();
     await expect(contactTrigger).toBeFocused();
 
+    await page.keyboard.press('Enter');
+    await expect(contactDialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(contactDialog).toBeHidden();
+    expect(await contactDialog.getAttribute('open')).toBeNull();
+    await expect(contactTrigger).toBeFocused();
+    if (testInfo.project.name !== 'desktop-chrome-1440') {
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
+    }
+
+    await page.keyboard.press('Enter');
+    await expect(contactDialog).toBeVisible();
+    await contactDialog.locator('#az-contact-title').click();
+    await expect(contactDialog).toBeVisible();
+    await clickOutsideDialogRect(page, contactDialog);
+    await expect(contactDialog).toBeHidden();
+    expect(await contactDialog.getAttribute('open')).toBeNull();
+    await expect(contactTrigger).toBeFocused();
+    if (testInfo.project.name !== 'desktop-chrome-1440') {
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
+    }
+
     if (testInfo.project.name !== 'desktop-chrome-1440') {
       await navToggle.click();
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
@@ -287,6 +332,22 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(statusClose).toHaveCount(1);
     await expect(statusClose).toBeFocused();
     await page.keyboard.press('Enter');
+    await expect(statusDialog).toBeHidden();
+    expect(await statusDialog.getAttribute('open')).toBeNull();
+    await expect(cityTrigger).toBeFocused();
+
+    await page.keyboard.press('Enter');
+    await expect(statusDialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(statusDialog).toBeHidden();
+    expect(await statusDialog.getAttribute('open')).toBeNull();
+    await expect(cityTrigger).toBeFocused();
+
+    await page.keyboard.press('Enter');
+    await expect(statusDialog).toBeVisible();
+    await statusDialog.locator('#az-status-title').click();
+    await expect(statusDialog).toBeVisible();
+    await clickOutsideDialogRect(page, statusDialog);
     await expect(statusDialog).toBeHidden();
     expect(await statusDialog.getAttribute('open')).toBeNull();
     await expect(cityTrigger).toBeFocused();

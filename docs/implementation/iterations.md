@@ -1369,6 +1369,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current provisional mobile Chrome computed accessible-name round-trip.
 
+### I2-S49 — native dialog Escape/outside-pointer dismissal
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S43/I2-S45/I2-S47`; `SCR-001/UI-SCR001-006`, `UI-SCR002-001/FR-DLV-001` safety partial, `PBL-021/026/PBL-040`, `NFR-A11Y-002` technical partial. Contact/delivery workflows не расширяются.
+
+Критерии среза:
+
+- exact contact opener reopens dialog; native Escape closes/removes `open` and returns opener focus;
+- child contact title click stays open; real mouse click at a dynamically selected viewport corner outside `getBoundingClientRect()` closes/restores focus;
+- mobile contact dismissal leaves nav expanded/name Close until explicit exact restore;
+- exact city opener repeats the same Escape plus child-content/outside-rect pointer paths on shared status dialog.
+
+Вне scope: bare-dialog padding/border targets, touch-specific gesture, outside-click mobile nav, all other openers/keys, cancel interception, nested/dirty dialogs, scroll lock/animation/resize/back navigation, AT/browser matrix и real contact/delivery acceptance.
+
+Выполнено и проверено:
+
+- production code unchanged: native Escape and existing target-exact pointer handler already satisfied the tested outside-rect/child-content paths;
+- targeted homepage scenario: `3 passed` на `1440/390/360` после dynamic outside-rect helper;
+- read-only audit: duplicate custom Escape listener не нужен;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current two theme-owned native-dialog Escape/outside-rectangle primary-pointer paths в pinned Chrome.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
