@@ -99,28 +99,34 @@ test('visual artifact comparison retains only explicitly bounded pixel noise', a
   });
 });
 
-test('homepage exposes a visible keyboard focus entry point', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'networkidle' });
+test('theme entrypoints expose a visible skip-link focus transfer', async ({ page }) => {
+  for (const route of ['/', '/delivery/', '/shop/']) {
+    await page.goto(route, { waitUntil: 'networkidle' });
 
-  await page.keyboard.press('Tab');
-  const skipLink = page.locator('.az-skip-link');
-  await expect(skipLink).toBeFocused();
-  await expect(skipLink).toBeVisible();
-  await expect(skipLink).toHaveAttribute('href', '#primary');
+    await page.keyboard.press('Tab');
+    const skipLink = page.locator('.az-skip-link');
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toBeVisible();
+    await expect(skipLink).toBeInViewport({ ratio: 1 });
+    await expect(skipLink).toHaveAttribute('href', '#primary');
 
-  const focusStyle = await skipLink.evaluate((element) => {
-    const style = window.getComputedStyle(element);
-    return {
-      outlineStyle: style.outlineStyle,
-      outlineWidth: style.outlineWidth,
-      boxShadow: style.boxShadow,
-    };
-  });
-  const hasOutline = focusStyle.outlineStyle !== 'none' && focusStyle.outlineWidth !== '0px';
-  const hasFocusRing = focusStyle.boxShadow !== 'none';
-  expect(hasOutline || hasFocusRing, 'Focused skip link should expose a visible outline or focus ring').toBe(true);
+    const focusStyle = await skipLink.evaluate((element) => {
+      const style = window.getComputedStyle(element);
+      return {
+        outlineStyle: style.outlineStyle,
+        outlineWidth: style.outlineWidth,
+        boxShadow: style.boxShadow,
+      };
+    });
+    const hasOutline = focusStyle.outlineStyle !== 'none' && focusStyle.outlineWidth !== '0px';
+    const hasFocusRing = focusStyle.boxShadow !== 'none';
+    expect(hasOutline || hasFocusRing, `Focused skip link should expose a focus style on ${route}`).toBe(true);
 
-  await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/#primary$/);
-  await expect(page.locator('main#primary')).toBeVisible();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/#primary$/);
+    const primary = page.locator('main#primary[tabindex="-1"]');
+    await expect(primary).toHaveCount(1);
+    await expect(primary).toBeVisible();
+    await expect(primary).toBeFocused();
+  }
 });

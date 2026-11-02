@@ -6,6 +6,7 @@
 | Компонент | Источник Paper / UI | Код | Данные | Состояния в Итерации 1 | Переиспользование / статус |
 |---|---|---|---|---|---|
 | Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | desktop/mobile nav click + native Enter/Space + scoped Escape/focus + localized dynamic computed name, contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48/S52 nav `PASS / TECHNICAL`, overall `TESTING` |
+| Skip link / primary landmark | direct Paper control mapping отсутствует | `header.php`, four theme main templates, `main.css` | none | first desktop Tab visible/focus-styled link; Enter fragment + exact main focus transfer on front/page/Woo renderer families | I2-S54 `PASS / TECHNICAL`; generic index runtime, mobile/AT/browser/full WCAG open |
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |
 | Catalog CTA/menu | UI-SCR002-002/012; SCR-005 | `header.php`, `front-page.php`, Woo archive hook | curated `product_cat` | empty + populated; configured shop → category проверен | общий; I2-S1 `PASS / PROVISIONAL` |

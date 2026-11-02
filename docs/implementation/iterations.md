@@ -1495,6 +1495,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Woo/Chrome six-stop local login-form focus-order renderer contract.
 
+### I2-S54 — skip-link target focus transfer
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation existing skip-link baseline; `PBL-040`, `NFR-A11Y-002` technical partial; direct domain FR/Paper control mapping отсутствует. `DG-018` остаётся open; checkout `TC-040`, PBL-010 completion и full WCAG не заявляются.
+
+Критерии среза:
+
+- `front-page.php`, `page.php`, `woocommerce.php`, `index.php` render exact `main#primary[tabindex=-1]`, не добавляя target в sequential Tab order;
+- на `/`, `/delivery/`, `/shop/` first desktop Tab focuses visible exact skip link `href=#primary`;
+- keyboard-focused link имеет computed non-none box-shadow либо non-none positive-width outline;
+- Enter добавляет `#primary`, exact visible target становится focused activeElement;
+- runtime generic `index.php` не заявляется: для него в срезе только source и PHP-lint evidence.
+
+Вне scope: mobile behavior, every route/template combination, focus contrast/manual appearance, screen-reader announcement, AT/browser matrix, full-page tab order, routing/SEO/content, full WCAG и business/production acceptance.
+
+Выполнено и проверено:
+
+- pre-fix diagnostic: fragment/visibility passed, `main#primary` focus assertion failed;
+- production fix: four theme templates получили одинаковый `tabindex=-1`; PHP lint `4 passed`;
+- post-fix targeted three-route desktop scenario: `1 passed`;
+- independent review: implementation/mapping accepted, generic-index runtime claim explicitly excluded;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned desktop Chrome skip-link focus transfer for representative front/page/Woo renderer families.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

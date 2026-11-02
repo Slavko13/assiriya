@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S53:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S54:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -648,6 +648,18 @@ I2-S52 closes only the current provisional Chrome `390/360` native Space state/n
 | I2-S53-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
 
 I2-S53 closes only the current pinned Woo/Chrome six-stop local login-form forward/reverse focus order and end-of-each-leg URL/state stability under Tab/Shift+Tab input. It does not prove entry from before username, behavior after the lost-password anchor, wrap/cycle/focus trap, full-page order, focus-style visibility/contrast for every control, click/Enter/Space activation, credential validation, submit/POST, login/session/cookies, lost-password recovery, localization, screen-reader/AT/browser matrix, cross-Woo-version compatibility, full WCAG or production IAM/security. `DG-002/018` remain open; `TC-040`, `TC-037/038` and `FR-AUTH-003` are not claimed.
+
+### I2-S54 — skip-link target focus transfer
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S54-ACC-001 | Main target is programmatically focusable without joining sequential order | `front-page.php`, `page.php`, `woocommerce.php`, `index.php` each render exact `main#primary[tabindex="-1"]`; PHP lint passes all four | `PASS / SOURCE` |
+| I2-S54-ACC-002 | Representative entrypoints expose the exact skip link | on `/`, `/delivery/`, `/shop/`, first desktop Tab focuses visible `.az-skip-link[href="#primary"]` | `PASS` |
+| I2-S54-ACC-003 | Skip link has a computed focus style | each representative route reports a non-`none` box-shadow or non-`none` positive-width outline while the link is keyboard-focused | `PASS / TECHNICAL` |
+| I2-S54-ACC-004 | Enter transfers focus to primary content | on each representative route Enter yields URL ending `#primary`; exact visible `main#primary[tabindex="-1"]` becomes activeElement | `PASS` |
+| I2-S54-ACC-005 | Regression/data gates preserved | pre-fix focus assertion failed as expected; post-fix targeted `1 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S54 closes only the pinned desktop Chrome skip-link focus-transfer path for representative front-page, regular-page and Woo renderer families. `index.php` has source/lint evidence but no stable runtime route in this slice. It does not prove mobile behavior, every route/template combination, actual focus-style contrast/manual appearance, screen-reader announcement, AT/browser matrix, full-page tab order, routing/SEO/content, full WCAG or business acceptance. `DG-018` remains open; checkout `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

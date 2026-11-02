@@ -7,7 +7,7 @@ $maintenance_products = avtozakup_home_products( 'maintenance_product_ids' );
 $stock_products = avtozakup_home_products( 'stock_product_ids' );
 $shop_url = avtozakup_wc_page_url( 'shop' );
 ?>
-<main id="primary" class="az-main">
+<main id="primary" class="az-main" tabindex="-1">
 	<section class="az-hero az-container" aria-labelledby="az-hero-title">
 		<div class="az-hero__vehicle">
 			<h1 id="az-hero-title"><?php avtozakup_heading_lines( (string) $settings['hero_title'], true ); ?></h1>
