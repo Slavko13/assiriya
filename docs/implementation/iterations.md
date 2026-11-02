@@ -849,6 +849,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только mutation-isolation cleanup конкретного root/child category fixture при выполнении `finally`.
 
+### I2-S28 — exact unmarked Woo fixture fallback cleanup
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040` test mutation isolation; поддерживает `I2-S8/S13/S22/S23`; production behavior не меняется.
+
+Критерии среза:
+
+- unique SKU/category slug известны до REST create и exact-equal response;
+- normal run всегда выполняет exact SKU/slug lookup и сверяет известный ID;
+- found IDs попадают в strict-filtered deduplicated union до validation;
+- cleanup идёт product → category, затем проверяется Settings no-mutation snapshot;
+- каждый удалённый ID даёт `404`, repeated exact lookup — `0`;
+- lookup/validation error пробрасывается после попытки available union cleanup, category cleanup остаётся во внешнем `finally`.
+
+Вне scope: hard kill, старые fixtures других marker, отказ delete/БД/сети, concurrent run, error aggregation, DB transaction/rollback и production lifecycle/master/RBAC.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только mutation-isolation cleanup конкретного unmarked product/category fixture при выполнении `finally`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

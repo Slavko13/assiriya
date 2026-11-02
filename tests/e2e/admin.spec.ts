@@ -673,6 +673,7 @@ test.describe('WordPress administration', () => {
       const createdProduct = await productResponse.json();
       productId = Number(createdProduct.id);
       expect(productId).toBeGreaterThan(0);
+      expect(createdProduct.sku).toBe(sku);
       expect(createdProduct.permalink).toBeTruthy();
 
       await page.goto('/shop/?orderby=date', { waitUntil: 'networkidle' });
@@ -758,18 +759,27 @@ test.describe('WordPress administration', () => {
       try {
         if (restNonce) {
           const lookupUrl = `/wp-json/wc/v3/products?sku=${encodeURIComponent(sku)}&per_page=10`;
-          let cleanupIds = productId > 0 ? [productId] : [];
+          const cleanupIds = new Set<number>(productId > 0 ? [productId] : []);
+          let lookupError: unknown;
+          let lookupFailed = false;
 
-          if (cleanupIds.length === 0) {
+          try {
             const lookupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
             expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
             const lookupProducts = await lookupResponse.json();
-            cleanupIds = lookupProducts
+            const exactLookupIds = lookupProducts
               .filter((product: { id?: number; sku?: string }) => product.sku === sku && Number(product.id) > 0)
               .map((product: { id: number }) => Number(product.id));
+            exactLookupIds.forEach((id: number) => cleanupIds.add(id));
+            if (productId > 0) {
+              expect(exactLookupIds).toContain(productId);
+            }
+          } catch (error) {
+            lookupFailed = true;
+            lookupError = error;
           }
 
-          for (const cleanupId of [...new Set(cleanupIds)]) {
+          for (const cleanupId of cleanupIds) {
             const deleteProductResponse = await page.request.delete(`/wp-json/wc/v3/products/${cleanupId}?force=true`, {
               headers: requestHeaders,
             });
@@ -778,6 +788,10 @@ test.describe('WordPress administration', () => {
               headers: requestHeaders,
             });
             expect(deletedProductResponse.status()).toBe(404);
+          }
+
+          if (lookupFailed) {
+            throw lookupError;
           }
 
           const verifyCleanupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
@@ -789,20 +803,29 @@ test.describe('WordPress administration', () => {
         try {
           if (restNonce) {
             const lookupUrl = `/wp-json/wc/v3/products/categories?slug=${encodeURIComponent(categorySlug)}&per_page=100`;
-            let cleanupIds = categoryId > 0 ? [categoryId] : [];
+            const cleanupIds = new Set<number>(categoryId > 0 ? [categoryId] : []);
+            let lookupError: unknown;
+            let lookupFailed = false;
 
-            if (cleanupIds.length === 0) {
+            try {
               const lookupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
               expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
               const lookupCategories = await lookupResponse.json();
-              cleanupIds = lookupCategories
+              const exactLookupIds = lookupCategories
                 .filter((category: { id?: number; slug?: string }) => (
                   category.slug === categorySlug && Number(category.id) > 0
                 ))
                 .map((category: { id: number }) => Number(category.id));
+              exactLookupIds.forEach((id: number) => cleanupIds.add(id));
+              if (categoryId > 0) {
+                expect(exactLookupIds).toContain(categoryId);
+              }
+            } catch (error) {
+              lookupFailed = true;
+              lookupError = error;
             }
 
-            for (const cleanupId of [...new Set(cleanupIds)]) {
+            for (const cleanupId of cleanupIds) {
               const deleteCategoryResponse = await page.request.delete(
                 `/wp-json/wc/v3/products/categories/${cleanupId}?force=true`,
                 { headers: requestHeaders },
@@ -813,6 +836,10 @@ test.describe('WordPress administration', () => {
                 { headers: requestHeaders },
               );
               expect(deletedCategoryResponse.status()).toBe(404);
+            }
+
+            if (lookupFailed) {
+              throw lookupError;
             }
 
             const verifyCleanupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });

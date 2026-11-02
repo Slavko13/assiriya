@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S27:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S28:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -331,6 +331,18 @@ I2-S26 закрывает только identity одного AJAX-added demo ite
 | I2-S27-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S27 закрывает только exact fallback cleanup текущего root/child fixture при выполнении `finally`. Hard kill, старые slugs других marker, отказ delete/БД/сети, concurrency, error aggregation и transactional rollback остаются вне scope.
+
+### I2-S28 — exact unmarked Woo fixture fallback cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S28-ACC-001 | Cleanup identifiers подтверждены независимо от ID | unique SKU/category slug известны до create; REST product возвращает exact SKU, category — exact slug | `PASS` |
+| I2-S28-ACC-002 | Normal run проверяет exact lookup и сохраняет найденные IDs | SKU/slug lookup выполняются всегда; strict filters требуют exact identifier и positive ID; found IDs добавляются в union до known-ID validation | `PASS` |
+| I2-S28-ACC-003 | Cleanup остаётся узким и dependency-safe | удаляется deduplicated known/found union; порядок product → category; каждый ID даёт `404`, repeated exact lookup — `0` | `PASS` |
+| I2-S28-ACC-004 | Lookup error не отменяет доступный cleanup | validation/lookup error сохраняется; доступный union удаляется, затем исходная ошибка пробрасывается; outer `finally` сохраняет достижимость category cleanup и Settings snapshot | `PASS` |
+| I2-S28-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S28 закрывает только exact fallback cleanup одного unmarked product/category fixture при выполнении `finally`. Hard kill, старые fixtures других marker, отказ delete/БД/сети, concurrency, error aggregation и transactional rollback остаются вне scope.
 
 ## Технические критерии Итерации 1
 
