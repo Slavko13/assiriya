@@ -72,7 +72,12 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(navToggle).toHaveCount(1);
     await expect(navToggle).toHaveAttribute('type', 'button');
     await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(navToggle.locator('.screen-reader-text')).toHaveText('Открыть меню');
+    expect(await navToggle.getAttribute('aria-label')).toBeNull();
+    await expect(navToggle).toHaveAttribute('data-nav-open-label', 'Открыть меню');
+    await expect(navToggle).toHaveAttribute('data-nav-close-label', 'Закрыть меню');
+    const navLabel = navToggle.locator('.screen-reader-text[data-nav-label]');
+    await expect(navLabel).toHaveCount(1);
+    await expect(navLabel).toHaveText('Открыть меню');
     await expect(navPanel).toHaveCount(1);
     await expect(navPanel).not.toHaveClass(/\bis-open\b/);
 
@@ -151,10 +156,14 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
       await expect(navPanel).toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeVisible();
+      await expect(navLabel).toHaveText('Закрыть меню');
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
       await navToggle.click();
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+      await expect(navLabel).toHaveText('Открыть меню');
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
 
       await navToggle.focus();
       await expect(navToggle).toBeFocused();
@@ -162,17 +171,20 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
       await expect(navPanel).toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
       await expect(navToggle).toBeFocused();
       await page.keyboard.press('Escape');
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
 
       await page.keyboard.press('Enter');
       await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
       await expect(navPanel).toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
       const firstNavLink = navPanel.getByRole('link', { name: 'Выбрать автомобиль', exact: true });
       await expect(firstNavLink).toHaveCount(1);
       await page.keyboard.press('Tab');
@@ -181,12 +193,14 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
 
       await page.keyboard.press('Escape');
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
     }
 
@@ -200,6 +214,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     if (testInfo.project.name !== 'desktop-chrome-1440') {
       await navToggle.click();
       await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
     }
 
     const contactTrigger = page.locator(
@@ -243,6 +258,7 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
     }
 
     const cityTrigger = page.locator(

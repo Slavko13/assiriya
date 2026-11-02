@@ -4,9 +4,15 @@
   const navToggle = document.querySelector('[data-nav-toggle]');
   const navPanel = document.querySelector('[data-nav-panel]');
   if (navToggle && navPanel) {
+    const navLabel = navToggle.querySelector('[data-nav-label]');
+    const navOpenLabel = navToggle.getAttribute('data-nav-open-label');
+    const navCloseLabel = navToggle.getAttribute('data-nav-close-label');
     const setNavOpen = (open) => {
       navToggle.setAttribute('aria-expanded', String(open));
       navPanel.classList.toggle('is-open', open);
+      if (navLabel && navOpenLabel && navCloseLabel) {
+        navLabel.textContent = open ? navCloseLabel : navOpenLabel;
+      }
     };
     const closeNavOnEscape = (event) => {
       if (event.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true') return;

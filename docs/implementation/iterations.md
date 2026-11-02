@@ -1345,6 +1345,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current theme/Chrome fail-closed blocked-status renderer и keyboard/focus round-trip.
 
+### I2-S48 — mobile primary-nav dynamic accessible name
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S42/I2-S46`; `SCR-002` header, `DG-017/018`, `PBL-010/PBL-040`; `NFR-A11Y-002/TC-040` technical partial. Нового FR/UI business scope нет.
+
+Критерии среза:
+
+- theme server-rendered button содержит localized escaped open/close data labels и один marked hidden-text name source; initial no-JS name — `Открыть меню`;
+- desktop hidden toggle проверяется только на DOM text; mobile initial computed name exact `Открыть меню`;
+- pointer open/close синхронно даёт `Закрыть меню`→`Открыть меню` вместе с existing aria/class state;
+- Enter open и Escape с toggle/first panel link дают тот же name round-trip; closed Escape no-op; contact-nav path также exact-restores open label.
+
+Вне scope: actual screen-reader announcement, live region, AT/browser matrix, visible text/icon change, focus trap/outside-click, link destinations, resize/orientation, approved mobile design, full WCAG/TC-040 и production navigation acceptance.
+
+Выполнено и проверено:
+
+- PHP lint и JavaScript syntax: `PASS`; targeted homepage scenario: `3 passed` на `1440/390/360`;
+- аналитический read-only review: без findings;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current provisional mobile Chrome computed accessible-name round-trip.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

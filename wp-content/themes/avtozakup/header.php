@@ -50,7 +50,7 @@ $az_settings = avtozakup_home_settings();
 				<a href="<?php echo esc_url( avtozakup_wc_page_url( 'myaccount' ) ); ?>"><?php echo avtozakup_icon( 'user' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php esc_html_e( 'Войти', 'avtozakup' ); ?></span></a>
 				<a class="az-cart-link" href="<?php echo esc_url( avtozakup_wc_page_url( 'cart' ) ); ?>"><?php echo avtozakup_icon( 'cart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span><?php esc_html_e( 'Корзина', 'avtozakup' ); ?></span><b><?php echo class_exists( 'WooCommerce' ) && WC()->cart ? esc_html( (string) WC()->cart->get_cart_contents_count() ) : '0'; ?></b></a>
 			</div>
-			<button class="az-mobile-toggle" type="button" aria-expanded="false" aria-controls="az-primary-nav" data-nav-toggle><?php echo avtozakup_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span class="screen-reader-text"><?php esc_html_e( 'Открыть меню', 'avtozakup' ); ?></span></button>
+			<button class="az-mobile-toggle" type="button" aria-expanded="false" aria-controls="az-primary-nav" data-nav-toggle data-nav-open-label="<?php esc_attr_e( 'Открыть меню', 'avtozakup' ); ?>" data-nav-close-label="<?php esc_attr_e( 'Закрыть меню', 'avtozakup' ); ?>"><?php echo avtozakup_icon( 'menu' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span class="screen-reader-text" data-nav-label><?php esc_html_e( 'Открыть меню', 'avtozakup' ); ?></span></button>
 		</div>
 	</div>
 	<div class="az-navrow" id="az-primary-nav" data-nav-panel>

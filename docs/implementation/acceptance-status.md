@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S47:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S48:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -574,6 +574,19 @@ I2-S46 closes only the current provisional 390/360 Chrome renderer Escape/focus 
 | I2-S47-ACC-006 | Responsive/regression gates preserved | PHP/JS syntax `PASS`; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review finding fixed | `PASS` |
 
 I2-S47 closes only the current theme/Chrome fail-closed status renderer for already blocked homepage actions. Vehicle/fitment data, VIN validation/submit/contacts/consent/CRM/SLA, B2B application/onboarding/verification/privileges/prices, persistence, AT/browser matrix and production domain acceptance remain outside scope; DEC-004/016/017/018 stay open.
+
+### I2-S48 — mobile primary-nav dynamic accessible name
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S48-ACC-001 | Localized single name source exact | toggle carries escaped exact open/close data labels; exactly one marked hidden-text node starts with `Открыть меню`; no parallel `aria-label` | `PASS` |
+| I2-S48-ACC-002 | Initial viewport boundary exact | desktop hidden toggle checked at DOM-text level only; mobile visible toggle computed accessible name exact `Открыть меню` | `PASS` |
+| I2-S48-ACC-003 | Pointer name round-trip exact | mobile pointer open synchronizes expanded/panel/name `Закрыть меню`; second click restores collapsed/name `Открыть меню` | `PASS` |
+| I2-S48-ACC-004 | Keyboard name round-trip exact | Enter open gives `Закрыть меню`; Escape from toggle and from first panel link each restores `Открыть меню`; closed Escape keeps it unchanged | `PASS` |
+| I2-S48-ACC-005 | Existing contact-nav path exact | mobile nav opened for contact trigger reports `Закрыть меню`; post-dialog collapse restores expanded false/no class/hidden/name `Открыть меню` | `PASS` |
+| I2-S48-ACC-006 | Responsive/regression gates preserved | PHP/JS syntax `PASS`; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; analyst review no findings | `PASS` |
+
+I2-S48 closes only the current provisional 390/360 Chrome computed accessible-name round-trip. It does not prove announcement by a real screen reader, live-region behavior, AT/browser matrix, visible icon/text state, focus trap/outside-click, resize/orientation, approved mobile design, full WCAG/TC-040 or production navigation acceptance.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

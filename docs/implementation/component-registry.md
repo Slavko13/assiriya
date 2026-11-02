@@ -5,7 +5,7 @@
 
 | Компонент | Источник Paper / UI | Код | Данные | Состояния в Итерации 1 | Переиспользование / статус |
 |---|---|---|---|---|---|
-| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | desktop/mobile nav click + scoped Escape/focus, contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46 nav `PASS / TECHNICAL`, overall `TESTING` |
+| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | desktop/mobile nav click + scoped Escape/focus + localized dynamic computed name, contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48 nav `PASS / TECHNICAL`, overall `TESTING` |
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |
 | Catalog CTA/menu | UI-SCR002-002/012; SCR-005 | `header.php`, `front-page.php`, Woo archive hook | curated `product_cat` | empty + populated; configured shop → category проверен | общий; I2-S1 `PASS / PROVISIONAL` |
