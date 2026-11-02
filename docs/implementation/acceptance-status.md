@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S25:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S26:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -307,6 +307,18 @@ I2-S24 закрывает только exact fallback cleanup одного trans
 | I2-S25-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S25 закрывает только presentation contract текущей seeded marked custom card. `W 914/2` не объявляется подтверждённым OEM/артикулом master-системы; срез не доказывает реальную цену/остаток, commercial CTA, permalink policy, ownership/master или business readiness.
+
+### I2-S26 — exact AJAX cart item identity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S26-ACC-001 | Source product identity фиксируется до mutation | ближайшая custom card имеет numeric `data-product-id`; CTA `data-product_id` exact-equal card ID; title/permalink непусты | `PASS` |
+| I2-S26-ACC-002 | AJAX add остаётся успешным | exact CTA получает успешный `wc-ajax=add_to_cart`, payload без `error`, class `added`, badge `1` | `PASS` |
+| I2-S26-ACC-003 | Cart содержит именно clicked product | `/cart/` содержит ровно одну row; row содержит exact source title, а classic/Blocks title-link ведёт на exact source permalink | `PASS` |
+| I2-S26-ACC-004 | Existing demo guards сохранены | cart/checkout demo notice видим; checkout остаётся disabled/guarded; runtime errors отсутствуют | `PASS` |
+| I2-S26-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S26 закрывает только identity одного AJAX-added demo item на текущем локальном cart renderer. Не доказаны quantity/price/tax, reservation, persistence/concurrency, auth/guest policy, checkout/order/payment и cross-install classic/Blocks acceptance.
 
 ## Технические критерии Итерации 1
 

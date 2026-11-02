@@ -119,7 +119,16 @@ test.describe('АВТОЗАКУП homepage', () => {
 
     const addToCart = page.locator('.az-product-card a.add_to_cart_button[data-product_id]').first();
     await expect(addToCart, 'At least one purchasable in-stock product is required').toBeVisible();
-    await expect(addToCart).toHaveAttribute('data-product_id', /^\d+$/);
+    const sourceCard = addToCart.locator('xpath=ancestor::article[@data-product-id][1]');
+    await expect(sourceCard).toHaveCount(1);
+    const sourceProductId = await sourceCard.getAttribute('data-product-id');
+    expect(sourceProductId).toMatch(/^\d+$/);
+    await expect(addToCart).toHaveAttribute('data-product_id', sourceProductId!);
+    const sourceTitleLink = sourceCard.locator('.az-product-card__title');
+    const sourceProductName = (await sourceTitleLink.innerText()).trim();
+    const sourceProductHref = await sourceTitleLink.getAttribute('href');
+    expect(sourceProductName).not.toBe('');
+    expect(sourceProductHref).toBeTruthy();
 
     const addResponsePromise = page.waitForResponse(
       (response) => response.request().method() === 'POST' && response.url().includes('wc-ajax=add_to_cart'),
@@ -138,6 +147,12 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(new URL(page.url()).pathname, 'The cart link must use the canonical WooCommerce slug').toBe('/cart/');
     const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
     await expect(cartItems).toHaveCount(1);
+    const cartItem = cartItems.first();
+    await expect(cartItem).toContainText(sourceProductName);
+    const cartProductLink = cartItem.locator('.product-name a, a.wc-block-components-product-name');
+    await expect(cartProductLink).toHaveCount(1);
+    await expect(cartProductLink).toHaveText(sourceProductName);
+    await expect(cartProductLink).toHaveAttribute('href', sourceProductHref!);
     await expect(page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: 'демонстрационный каталог' })).toBeVisible();
 
     const checkoutLink = page.locator('.checkout-button, .wc-block-cart__submit-button');

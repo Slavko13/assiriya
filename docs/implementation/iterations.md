@@ -796,6 +796,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только marked custom-card presentation baseline текущего seeded fixture.
 
+### I2-S26 — exact AJAX cart item identity
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `FR-CART-001` technical/demo partial; `PBL-003/PBL-040` regression safety; production behavior не меняется.
+
+Критерии среза:
+
+- source custom card numeric ID, exact title/permalink фиксируются до click;
+- CTA ID exact-equal card ID;
+- AJAX response успешен, payload без error, CTA получает added state, badge становится `1`;
+- единственная cart row имеет exact source title, а classic/Blocks title-link — exact source permalink;
+- existing demo checkout notices, guards и runtime checks сохраняются.
+
+Вне scope: quantity/price/tax, stock reservation, persistence/concurrency, auth/guest policy, checkout/order/payment и cross-install classic/Blocks acceptance.
+
+Выполнено и проверено:
+
+- targeted public viewport scenario: `3 passed`;
+- весь homepage suite: `7 passed`, `2 intentional skipped`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact identity текущего локального AJAX-added demo item.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
