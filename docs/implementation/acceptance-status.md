@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S51:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S52:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -624,6 +624,18 @@ I2-S50 closes only the current pinned Woo/Chrome DOM/keyboard/type/accessibility
 | I2-S51-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; traceability review finding excluded checkout `TC-040` from claims | `PASS` |
 
 I2-S51 closes only the current pinned Woo/Chrome native checkbox Tab/Space/focus/name round-trip and computed focus-style presence. It does not prove focus contrast or actual rendered visibility, the full form tab order, Enter behavior, credential entry, submit/POST, remember-cookie/session persistence, login/auth/server handling, localization, screen-reader/AT/browser matrix, cross-Woo-version compatibility, full WCAG acceptance or production IAM/security.
+
+### I2-S52 — mobile primary-nav native Space activation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S52-ACC-001 | Mobile initial boundary exact | on `390/360` the visible exact toggle starts collapsed, named `Открыть меню` and is focused after the existing closed-Escape contract | `PASS` |
+| I2-S52-ACC-002 | Native Space open exact | Space produces `aria-expanded=true`, panel `is-open` + visible, hidden label/computed name `Закрыть меню`, while toggle retains focus | `PASS` |
+| I2-S52-ACC-003 | Native Space close exact | second Space restores expanded false, removes `is-open`, hides panel, restores hidden label/computed name `Открыть меню` and retains toggle focus | `PASS` |
+| I2-S52-ACC-004 | Route/vertical position remain stable | exact pathname and `window.scrollY` captured before activation remain unchanged after both Space presses | `PASS / TECHNICAL` |
+| I2-S52-ACC-005 | Desktop/regression gates preserved | desktop retains hidden-toggle/visible-panel presentation boundary; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S52 closes only the current provisional Chrome `390/360` native Space state/name/focus/pathname/vertical-scroll round-trip; desktop evidence is the initial presentation boundary only. It does not prove link activation/destinations, full tab order, outside-click, focus trap, full scroll/scroll-lock behavior, resize/orientation, touch/real-device behavior, screen-reader announcement, AT/browser matrix, approved mobile design, full WCAG or production navigation acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

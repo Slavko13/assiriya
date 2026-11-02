@@ -1444,6 +1444,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Woo/Chrome remember-me native keyboard/focus/name/computed-style renderer contract.
 
+### I2-S52 — mobile primary-nav native Space activation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S42/I2-S46/I2-S48`; `SCR-002` header, `PBL-010/PBL-040`, `NFR-A11Y-002` technical partial. `DG-017/018` остаются open; checkout `TC-040` и production navigation acceptance не затрагиваются.
+
+Критерии среза:
+
+- на provisional `390/360` exact visible toggle начинает Space path collapsed, named `Открыть меню` и focused;
+- первый native Space synchronously даёт expanded true, `is-open`, visible panel, hidden/computed name `Закрыть меню` и сохраняет toggle focus;
+- второй Space exact-restores collapsed/no-class/hidden/name `Открыть меню` и сохраняет focus;
+- exact pathname и vertical `window.scrollY` до path не меняются после обеих активаций;
+- desktop сохраняет только existing hidden-toggle/visible-panel initial presentation boundary.
+
+Вне scope: link activation/destinations/content, full tab order, outside-click, focus trap, horizontal/full scroll and scroll-lock, resize/orientation, touch/real device, screen-reader announcement, AT/browser matrix, approved mobile design, full WCAG и production navigation acceptance.
+
+Выполнено и проверено:
+
+- production code unchanged: native button Space и existing shared state helper уже удовлетворяют узкому контракту, duplicate key handler не нужен;
+- targeted homepage scenario: `3 passed` на `1440/390/360`;
+- independent review: blocking findings отсутствуют; pathname/vertical-scroll claim boundary применена;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current provisional mobile Chrome native-Space menu renderer contract; desktop — presentation boundary only.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

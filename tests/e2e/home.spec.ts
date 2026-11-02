@@ -215,6 +215,27 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
 
+      const spacePathname = new URL(page.url()).pathname;
+      const spaceScrollY = await page.evaluate(() => window.scrollY);
+      await page.keyboard.press('Space');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      await expect(navLabel).toHaveText('Закрыть меню');
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
+      await expect(navToggle).toBeFocused();
+      expect(new URL(page.url()).pathname).toBe(spacePathname);
+      expect(await page.evaluate(() => window.scrollY)).toBe(spaceScrollY);
+      await page.keyboard.press('Space');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navLabel).toHaveText('Открыть меню');
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      await expect(navToggle).toBeFocused();
+      expect(new URL(page.url()).pathname).toBe(spacePathname);
+      expect(await page.evaluate(() => window.scrollY)).toBe(spaceScrollY);
+
       await page.keyboard.press('Escape');
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
