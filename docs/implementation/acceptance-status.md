@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S22:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S23:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -271,6 +271,18 @@ I2-S21 закрывает только один WordPress capability boundary д
 | I2-S22-ACC-005 | Cleanup и regression не оставляют следов | product удалён раньше category; exact ID дают `404`, exact SKU/slug lookup — `0`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S22 закрывает только отрицательную presentation-boundary unmarked товара в taxonomy loop. Он не доказывает category ownership/master, hierarchy/legacy policy, production RBAC, актуальность stock/price или lifecycle.
+
+### I2-S23 — unmarked custom homepage card isolation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S23-ACC-001 | Fixture использует custom homepage card без нового test footprint | существующий Woo CRUD создаёт published unmarked product с unique SKU и выбирает его первым только в `popular_product_ids` | `PASS` |
+| I2-S23-ACC-002 | Card identity и route точны | в maintenance section существует ровно одна exact `data-product-id` card; title/media links ведут на exact permalink, title и `Арт. <SKU>` совпадают с fixture | `PASS` |
+| I2-S23-ACC-003 | Unmarked card использует standard presentation branch | stock имеет `is-in-stock` и exact `Есть в наличии`; note — `Срок уточняется при заказе`; card не содержит demo-copy; CTA видима, имеет exact `data-product_id` и текст `В корзину` | `PASS` |
+| I2-S23-ACC-004 | Homepage selections остаются изолированными и восстанавливаются | exact product отсутствует в stock section; category/popular/stock stored order и rendered prefixes exact-restored существующим transactional cleanup | `PASS` |
+| I2-S23-ACC-005 | Regression и cleanup не оставляют следов | product удалён раньше category, оба exact ID дают `404`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S23 закрывает только card-local presentation isolation custom homepage helper. Общий collection-level demo disclaimer остаётся намеренным; срез не доказывает реальную актуальность stock/price, offer/master ownership, production RBAC/lifecycle или responsive/a11y acceptance.
 
 ## Технические критерии Итерации 1
 

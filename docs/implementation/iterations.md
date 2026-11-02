@@ -715,6 +715,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только отрицательную presentation-boundary unmarked товара в taxonomy loop; category ownership/master и business acceptance остаются открытыми.
 
+### I2-S23 — unmarked custom homepage card isolation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040` regression safety; `FR-CAT-002/FR-OFR-002` presentation partial; production behavior не меняется.
+
+Критерии среза:
+
+- существующий transactional Woo CRUD fixture получает unique SKU и остаётся unmarked;
+- exact custom card находится только в maintenance-подборке;
+- title/media links, updated title и SKU совпадают с fixture;
+- stock-copy, note и add-to-cart используют standard non-demo branch;
+- exact product отсутствует в stock-подборке;
+- исходный category/popular/stock order exact-restored; cleanup идёт product → category с ID `404`.
+
+Вне scope: collection-level demo disclaimer, REST-response-without-ID cleanup fallback, real stock/price, commercial CTA semantics, offer/master ownership, production RBAC/lifecycle и responsive/a11y acceptance.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только отрицательную card-local presentation-boundary custom homepage helper.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

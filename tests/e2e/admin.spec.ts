@@ -805,6 +805,7 @@ test.describe('WordPress administration', () => {
     const categoryName = `E2E категория ${marker}`;
     const initialProductName = `E2E товар ${marker}`;
     const updatedProductName = `${initialProductName} — изменён`;
+    const sku = `HOME-E2E-${marker}`;
     let restNonce = '';
     let categoryId = 0;
     let productId = 0;
@@ -851,21 +852,27 @@ test.describe('WordPress administration', () => {
           slug: `e2e-product-${marker}`,
           type: 'simple',
           status: 'publish',
+          sku,
           regular_price: '1234',
           stock_status: 'instock',
           categories: [{ id: categoryId }],
         },
       });
       expect(productResponse.ok(), await productResponse.text()).toBeTruthy();
-      productId = Number((await productResponse.json()).id);
+      const createdProduct = await productResponse.json();
+      productId = Number(createdProduct.id);
       expect(productId).toBeGreaterThan(0);
+      const productPermalink = String(createdProduct.permalink ?? '');
+      expect(productPermalink).not.toBe('');
 
       const updateResponse = await page.request.put(`/wp-json/wc/v3/products/${productId}`, {
         headers: requestHeaders,
         data: { name: updatedProductName },
       });
       expect(updateResponse.ok(), await updateResponse.text()).toBeTruthy();
-      expect((await updateResponse.json()).name).toContain(updatedProductName);
+      const updatedProduct = await updateResponse.json();
+      expect(updatedProduct.name).toBe(updatedProductName);
+      expect(updatedProduct.permalink).toBe(productPermalink);
 
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       const categorySelect = page.locator('#category_ids');
@@ -883,9 +890,30 @@ test.describe('WordPress administration', () => {
 
       await page.goto('/', { waitUntil: 'networkidle' });
       await expect(page.locator('.az-category-card', { hasText: categoryName })).toBeVisible();
-      const productCard = page.locator(`.az-product-card[data-product-id="${productId}"]`);
+      const productCards = page.locator(`.az-product-card[data-product-id="${productId}"]`);
+      await expect(productCards).toHaveCount(1);
+      const maintenanceSection = page.locator('[aria-labelledby="az-maintenance-title"]');
+      const productCard = maintenanceSection.locator(`.az-product-card[data-product-id="${productId}"]`);
       await expect(productCard).toBeVisible();
-      await expect(productCard.locator('.az-product-card__title')).toContainText(updatedProductName);
+      const productTitle = productCard.locator('.az-product-card__title');
+      await expect(productTitle).toHaveText(updatedProductName);
+      await expect(productTitle).toHaveAttribute('href', productPermalink);
+      await expect(productCard.locator('.az-product-card__media')).toHaveAttribute('href', productPermalink);
+      await expect(productCard.locator('.az-product-card__sku')).toHaveText(`Арт. ${sku}`);
+      const productStock = productCard.locator('.az-product-card__stock');
+      await expect(productStock).toHaveClass(/is-in-stock/);
+      await expect(productStock).toHaveText('Есть в наличии');
+      const productNote = productCard.locator('.az-product-card__note');
+      await expect(productNote).toHaveText('Срок уточняется при заказе');
+      await expect(productCard).not.toContainText(/демо/i);
+      const productAction = productCard.locator('.add_to_cart_button.ajax_add_to_cart');
+      await expect(productAction).toHaveCount(1);
+      await expect(productAction).toBeVisible();
+      await expect(productAction).toHaveText('В корзину');
+      await expect(productAction).toHaveAttribute('data-product_id', String(productId));
+      await expect(
+        page.locator(`[aria-labelledby="az-stock-title"] .az-product-card[data-product-id="${productId}"]`),
+      ).toHaveCount(0);
     } finally {
       try {
         if (originalCaptured) {
