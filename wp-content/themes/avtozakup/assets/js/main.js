@@ -38,6 +38,7 @@
 
   const statusDialog = document.querySelector('[data-status-dialog-modal]');
   const statusCopy = statusDialog?.querySelector('[data-status-copy]');
+  let statusTrigger = null;
   const messages = {
     vehicle: 'Подбор по автомобилю ожидает решения об источнике каталога применяемости (DEC-004). Пока доступен каталог WooCommerce.',
     vin: 'VIN-заявка не отправляется: обязательные контакты, согласие и маршрут обработки зависят от DEC-017 и DEC-018.',
@@ -48,9 +49,16 @@
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
       const key = trigger.getAttribute('data-status-dialog');
-      if (statusCopy && messages[key]) statusCopy.textContent = messages[key];
-      if (statusDialog?.showModal) statusDialog.showModal();
+      const hasMessage = key && Object.prototype.hasOwnProperty.call(messages, key);
+      if (!statusDialog?.showModal || !statusCopy || !hasMessage) return;
+      statusCopy.textContent = messages[key];
+      statusTrigger = trigger;
+      statusDialog.showModal();
     });
+  });
+  statusDialog?.addEventListener('close', () => {
+    if (statusTrigger?.isConnected) statusTrigger.focus();
+    statusTrigger = null;
   });
 
   document.querySelectorAll('dialog').forEach((dialog) => {

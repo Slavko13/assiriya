@@ -17,7 +17,7 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 				<label><span><?php esc_html_e( 'Модель', 'avtozakup' ); ?></span><select disabled><option><?php esc_html_e( 'Выберите модель', 'avtozakup' ); ?></option></select></label>
 				<label><span><?php esc_html_e( 'Год выпуска', 'avtozakup' ); ?></span><select disabled><option><?php esc_html_e( 'Выберите год', 'avtozakup' ); ?></option></select></label>
 				<label><span><?php esc_html_e( 'Модификация', 'avtozakup' ); ?></span><select disabled><option><?php esc_html_e( 'Выберите модификацию', 'avtozakup' ); ?></option></select></label>
-				<button class="az-button" type="button" data-status-dialog="vehicle"><?php esc_html_e( 'Подобрать', 'avtozakup' ); ?></button>
+				<button class="az-button" type="button" data-status-dialog="vehicle" aria-haspopup="dialog"><?php esc_html_e( 'Подобрать', 'avtozakup' ); ?></button>
 			</div>
 			<a class="az-hero__vin" href="#vin-request"><?php echo avtozakup_icon( 'vin' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php esc_html_e( 'Не знаете автомобиль? Подбор по VIN', 'avtozakup' ); ?></a>
 			<p id="az-vehicle-note" class="screen-reader-text"><?php esc_html_e( 'Каталог применяемости ожидает согласования источника данных.', 'avtozakup' ); ?></p>
@@ -80,12 +80,12 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 			<p><?php echo esc_html( (string) $settings['vin_text'] ); ?></p>
 			<label for="az-vin"><?php esc_html_e( 'VIN автомобиля', 'avtozakup' ); ?></label><input id="az-vin" type="text" maxlength="17" placeholder="<?php esc_attr_e( 'Введите VIN (17 символов)', 'avtozakup' ); ?>" autocomplete="off">
 			<label for="az-part"><?php esc_html_e( 'Какая деталь нужна', 'avtozakup' ); ?></label><input id="az-part" type="text" placeholder="<?php esc_attr_e( 'Например, передние тормозные колодки', 'avtozakup' ); ?>" autocomplete="off">
-			<div class="az-vin__actions"><button class="az-button" type="button" data-status-dialog="vin"><?php esc_html_e( 'Продолжить →', 'avtozakup' ); ?></button><span><?php esc_html_e( 'Контакты и согласие будут запрошены на согласованном шаге', 'avtozakup' ); ?></span></div>
+			<div class="az-vin__actions"><button class="az-button" type="button" data-status-dialog="vin" aria-haspopup="dialog"><?php esc_html_e( 'Продолжить →', 'avtozakup' ); ?></button><span><?php esc_html_e( 'Контакты и согласие будут запрошены на согласованном шаге', 'avtozakup' ); ?></span></div>
 		</div>
 	</section>
 
 	<section id="business" class="az-business az-container" aria-labelledby="az-business-title">
-		<div class="az-business__copy"><span><?php echo esc_html( (string) $settings['b2b_eyebrow'] ); ?></span><h2 id="az-business-title"><?php avtozakup_heading_lines( (string) $settings['b2b_title'] ); ?></h2><p><?php echo esc_html( (string) $settings['b2b_text'] ); ?></p><button class="az-button" type="button" data-status-dialog="b2b"><?php echo esc_html( (string) $settings['b2b_button_label'] ); ?></button></div>
+		<div class="az-business__copy"><span><?php echo esc_html( (string) $settings['b2b_eyebrow'] ); ?></span><h2 id="az-business-title"><?php avtozakup_heading_lines( (string) $settings['b2b_title'] ); ?></h2><p><?php echo esc_html( (string) $settings['b2b_text'] ); ?></p><button class="az-button" type="button" data-status-dialog="b2b" aria-haspopup="dialog"><?php echo esc_html( (string) $settings['b2b_button_label'] ); ?></button></div>
 		<div class="az-business__benefits"><div><?php echo avtozakup_icon( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Свой склад и поставщики', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Варианты получения под ваш запрос', 'avtozakup' ); ?></span></p></div><div><?php echo avtozakup_icon( 'swap' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Подбор аналогов', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Помогаем сравнить предложения', 'avtozakup' ); ?></span></p></div><div><?php echo avtozakup_icon( 'headset' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Работа с автосервисами', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Персональное обсуждение условий', 'avtozakup' ); ?></span></p></div></div>
 	</section>
 

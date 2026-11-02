@@ -278,6 +278,81 @@ test.describe('АВТОЗАКУП homepage', () => {
     expectNoRuntimeErrors(runtimeErrors);
   });
 
+  test('keeps blocked homepage actions keyboard-safe and fail-closed', async ({ page }) => {
+    const runtimeErrors = watchRuntimeErrors(page);
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    const statusTriggers = page.locator('button[data-status-dialog]');
+    const statusTriggerCount = await statusTriggers.count();
+    expect(statusTriggerCount, 'At least the homepage blocked-action triggers are required').toBeGreaterThanOrEqual(4);
+    for (let index = 0; index < statusTriggerCount; index += 1) {
+      await expect(statusTriggers.nth(index)).toHaveAttribute('type', 'button');
+      await expect(statusTriggers.nth(index)).toHaveAttribute('aria-haspopup', 'dialog');
+    }
+
+    const statusDialog = page.locator(
+      'dialog[data-status-dialog-modal][aria-labelledby="az-status-title"]',
+    );
+    const statusCopy = statusDialog.locator('[data-status-copy]');
+    const statusClose = statusDialog.getByRole('button', { name: 'Закрыть', exact: true });
+    await expect(statusDialog).toHaveCount(1);
+    await expect(statusDialog).toBeHidden();
+    expect(await statusDialog.getAttribute('open')).toBeNull();
+
+    const actions = [
+      {
+        selector: '.az-vehicle-picker button[data-status-dialog="vehicle"]',
+        message: 'Подбор по автомобилю ожидает решения об источнике каталога применяемости (DEC-004). Пока доступен каталог WooCommerce.',
+      },
+      {
+        selector: '#vin-request button[data-status-dialog="vin"]',
+        message: 'VIN-заявка не отправляется: обязательные контакты, согласие и маршрут обработки зависят от DEC-017 и DEC-018.',
+      },
+      {
+        selector: '#business button[data-status-dialog="b2b"]',
+        message: 'B2B-сценарий откроется после утверждения минимального состава, полномочий и условий (DEC-016).',
+      },
+    ];
+    const initialUrl = page.url();
+
+    for (const action of actions) {
+      const trigger = page.locator(action.selector);
+      await expect(trigger).toHaveCount(1);
+      await expect(trigger).toBeVisible();
+      await expect(trigger).toHaveAccessibleName(/.+/);
+      await trigger.focus();
+      await expect(trigger).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(statusDialog).toBeVisible();
+      await expect(statusDialog).toHaveAttribute('open', '');
+      await expect(statusDialog).toHaveAccessibleName('Сценарий ещё согласуется');
+      await expect(statusCopy).toHaveText(action.message);
+      await expect(statusClose).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(statusDialog).toBeHidden();
+      expect(await statusDialog.getAttribute('open')).toBeNull();
+      await expect(trigger).toBeFocused();
+      expect(page.url()).toBe(initialUrl);
+    }
+
+    const failClosedTrigger = page.locator('.az-vehicle-picker button.az-button');
+    const retainedCopy = await statusCopy.innerText();
+    for (const unknownKey of ['unknown', 'constructor', 'toString', '__proto__']) {
+      await failClosedTrigger.evaluate(
+        (element, key) => element.setAttribute('data-status-dialog', key),
+        unknownKey,
+      );
+      await failClosedTrigger.focus();
+      await page.keyboard.press('Enter');
+      await expect(statusDialog).toBeHidden();
+      expect(await statusDialog.getAttribute('open')).toBeNull();
+      await expect(statusCopy).toHaveText(retainedCopy);
+      expect(page.url()).toBe(initialUrl);
+    }
+
+    expectNoRuntimeErrors(runtimeErrors);
+  });
+
   test('adds an available WooCommerce product to the cart over AJAX', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
     await page.goto('/', { waitUntil: 'networkidle' });

@@ -1321,6 +1321,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current provisional mobile Chrome renderer Escape/focus contract.
 
+### I2-S47 — homepage blocked status-dialog router/focus contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `UI-SCR002-011/016/017`; `FR-SRCH-004/FR-VIN-001/002/FR-B2B-001` safety partial; `PBL-007/013/029/031/032/PBL-040`; `NFR-A11Y-002` technical partial. DEC-004/016/017/018 остаются open.
+
+Критерии среза:
+
+- все rendered status buttons имеют type/button dialog semantics; exact Vehicle/VIN/B2B triggers visible и named;
+- focused trigger + Enter открывает один labelled native status dialog с exact existing DEC-blocked copy для каждого route;
+- close auto-focused; Enter exact-closes/removes `open`, returns focus actual opener и не меняет URL;
+- message router uses own-property allowlist; `unknown`, `constructor`, `toString`, `__proto__` не открывают dialog и не меняют retained copy/URL.
+
+Вне scope: Vehicle/fitment source and compatibility, VIN validation/submit/contacts/consent/CRM/SLA, B2B application/onboarding/verification/privileges/prices, persistence, AT/browser matrix и production domain acceptance.
+
+Выполнено и проверено:
+
+- PHP lint двух templates и JavaScript syntax: `PASS`;
+- targeted blocked-actions scenario: `3 passed` на `1440/390/360` после исправления test-only stale locator; hostile inherited-key review finding затем закрыт own-property allowlist;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current theme/Chrome fail-closed blocked-status renderer и keyboard/focus round-trip.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

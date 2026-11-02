@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S46:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S47:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -561,6 +561,19 @@ I2-S45 закрывает только current theme-owned SCR-001 native-dialog
 | I2-S46-ACC-006 | Responsive/regression gates preserved | targeted `3 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; JavaScript syntax `PASS`; independent review no findings | `PASS` |
 
 I2-S46 closes only the current provisional 390/360 Chrome renderer Escape/focus contract. Outside-click, dynamic button name, focus trap/roving tabindex, link activation/destinations, scroll lock, resize/orientation/breakpoint transitions, Space/AT/browser matrix, approved mobile design and production navigation acceptance remain outside scope.
+
+### I2-S47 — homepage blocked status-dialog router/focus contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S47-ACC-001 | Rendered trigger semantics exact | каждый current `button[data-status-dialog]` имеет type button и `aria-haspopup=dialog`; Vehicle/VIN/B2B exact selectors существуют по одному, visible и имеют non-empty accessible name | `PASS` |
+| I2-S47-ACC-002 | Vehicle blocked copy exact | focused Vehicle trigger + Enter открывает единственный labelled dialog с exact DEC-004/catalog-source copy | `PASS` |
+| I2-S47-ACC-003 | VIN/B2B blocked copy exact | focused VIN/B2B trigger + Enter по очереди заменяет copy exact DEC-017/018 и DEC-016 messages; B2B label не hardcoded | `PASS` |
+| I2-S47-ACC-004 | Close/focus/URL exact | каждый open auto-focuses close; Enter closes/removes `open`, returns focus actual opener; page URL exact unchanged | `PASS` |
+| I2-S47-ACC-005 | Router fails closed on hostile keys | own-property allowlist rejects `unknown`, `constructor`, `toString`, `__proto__`; dialog stays hidden, prior copy and URL unchanged | `PASS` |
+| I2-S47-ACC-006 | Responsive/regression gates preserved | PHP/JS syntax `PASS`; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review finding fixed | `PASS` |
+
+I2-S47 closes only the current theme/Chrome fail-closed status renderer for already blocked homepage actions. Vehicle/fitment data, VIN validation/submit/contacts/consent/CRM/SLA, B2B application/onboarding/verification/privileges/prices, persistence, AT/browser matrix and production domain acceptance remain outside scope; DEC-004/016/017/018 stay open.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
