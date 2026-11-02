@@ -27,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`; catalog/search/PDP journeys + category accessible-name/Settings identity and desktop isolation checks | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`; 18 screenshots используют fail-fast fonts/lazy-image/decode stabilization и cross-worker lock; два visual-прогона byte-identical | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -43,6 +43,7 @@
 - Playwright: `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`.
 - Playwright env preflight: `6 passed`; no-target/unsafe-target/partial-admin states fail closed before browser.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
+- Visual evidence: два последовательных targeted-прогона по 18 capture points прошли `18/18`; SHA-256 всех 18 PNG совпали, а последующий полный regression сохранил тот же набор hashes.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
 - Woo category/product CRUD с отражением на главной и cleanup, cart count, classic/Woo Blocks cart/checkout guard и keyboard/focus entry point — `PASS`.
 - Configured shop page → curated categories → «Тормозная система» archive, breadcrumb, products и no-overflow на `1440/390/360` — `PASS`.

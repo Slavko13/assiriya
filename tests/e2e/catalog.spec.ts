@@ -1,8 +1,7 @@
-import { mkdir } from 'node:fs/promises';
-import path from 'node:path';
-
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+
+import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
   console: string[];
@@ -121,14 +120,7 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   }));
   expect(shopPageWidth.scrollWidth).toBeLessThanOrEqual(shopPageWidth.clientWidth + 1);
 
-  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-  await mkdir(visualDiffDirectory, { recursive: true });
-  await page.screenshot({
-    path: path.join(visualDiffDirectory, `catalog-${testInfo.project.name}.png`),
-    fullPage: true,
-    animations: 'disabled',
-    style: '.az-skip-link { display: none !important; }',
-  });
+  await captureStableVisual(page, testInfo, `catalog-${testInfo.project.name}.png`);
 
   const brakes = categoryCards.filter({ hasText: 'Тормозная система' });
   await expect(brakes).toHaveCount(1);
@@ -189,14 +181,7 @@ test('shows explicit demo provenance through shop, product search and PDP', asyn
   await expect(provenance).toContainText('Цена, остаток, срок поставки и применяемость не подтверждены внешними системами');
   await expect(provenance).toContainText('Paper SCR-002, SCR-006, SCR-007, SCR-009');
 
-  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-  await mkdir(visualDiffDirectory, { recursive: true });
-  await page.screenshot({
-    path: path.join(visualDiffDirectory, `product-demo-provenance-${testInfo.project.name}.png`),
-    fullPage: true,
-    animations: 'disabled',
-    style: '.az-skip-link { display: none !important; }',
-  });
+  await captureStableVisual(page, testInfo, `product-demo-provenance-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -265,14 +250,7 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
     `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
   ).toEqual([]);
 
-  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-  await mkdir(visualDiffDirectory, { recursive: true });
-  await page.screenshot({
-    path: path.join(visualDiffDirectory, `product-technical-baseline-${testInfo.project.name}.png`),
-    fullPage: true,
-    animations: 'disabled',
-    style: '.az-skip-link { display: none !important; }',
-  });
+  await captureStableVisual(page, testInfo, `product-technical-baseline-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

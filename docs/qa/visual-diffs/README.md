@@ -51,6 +51,8 @@ report-home-YYYYMMDD.md
 - полная страница после network idle и загрузки изображений;
 - отдельно фиксировать browser console/page errors.
 
+Автоматический capture выполняет общий `tests/e2e/visual.ts`: на время прохода отключает smooth scroll, ждёт fonts, последовательно прокручивает страницу для lazy loading, требует `complete`, положительные natural dimensions и успешный `decode()` у layout-visible изображений, возвращает scroll/focus и только затем снимает full page. Ошибка/таймаут не маскируются. Межпроцессный lock сериализует capture между Playwright workers.
+
 ## Что проверять
 
 - ширины контейнеров, сетку, вертикальный ритм и порядок секций;
@@ -114,6 +116,14 @@ report-home-YYYYMMDD.md
 - targeted catalog/search/PDP: `15 passed`; full regression: `28 tests`, `26 passed`, `2 intentional skipped`, `0 failed`;
 - это не полный translation baseline: breadcrumb, shop result count/sorting и прочие Woo strings остаются открыты;
 - visual `PROVISIONAL / DESIGN_REVIEW_REQUIRED`.
+
+## Deterministic visual evidence I2-S17
+
+- все 6 capture points (`homepage`, `catalog`, два PDP, results и empty search) переведены на общий fail-fast helper; production DOM/CSS/PHP не менялись;
+- каждый capture проверен на `1440/390/360`, всего 18 PNG;
+- до сериализации параллельный прогон менял 2 из 18 hashes, а isolated capture был стабилен; после cross-worker lock два последовательных targeted-прогона дали `18 passed` и byte-identical SHA-256 для всех 18 файлов;
+- полный regression: `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; hashes совпали с последним targeted-прогоном;
+- representative desktop/mobile artifacts просмотрены; baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не объявляется pixel-perfect.
 
 ## Отчёт
 

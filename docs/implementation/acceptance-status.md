@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S16:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S17:** `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -198,6 +198,18 @@ I2-S15 закрывает только accessible name shared category card. П�
 | I2-S16-ACC-005 | Regression не ухудшен | PHP lint; targeted `1 passed`; full `33`: `31 passed`, `2 skipped`, `0 failed` | `PASS` |
 
 I2-S16 закрывает только различимость options в project Settings. Term ID instance-local; production master, legacy cleanup и RBAC остаются open.
+
+### I2-S17 — deterministic visual evidence capture
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S17-ACC-001 | Все actual captures используют единый fail-fast путь | 6 capture points × `1440/390/360` вызывают `captureStableVisual` | `PASS` |
+| I2-S17-ACC-002 | Незагруженное изображение не маскируется | helper ждёт fonts/complete, проверяет natural dimensions и `decode()`; timeout/error бросает исключение | `PASS` |
+| I2-S17-ACC-003 | Параллельные captures детерминированы | межпроцессный exclusive-file lock; два последовательных targeted run: `18 passed` + exact-equal SHA-256 всех 18 PNG | `PASS` |
+| I2-S17-ACC-004 | Полный regression сохраняет visual evidence | full `33`: `31 passed`, `2 skipped`, `0 failed`; все 18 hashes совпали с targeted set | `PASS` |
+| I2-S17-ACC-005 | Visual scope заявлен честно | representative artifacts просмотрены; production presentation не менялась; `PROVISIONAL / DESIGN_REVIEW_REQUIRED` сохранён | `PASS` |
+
+I2-S17 закрывает только воспроизводимость actual screenshots. Pixel-perfect/approved baseline не заявляется и остаётся за `DEC-019/020`.
 
 ## Технические критерии Итерации 1
 

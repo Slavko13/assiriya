@@ -1,8 +1,7 @@
-import { mkdir } from 'node:fs/promises';
-import path from 'node:path';
-
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+
+import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
   console: string[];
@@ -78,32 +77,7 @@ test.describe('АВТОЗАКУП homepage', () => {
       `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
     ).toEqual([]);
 
-    const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-    await mkdir(visualDiffDirectory, { recursive: true });
-    await page.evaluate(async () => {
-      const images = Array.from(document.images);
-      images.forEach((image) => {
-        image.loading = 'eager';
-      });
-      await Promise.all(images.map((image) => image.complete
-        ? Promise.resolve()
-        : new Promise<void>((resolve) => {
-          image.addEventListener('load', () => resolve(), { once: true });
-          image.addEventListener('error', () => resolve(), { once: true });
-          window.setTimeout(resolve, 3_000);
-        })));
-      window.scrollTo(0, 0);
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    });
-    await page.waitForTimeout(150);
-    await page.screenshot({
-      path: path.join(visualDiffDirectory, `homepage-${testInfo.project.name}.png`),
-      fullPage: true,
-      animations: 'disabled',
-      style: '.az-skip-link { display: none !important; }',
-    });
+    await captureStableVisual(page, testInfo, `homepage-${testInfo.project.name}.png`);
 
     expectNoRuntimeErrors(runtimeErrors);
   });

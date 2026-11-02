@@ -549,6 +549,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только различимость одноимённых options в project Settings. Taxonomy cleanup и production master-data остаются open.
 
+### I2-S17 — deterministic visual evidence capture
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040`, regression evidence для `NFR-UX-001—003` и `TC-039/040`; production presentation и design scope не меняются.
+
+Критерии среза:
+
+- все 6 screenshot points используют один helper на `1440/390/360`;
+- smooth scroll временно отключён; fonts, lazy-loaded layout-visible images и decoded pixels готовы до capture;
+- image error/decode/timeout завершает тест ошибкой вместо тихого продолжения;
+- параллельные Playwright workers не выполняют full-page capture одновременно;
+- два одинаковых targeted-прогона дают byte-identical SHA-256 всех 18 PNG.
+
+Вне scope: утверждение Paper/mobile baseline, pixel-perfect redesign, изменение DOM/CSS/PHP и замена provisional visual статуса.
+
+Выполнено и проверено:
+
+- добавлен `tests/e2e/visual.ts`; шесть прежних screenshot blocks заменены общим helper;
+- диагностически подтверждено, что без lock менялись `2/18` hashes, тогда как isolated catalog capture был стабилен; добавлена межпроцессная сериализация;
+- два последовательных targeted-прогона: `18 passed` каждый, все 18 SHA-256 exact-equal;
+- полный regression: `33` tests, `31 passed`, `2 intentional skipped`, `0 failed`; все hashes сохранились;
+- representative homepage/catalog/search/PDP desktop/mobile artifacts просмотрены, lazy images загружены; production-код не менялся.
+
+Статус закрывает воспроизводимость actual visual evidence. Утверждение дизайна остаётся заблокировано `DEC-019/020`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

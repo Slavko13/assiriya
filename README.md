@@ -26,7 +26,7 @@
 - E2E isolation: временный unmarked Woo product не получает demo presentation в каталоге, строгом поиске и PDP; `finally` cleanup и отсутствие temporary SKU проверяются;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
-- Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и screenshots;
+- Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и fail-fast deterministic screenshots;
 - трассировка требований и честные статусы открытых `DEC-001…DEC-020`.
 
 Цены, остатки и сроки на демо-товарах не являются коммерческим предложением. Реальные поиск/применяемость, поставщики, VIN, B2B, checkout, оплата и доставка не активированы до соответствующих решений и интеграций.
@@ -76,7 +76,7 @@ npm run test:e2e
 
 Перед установкой opt-in сверьте exact root `BASE_URL` и убедитесь, что стенд локальный или disposable и принадлежит вам: admin suite временно меняет settings и создаёт/удаляет Woo fixtures. Этот suite не является production smoke; trace/video/screenshot для admin project отключены.
 
-Текущий локальный результ: **33 tests: 31 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
+Текущий локальный результ: **33 tests: 31 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. Все 18 actual screenshots снимаются общим fail-fast helper после загрузки шрифтов, активации lazy images и успешного decode; захват сериализован между workers. Два последовательных visual-прогона дали byte-identical SHA-256 для всех 18 файлов. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
 
 ## Persistence, backup и restore
 

@@ -1,8 +1,7 @@
-import { mkdir } from 'node:fs/promises';
-import path from 'node:path';
-
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+
+import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
   console: string[];
@@ -67,14 +66,7 @@ test('shows a truthful product-search empty state', async ({ page }, testInfo) =
     `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
   ).toEqual([]);
 
-  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-  await mkdir(visualDiffDirectory, { recursive: true });
-  await page.screenshot({
-    path: path.join(visualDiffDirectory, `product-search-empty-${testInfo.project.name}.png`),
-    fullPage: true,
-    animations: 'disabled',
-    style: '.az-skip-link { display: none !important; }',
-  });
+  await captureStableVisual(page, testInfo, `product-search-empty-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -133,14 +125,7 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
     `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
   ).toEqual([]);
 
-  const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
-  await mkdir(visualDiffDirectory, { recursive: true });
-  await page.screenshot({
-    path: path.join(visualDiffDirectory, `product-search-results-${testInfo.project.name}.png`),
-    fullPage: true,
-    animations: 'disabled',
-    style: '.az-skip-link { display: none !important; }',
-  });
+  await captureStableVisual(page, testInfo, `product-search-results-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
