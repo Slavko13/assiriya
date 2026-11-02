@@ -17,6 +17,7 @@
 
 - классическая тема `avtozakup` с desktop 1440 и provisional mobile 390/360;
 - responsive primary navigation: desktop panel остаётся видимым при скрытой toggle-button; на mobile exact control/panel binding, accessible name и `aria-expanded`/`is-open` open→close round-trip проверены на 390/360;
+- header city control остаётся честным blocked-state: keyboard Enter открывает native status dialog с exact DEC-001/014 copy, close получает focus и Enter возвращает focus на trigger на `1440/390/360`;
 - плагин `avtozakup-core`: Settings API главной, безопасный demo seed, checkout guard и интерфейсы будущих адаптеров;
 - 8 демонстрационных категорий верхнего уровня, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references; Settings различает одноимённые options по `#ID` и принимает не более 8 существующих root-категорий;
 - первый срез Итерации 2: единственная header catalog link имеет exact accessible name и same-origin `/shop/` href без query/fragment, фактически открывает настроенную WooCommerce shop page с восемью curated категориями, общими category cards, явной идентичностью по selected term ID, чистыми accessible names и переходом в category archive;

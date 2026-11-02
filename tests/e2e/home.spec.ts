@@ -157,6 +157,36 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navPanel).toBeHidden();
     }
 
+    const cityTrigger = page.locator(
+      'button.az-city[data-status-dialog="delivery"][aria-haspopup="dialog"]',
+    );
+    const statusDialog = page.locator(
+      'dialog[data-status-dialog-modal][aria-labelledby="az-status-title"]',
+    );
+    await expect(cityTrigger).toHaveCount(1);
+    await expect(cityTrigger).toBeVisible();
+    await expect(cityTrigger).toHaveAttribute('type', 'button');
+    await expect(cityTrigger).toHaveAccessibleName('Выбрать город');
+    await expect(statusDialog).toHaveCount(1);
+    await expect(statusDialog).toBeHidden();
+    expect(await statusDialog.getAttribute('open')).toBeNull();
+    await cityTrigger.focus();
+    await expect(cityTrigger).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(statusDialog).toBeVisible();
+    await expect(statusDialog).toHaveAttribute('open', '');
+    await expect(statusDialog).toHaveAccessibleName('Сценарий ещё согласуется');
+    await expect(statusDialog.locator('[data-status-copy]')).toHaveText(
+      'Города, способы получения и география ещё согласуются в DEC-001 и DEC-014.',
+    );
+    const statusClose = statusDialog.getByRole('button', { name: 'Закрыть', exact: true });
+    await expect(statusClose).toHaveCount(1);
+    await expect(statusClose).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(statusDialog).toBeHidden();
+    expect(await statusDialog.getAttribute('open')).toBeNull();
+    await expect(cityTrigger).toBeFocused();
+
     expectNoRuntimeErrors(runtimeErrors);
   });
 

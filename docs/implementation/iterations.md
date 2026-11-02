@@ -1225,6 +1225,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current-renderer responsive toggle→panel DOM/state contract.
 
+### I2-S43 — header city status-dialog keyboard contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-021/026/PBL-040`; `FR-DLV-001/NFR-UX-002` technical safety partial; real delivery behavior отсутствует.
+
+Критерии среза:
+
+- единственный visible city button имеет exact type/delivery key/dialog semantics/name;
+- labelled native status dialog initial hidden и без `open`;
+- keyboard Enter с focused trigger открывает dialog, close auto-focused;
+- exact DEC-001/014 blocked copy; close Enter закрывает и возвращает focus trigger.
+
+Вне scope: real city selection/persistence, geolocation, delivery methods/cost, other status keys/dialogs, Escape/backdrop, screen-reader/browser matrix и production delivery.
+
+Выполнено и проверено:
+
+- targeted homepage scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current theme-owned blocked-state native-dialog keyboard/focus contract в Chrome.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

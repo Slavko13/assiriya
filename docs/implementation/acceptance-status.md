@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S42:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S43:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -511,6 +511,18 @@ I2-S41 закрывает только DOM structure/default state/browser label
 | I2-S42-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S42 закрывает только current-renderer DOM binding и viewport-aware open/close state. Menu link destinations, keyboard/focus/Escape/outside-click, dynamic button name, resize/orientation, persistence, other browsers и production navigation acceptance остаются вне scope.
+
+### I2-S43 — header city status-dialog keyboard contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S43-ACC-001 | City trigger exact | один visible button, type button, delivery status key, dialog semantics и accessible name `Выбрать город` | `PASS` |
+| I2-S43-ACC-002 | Initial dialog state closed | один labelled native dialog, hidden, boolean `open` отсутствует | `PASS` |
+| I2-S43-ACC-003 | Keyboard open/focus exact | focused trigger + Enter открывает dialog; accessible name exact; close button автоматически focused | `PASS` |
+| I2-S43-ACC-004 | Blocked-state copy и close exact | exact DEC-001/014 delivery copy; Enter на close скрывает dialog, убирает `open`, возвращает focus trigger | `PASS` |
+| I2-S43-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S43 закрывает только current theme-owned blocked-state copy, native-dialog keyboard open/close и focus round-trip в Chrome. Реальный city selection/persistence, geolocation, delivery methods/cost, other status keys/dialogs, Escape/backdrop, screen-reader/browser matrix и production delivery остаются вне scope.
 
 ## Технические критерии Итерации 1
 
