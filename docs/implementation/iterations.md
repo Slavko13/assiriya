@@ -1285,7 +1285,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 - Compose project `avtozakup` не публикует host ports, не использует foreign networks/Caddy и не выполняет global removal/prune;
 - random secrets остаются в mode-600 untracked env; repeat deploy создаёт парный DB/uploads backup;
 - `cloudflared` pinned, случайный URL атомарно становится `PUBLIC_URL`, bootstrap/smoke повторяемы;
-- public admin routes exact `403`; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
+- owner-approved public `/wp-login.php` отвечает `2xx`, unauthenticated `/wp-admin/` ведёт на same-origin WordPress login; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
 - remote proof требуется до статуса `DEPLOYED`.
 
 Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; deployment preflight вместе с Playwright env `10 passed`. Server run сознательно не заявлен.

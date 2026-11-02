@@ -9,12 +9,6 @@
 	@health path /__avtozakup_health
 	respond @health "ok" 200
 
-	@blocked_admin {
-		path /wp-login.php /wp-login.php/* /wp-admin /wp-admin/*
-		not path /wp-admin/admin-ajax.php
-	}
-	respond @blocked_admin "Administrative access is disabled on the public preview." 403
-
 	header {
 		-Server
 		X-Content-Type-Options "nosniff"

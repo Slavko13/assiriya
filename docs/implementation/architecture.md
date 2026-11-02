@@ -8,7 +8,7 @@
 ```text
 Browser
   → Caddy (production HTTP edge, admin CIDR restriction)
-    OR Cloudflare Quick Tunnel → project Caddy (preview, public admin denied)
+    OR Cloudflare Quick Tunnel → project Caddy (preview, owner-approved public WP login)
     → WordPress + WooCommerce
       → theme/avtozakup          presentation, responsive UI
       → plugin/avtozakup-core    settings, demo safety, adapter contracts
@@ -58,9 +58,9 @@ Browser
 
 - `DISALLOW_FILE_EDIT`; секреты только в untracked env; DB network internal; `no-new-privileges`.
 - Caddy ограничивает `/wp-admin` и `/wp-login.php` по `ADMIN_ALLOWED_CIDR`; `admin-ajax.php` оставлен доступным.
-- Quick Tunnel Caddy всегда возвращает `403` для public admin routes и передаёт WordPress `X-Forwarded-Proto: https`; случайный URL нельзя использовать для администрирования.
+- Quick Tunnel Caddy передаёт public admin routes штатной WordPress-аутентификации и `X-Forwarded-Proto: https`; это owner-approved demo exception со случайным mode-600 credential, не production security baseline.
 - Изолированный security drill подтвердил public `200`, внешний admin `403`, trusted admin `200` и header `nosniff`; удалённая CIDR-проверка выполняется только после server inventory.
-- Текущий Caddy profile — HTTP/IP demo с `auto_https off`; это не подтверждает `NFR-SEC-003`. Публичный доступ к административной панели допустим только через VPN, SSH tunnel либо HTTPS с доверенным сертификатом.
+- Production Caddy profile — HTTP/IP demo с `auto_https off`; это не подтверждает `NFR-SEC-003`. Для production admin требуется VPN, SSH tunnel либо согласованный trusted edge; Quick Tunnel public login остаётся отдельным временным demo-исключением.
 - Backup и restore обрабатывают согласованную пару DB + uploads; restore требует явный `--confirm` и предварительный safety backup.
 - Изолированное локальное restore drill выполнено со статусом `PASS`: восстановление не затрагивало другие Compose-проекты.
 - Smoke-проверки `/`, `/wp-json/` и WooCommerce Store API выполнены со статусом `PASS`.

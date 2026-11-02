@@ -22,13 +22,17 @@ test('Quick Tunnel Compose is outbound-only and pinned', async () => {
   assert.doesNotMatch(compose, /network_mode:\s*host/);
 });
 
-test('Quick Tunnel edge blocks public administration', async () => {
+test('Quick Tunnel edge exposes the authenticated WordPress admin entry point', async () => {
   const caddyfile = await projectFile('docker/caddy/Caddyfile.quick-tunnel');
+  const deploy = await projectFile('scripts/deploy-quick-tunnel.sh');
 
-  assert.match(caddyfile, /path \/wp-login\.php \/wp-login\.php\/\* \/wp-admin \/wp-admin\/\*/);
-  assert.match(caddyfile, /respond @blocked_admin .* 403/);
+  assert.doesNotMatch(caddyfile, /blocked_admin|\/wp-login\.php|\/wp-admin/);
   assert.match(caddyfile, /header_up X-Forwarded-Proto "https"/);
   assert.match(caddyfile, /@health path \/__avtozakup_health/);
+  assert.match(deploy, /check_public_admin_route \/wp-login\.php/);
+  assert.match(deploy, /check_public_admin_route \/wp-admin\//);
+  assert.match(deploy, /id="loginform"/);
+  assert.match(deploy, /Configured bootstrap credentials remain only in/);
 });
 
 test('deployment guardrails preserve foreign services', async () => {

@@ -38,6 +38,7 @@ cleanup() {
             "$STATE_DIR/containers.before.ids" \
             "$STATE_DIR/listeners.before" \
             "$STATE_DIR/listeners.after" \
+            "$STATE_DIR/admin-login.html" \
             "$STATE_DIR/smoke.log"
         rmdir -- "$STATE_DIR" 2>/dev/null || true
     fi
@@ -322,11 +323,27 @@ if [[ "$smoke_ok" != "1" ]]; then
 fi
 cat "$STATE_DIR/smoke.log" >&2
 
-for blocked_path in /wp-admin/ /wp-login.php /wp-login.php/; do
-    admin_status="$(curl --silent --show-error --max-time 20 --output /dev/null --write-out '%{http_code}' "$tunnel_url$blocked_path")"
-    [[ "$admin_status" == "403" ]] || fail "Public $blocked_path must return 403; received $admin_status."
-done
-log "Public administrator routes and login PATH_INFO variants are blocked with HTTP 403."
+check_public_admin_route() {
+    local path="$1"
+    local output_file="${2:-/dev/null}"
+    local result code effective origin
+    result="$(curl --fail --silent --show-error --location --max-time 25 --connect-timeout 7 \
+        --output "$output_file" --write-out '%{http_code}|%{url_effective}' "$tunnel_url$path")" || return 1
+    IFS='|' read -r code effective <<< "$result"
+    [[ "$code" =~ ^2[0-9][0-9]$ ]] || return 1
+    [[ "$effective" =~ ^(https?://[^/]+) ]] || return 1
+    origin="${BASH_REMATCH[1]}"
+    [[ "$origin" == "$tunnel_url" ]] || return 1
+    printf '%s\n' "$effective"
+}
+
+login_effective="$(check_public_admin_route /wp-login.php "$STATE_DIR/admin-login.html")" || fail "Public WordPress login is not reachable."
+admin_effective="$(check_public_admin_route /wp-admin/)" || fail "Public WordPress admin entry point is not reachable."
+[[ "$login_effective" == *'/wp-login.php'* ]] || fail "Unexpected public login destination: $login_effective"
+[[ "$admin_effective" == *'/wp-login.php'* ]] || fail "Unauthenticated /wp-admin/ did not lead to the WordPress login page: $admin_effective"
+grep -Fq 'id="loginform"' "$STATE_DIR/admin-login.html" || fail "The public login response does not contain the WordPress login form."
+log "Public WordPress login is reachable at $tunnel_url/wp-admin/."
+log "Configured bootstrap credentials remain only in $ENV_FILE (mode 600)."
 
 log "Rechecking both existing sites."
 for index in "${!EXISTING_URLS[@]}"; do

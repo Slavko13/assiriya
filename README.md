@@ -101,7 +101,7 @@ docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml config 
 ENV_FILE=/opt/avtozakup/.env.prod ./scripts/deploy.sh
 ```
 
-HTTP по IP допустим только для ограниченной демонстрации без клиентских/платёжных данных. Удалённая админка требует VPN/SSH tunnel либо доверенного HTTPS edge.
+HTTP production-profile по IP допустим только для ограниченной демонстрации без клиентских/платёжных данных; его удалённая админка требует VPN/SSH tunnel либо доверенного HTTPS edge. Ниже отдельно описано принятое владельцем Quick Tunnel demo-исключение с публичной WordPress login form.
 
 Текущая production-конфигурация является demo-контуром, а не публичным магазином: target и Git `origin` известны, но server inventory и реальный запуск отсутствуют, а два существующих сайта ещё не проверялись. Реальные поиск и применяемость, VIN/B2B, резервы, checkout, оплата, доставка и возвраты остаются заблокированы открытыми `DEC-001…DEC-020` и отсутствующими интеграционными контрактами.
 
@@ -109,15 +109,21 @@ HTTP по IP допустим только для ограниченной де�
 
 ### Однокомандный временный preview через Cloudflare
 
-После push текущего commit выполнить **на сервере `176.98.184.23`** одну команду, подставив реальные публичные URL двух уже работающих сайтов:
+После push текущего commit выполнить **на сервере `176.98.184.23`** одну команду:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://SITE_1.EXAMPLE https://SITE_2.EXAMPLE' bash
+curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://test.itsoft.store/ https://wine-keep-soldier-settle.trycloudflare.com/' bash
 ```
 
 Установщик использует `/opt/avtozakup`, clean `main` и только fast-forward update. Отдельный Compose-проект не публикует host ports, не подключается к сетям существующего Caddy и не выполняет `down`, prune или `--remove-orphans`. До и после запуска проверяются оба URL, foreign container IDs/states и listeners 80/443. При первом запуске создаётся untracked `/opt/avtozakup/.env.quick` с режимом `600` и случайными секретами; при повторном запуске файл и данные сохраняются, а работающий DB/uploads-контур предварительно резервируется.
 
-Последняя строка успешного запуска имеет вид `AVTOZAKUP_PREVIEW_URL=https://...trycloudflare.com`. Это временная публичная preview-ссылка, а не постоянный DNS. Автоперезапуск connector выключен, чтобы не получить новый URL при старом `WP_HOME`; после Docker/host restart нужно повторить ту же команду. Публичные `/wp-admin/`, `/wp-login.php` и login PATH_INFO variants возвращают `403`; Quick Tunnel не используется для администрирования или production-трафика.
+Последняя строка успешного запуска имеет вид `AVTOZAKUP_PREVIEW_URL=https://...trycloudflare.com`. Это временная публичная preview-ссылка, а не постоянный DNS. Автоперезапуск connector выключен, чтобы не получить новый URL при старом `WP_HOME`; после Docker/host restart нужно повторить ту же команду. По явному решению владельца `/wp-admin/` и `/wp-login.php` доступны через preview и защищены штатной WordPress-аутентификацией со случайным длинным паролем. Настроенные bootstrap credentials не печатаются deploy-скриптом; прочитать их только на сервере (если пароль затем менялся внутри WordPress, актуален уже новый пароль):
+
+```bash
+sudo grep -E '^WP_ADMIN_(USER|PASSWORD)=' /opt/avtozakup/.env.quick
+```
+
+Public admin является demo-исключением, не production security baseline; ссылку и credentials нельзя публиковать вместе.
 
 ## Документация
 

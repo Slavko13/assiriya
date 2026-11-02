@@ -58,17 +58,17 @@ docker compose --env-file .env -f compose.yaml -f compose.dev.yaml run --rm --en
 docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml config --quiet
 ```
 
-Caddy profile предназначен только для контролируемого HTTP/IP demo-доступа и ограничивает admin по CIDR. Для публичной административной панели обязателен VPN, SSH tunnel либо согласованный HTTPS/TLS edge с доверенным сертификатом; `auto_https off` не выполняет `NFR-SEC-003`.
+Caddy production profile предназначен только для контролируемого HTTP/IP demo-доступа и ограничивает admin по CIDR. Для production административной панели обязателен VPN, SSH tunnel либо согласованный HTTPS/TLS edge с доверенным сертификатом; `auto_https off` не выполняет `NFR-SEC-003`. Quick Tunnel ниже имеет отдельное явно принятое владельцем demo-исключение с публичной WordPress login form.
 
 ## Однокомандный Quick Tunnel preview
 
-Этот вариант предназначен для временной демонстрации без изменения host Caddy и без публикации нового server port. Требования на сервере: Docker Engine с Compose v2, Git, curl, OpenSSL, gzip и tar. После push commit выполнить на `176.98.184.23`, заменив оба placeholder URL:
+Этот вариант предназначен для временной демонстрации без изменения host Caddy и без публикации нового server port. Требования на сервере: Docker Engine с Compose v2, Git, curl, OpenSSL, gzip и tar. После push commit выполнить на `176.98.184.23`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://SITE_1.EXAMPLE https://SITE_2.EXAMPLE' bash
+curl -fsSL https://raw.githubusercontent.com/Slavko13/assiriya/main/scripts/install-quick-tunnel.sh | sudo env EXPECTED_SERVER_IP='176.98.184.23' EXISTING_SITE_URLS='https://test.itsoft.store/ https://wine-keep-soldier-settle.trycloudflare.com/' bash
 ```
 
-Оба URL обязательны: фактические домены двух сайтов отсутствуют в репозитории и истории, поэтому скрипт не угадывает их. Он fail-closed проверяет их HTTP(S)-health до любых Docker-изменений и после запуска.
+Оба URL обязательны и зафиксированы владельцем как текущие контрольные endpoints. Скрипт fail-closed проверяет их HTTP(S)-health до любых Docker-изменений и после запуска. Второй endpoint сам является ephemeral Quick Tunnel; если его hostname изменится, значение в команде нужно обновить.
 
 Workflow:
 
@@ -79,10 +79,18 @@ Workflow:
 5. при повторном deploy создать парный DB/uploads backup;
 6. запустить outbound-only `cloudflared`, получить новый `https://*.trycloudflare.com` и атомарно сохранить его как `PUBLIC_URL`;
 7. build/start/recreate только services Compose-проекта `avtozakup`, выполнить идемпотентный bootstrap и public smoke;
-8. подтвердить public admin `403`, неизменность двух URL, foreign container IDs/states и listeners 80/443;
+8. подтвердить доступность public WordPress login/admin entry point, неизменность двух URL, foreign container IDs/states и listeners 80/443;
 9. вывести `AVTOZAKUP_PREVIEW_URL=...` последней строкой.
 
-Маршрут: `Cloudflare edge → cloudflared → project Caddy:8080 → WordPress:80`. `compose.quick-tunnel.yaml` не содержит `ports`, не использует host networking и не подключается к сетям двух существующих сайтов. Project Caddy полностью блокирует публичные `/wp-admin/` и `/wp-login.php`, потому что за `cloudflared` нельзя безопасно применять исходное CIDR-правило по адресу посетителя.
+Маршрут: `Cloudflare edge → cloudflared → project Caddy:8080 → WordPress:80`. `compose.quick-tunnel.yaml` не содержит `ports`, не использует host networking и не подключается к сетям двух существующих сайтов. По явному решению владельца project Caddy пропускает `/wp-admin/` и `/wp-login.php` к штатной WordPress-аутентификации. CIDR-ограничение здесь не заявляется; это public demo exception, не production security baseline.
+
+Deploy не печатает настроенные bootstrap credentials. Получить их в SSH-сессии сервера (если пароль затем менялся внутри WordPress, `.env.quick` его не заменяет):
+
+```bash
+sudo grep -E '^WP_ADMIN_(USER|PASSWORD)=' /opt/avtozakup/.env.quick
+```
+
+Не передавать preview URL и пароль в одном публичном сообщении. Успешный smoke требует, чтобы `/wp-login.php` отвечал `2xx` и содержал WordPress `#loginform`, а unauthenticated `/wp-admin/` same-origin перенаправлял на login form.
 
 Quick Tunnel является временным публичным preview без SLA: URL прекращает работу вместе с connector и обычно меняется после его пересоздания. Автоперезапуск `cloudflared` выключен, чтобы после Docker/host restart не возникал новый URL при старом `WP_HOME`; для восстановления нужно повторить ту же one-command установку. Для стабильного DNS нужен named Cloudflare Tunnel или согласованный production edge; ограничения Quick Tunnel описаны в [официальной документации Cloudflare](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/).
 
@@ -124,7 +132,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 
 - Compose services healthy;
 - `/` и `/wp-json/` не перенаправляются на localhost/internal host;
-- разрешённый IP открывает admin, посторонний получает 403;
+- production CIDR-profile: разрешённый IP открывает admin, посторонний получает `403`; Quick Tunnel demo-profile: public login отвечает и guest `/wp-admin/` ведёт на same-origin login;
 - главная, категории, товар, cart и demo checkout guard работают;
 - DB persistence после restart;
 - два существующих сайта имеют те же URL, containers, networks и health;
