@@ -1573,6 +1573,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Chrome exact-breakpoint DOM reconciliation and mobile re-entry renderer contract.
 
+### I2-S57 — post-AJAX cart accessible-name refresh
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S26/I2-S39/I2-S55`; `UI-SCR002-007`, `PBL-019/PBL-040`, `FR-CART-001` renderer-only technical/demo partial и `NFR-A11Y-002` technical partial. Production/cart business behavior не меняется; `DG-018` остаётся open; `TC-009/TC-040` не заявляются.
+
+Критерии среза:
+
+- existing real Woo AJAX add и прежние request/response/identity guards сохраняются;
+- successful response даёт visible header badge exact `1`;
+- existing S55 label+badge relation вычисляет exact cart name `Корзина 1`;
+- результат одинаков на `1440/390/360`.
+
+Вне scope: live announcement, real screen reader/AT, `aria-live` policy, pluralization, semantic meaning of the numeric badge, multi-item/update/remove, quantity/business correctness, persistence/concurrency, browser matrix, full WCAG и production commerce.
+
+Выполнено и проверено:
+
+- production source не менялся; в existing AJAX scenario добавлено одно post-mutation Playwright assertion;
+- targeted scenario: `3 passed`; independent review found no findings and confirmed narrow claim boundaries;
+- full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned guest Woo/Chrome one-add computed accessible-name state.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

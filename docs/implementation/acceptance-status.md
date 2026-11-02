@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S56:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S57:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -684,6 +684,18 @@ I2-S55 closes only current guest compact-header renderer relationships and initi
 | I2-S56-ACC-005 | Regression/data gates preserved | pre-fix mobile assertions retained true and failed; JS syntax `PASS`; targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S56 closes only current pinned Chrome exact `max-width:900px` boundary DOM-normalization and safe re-entry for initial `390/360` viewports. Because the desktop toggle is hidden, this does not claim desktop accessible-name or visible-panel `aria-expanded` semantics. It also does not prove focus/scroll preservation, arbitrary repeated/same-side resize, real orientation/device behavior, initial/bfcache/SPA reconciliation, link activation/content, screen-reader/AT/browser matrix, approved responsive design, full WCAG or production navigation acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
+
+### I2-S57 — post-AJAX cart accessible-name refresh
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S57-ACC-001 | Existing real AJAX path remains exact | current Woo add-to-cart request succeeds, response is not error, CTA reaches added state and visible header badge becomes exact `1` | `PASS` |
+| I2-S57-ACC-002 | Computed cart name follows the rendered badge | the one existing `.az-cart-link` has exact computed accessible name `Корзина 1` after the badge mutation | `PASS` |
+| I2-S57-ACC-003 | Responsive renderer evidence is exact | the same post-AJAX badge/name state passes on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S57-ACC-004 | Production and announcement scope remain unchanged | S57 changes only E2E evidence; no live region, custom announcement or cart production behavior is added | `PASS / SOURCE` |
+| I2-S57-ACC-005 | Regression/data gates preserved | targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
+
+I2-S57 closes only the current pinned guest Woo/Chrome computed accessible-name state after one successful existing AJAX add. It does not prove that the changed name is announced by a real screen reader, any `aria-live` behavior, pluralization, whether the badge represents units or cart lines, multi-item/update/remove behavior, quantity/business correctness, persistence, concurrency, AT/browser matrix, full WCAG or production commerce acceptance. `DG-018` remains open; `TC-009/TC-040` are not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

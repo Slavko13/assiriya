@@ -520,10 +520,13 @@ test.describe('АВТОЗАКУП homepage', () => {
     const responsePayload = await addResponse.json();
     expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
     await expect(addToCart).toHaveClass(/\badded\b/);
-    await expect(page.locator('.az-cart-link b'), 'The header cart badge should reflect the AJAX addition').toHaveText('1');
-
     const cartLink = page.locator('a.az-cart-link');
     await expect(cartLink).toHaveCount(1);
+    await expect(page.locator('.az-cart-link b'), 'The header cart badge should reflect the AJAX addition').toHaveText('1');
+    await expect(
+      cartLink,
+      'The cart link accessible name should include the AJAX-updated item count',
+    ).toHaveAccessibleName('Корзина 1');
     const cartHref = await cartLink.getAttribute('href');
     expect(cartHref).toBeTruthy();
     const cartUrl = new URL(cartHref!, page.url());
