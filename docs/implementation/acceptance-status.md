@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S43:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S44:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -523,6 +523,18 @@ I2-S42 закрывает только current-renderer DOM binding и viewport-
 | I2-S43-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S43 закрывает только current theme-owned blocked-state copy, native-dialog keyboard open/close и focus round-trip в Chrome. Реальный city selection/persistence, geolocation, delivery methods/cost, other status keys/dialogs, Escape/backdrop, screen-reader/browser matrix и production delivery остаются вне scope.
+
+### I2-S44 — guest password-visibility toggle wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S44-ACC-001 | Toggle exact-linked | один visible sibling button после `#password`, exact `aria-describedby=password`, type button | `PASS` |
+| I2-S44-ACC-002 | Initial label usable | initial aria-label non-empty и exact-equal accessible name без locale claim | `PASS` |
+| I2-S44-ACC-003 | Reveal state exact | click меняет password type на text и aria-label/accessibility name на другое non-empty значение | `PASS` |
+| I2-S44-ACC-004 | Conceal state exact-restored | второй explicit click возвращает type password и исходные aria-label/accessibility name | `PASS` |
+| I2-S44-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S44 закрывает только current Woo-injected DOM/client type/accessibility-label round-trip в Chrome. Exact localization, credential value, keyboard/focus, submit/POST/auth/session, OS capture, clipboard/autofill/password managers, AT/browser matrix, cross-version и production security остаются вне scope.
 
 ## Технические критерии Итерации 1
 

@@ -1249,6 +1249,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current theme-owned blocked-state native-dialog keyboard/focus contract в Chrome.
 
+### I2-S44 — guest password-visibility toggle wiring
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-009/PBL-040`; `FR-AUTH-002/NFR-SEC-005` technical partial; auth mutation отсутствует.
+
+Критерии среза:
+
+- один visible Woo-injected button — exact sibling password input и type button;
+- initial non-empty aria-label exact-equal accessible name, без locale claim;
+- first explicit click даёт type text и другое non-empty state label/name;
+- second explicit click exact-restores type password и исходный label/name.
+
+Вне scope: exact localization, credential value, keyboard/focus, submit/POST/auth/session, OS capture, clipboard/autofill/password managers, AT/browser matrix, cross-version и production security.
+
+Выполнено и проверено:
+
+- targeted account scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current Woo-injected password type/accessibility-label client round-trip в Chrome.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

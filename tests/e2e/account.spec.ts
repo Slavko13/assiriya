@@ -69,6 +69,26 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   await expect(password).toHaveAttribute('required', '');
   await expect(password).toHaveAttribute('aria-required', 'true');
 
+  const passwordToggle = loginForm.locator(
+    '.password-input > #password + button.show-password-input[aria-describedby="password"]',
+  );
+  await expect(passwordToggle).toHaveCount(1);
+  await expect(passwordToggle).toBeVisible();
+  await expect(passwordToggle).toHaveAttribute('type', 'button');
+  const revealLabel = (await passwordToggle.getAttribute('aria-label'))?.trim();
+  expect(revealLabel).toBeTruthy();
+  await expect(passwordToggle).toHaveAccessibleName(revealLabel!);
+  await passwordToggle.click();
+  await expect(password).toHaveAttribute('type', 'text');
+  await expect(passwordToggle).not.toHaveAttribute('aria-label', revealLabel!);
+  const concealLabel = (await passwordToggle.getAttribute('aria-label'))?.trim();
+  expect(concealLabel).toBeTruthy();
+  await expect(passwordToggle).toHaveAccessibleName(concealLabel!);
+  await passwordToggle.click();
+  await expect(password).toHaveAttribute('type', 'password');
+  await expect(passwordToggle).toHaveAttribute('aria-label', revealLabel!);
+  await expect(passwordToggle).toHaveAccessibleName(revealLabel!);
+
   const rememberLabel = loginForm.locator('label.woocommerce-form-login__rememberme');
   await expect(rememberLabel).toHaveCount(1);
   await expect(rememberLabel).toBeVisible();
