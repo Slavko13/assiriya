@@ -17,6 +17,7 @@ test('Quick Tunnel Compose is outbound-only and pinned', async () => {
   assert.match(compose, /cloudflare\/cloudflared:2026\.10\.7/);
   assert.match(compose, /http:\/\/caddy:8080/);
   assert.match(compose, /Caddyfile\.quick-tunnel/);
+  assert.match(compose, /^  caddy:[\s\S]*?cap_drop:\s*\n\s*- ALL\s*\n\s*cap_add:\s*\n\s*- NET_BIND_SERVICE/m);
   assert.match(compose, /^  cloudflared:[\s\S]*?restart: "no"/m);
   assert.doesNotMatch(compose, /^\s+ports:/m);
   assert.doesNotMatch(compose, /network_mode:\s*host/);
@@ -43,6 +44,7 @@ test('deployment guardrails preserve foreign services', async () => {
   assert.match(deploy, /snapshot_foreign_containers/);
   assert.match(deploy, /docker ps -aq --no-trunc > "\$STATE_DIR\/containers\.before\.ids" \|\| fail/);
   assert.match(deploy, /RestartCount/);
+  assert.match(deploy, /logs --no-color --tail 80 "\$service"/);
   assert.match(deploy, /Listeners on host ports 80\/443 changed/);
   assert.match(deploy, /avtozakup-quick-tunnel\.lock/);
   assert.match(deploy, /docker volume inspect avtozakup_db_data/);

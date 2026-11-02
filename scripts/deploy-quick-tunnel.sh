@@ -288,10 +288,18 @@ wait_healthy() {
         if [[ -n "$service_id" ]]; then
             health="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$service_id")"
             [[ "$health" == "healthy" || "$health" == "running" ]] && return 0
-            [[ "$health" == "unhealthy" || "$health" == "exited" || "$health" == "dead" ]] && return 1
+            if [[ "$health" == "unhealthy" || "$health" == "exited" || "$health" == "dead" ]]; then
+                log "Service $service entered terminal health state: $health"
+                "${compose[@]}" ps "$service" >&2 || true
+                "${compose[@]}" logs --no-color --tail 80 "$service" >&2 || true
+                return 1
+            fi
         fi
         sleep 3
     done
+    log "Timed out waiting for service $service to become healthy."
+    "${compose[@]}" ps "$service" >&2 || true
+    "${compose[@]}" logs --no-color --tail 80 "$service" >&2 || true
     return 1
 }
 

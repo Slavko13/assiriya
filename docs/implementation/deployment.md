@@ -84,6 +84,8 @@ Workflow:
 
 Маршрут: `Cloudflare edge → cloudflared → project Caddy:8080 → WordPress:80`. `compose.quick-tunnel.yaml` не содержит `ports`, не использует host networking и не подключается к сетям двух существующих сайтов. По явному решению владельца project Caddy пропускает `/wp-admin/` и `/wp-login.php` к штатной WordPress-аутентификации. CIDR-ограничение здесь не заявляется; это public demo exception, не production security baseline.
 
+Caddy остаётся `read_only`, `no-new-privileges` и `cap_drop: ALL`, но получает обратно единственную capability `NET_BIND_SERVICE`: официальный бинарник несёт соответствующую file capability и без неё Linux отклоняет сам `exec` с `Operation not permitted`. Capability не публикует порт; Caddy по-прежнему слушает только container-internal `:8080`.
+
 Deploy не печатает настроенные bootstrap credentials. Получить их в SSH-сессии сервера (если пароль затем менялся внутри WordPress, `.env.quick` его не заменяет):
 
 ```bash

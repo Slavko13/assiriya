@@ -541,7 +541,7 @@ I2-S44 закрывает только current Woo-injected DOM/client type/acce
 | ID | Критерий | Доказательство | Статус |
 |---|---|---|---|
 | OPS-QT-001-ACC-001 | Preview не занимает host ports | rendered Compose JSON: published port entries `0` | `PASS` локально |
-| OPS-QT-001-ACC-002 | Edge config валиден и public admin не блокируется proxy | `caddy:2.10.2-alpine caddy validate`; static assertions: admin deny matcher отсутствует, HTTPS forwarding сохранён | `PASS` локально |
+| OPS-QT-001-ACC-002 | Edge config валиден, запускается under hardening и не блокирует public admin | `caddy validate`; exact `read-only + cap_drop ALL + cap_add NET_BIND_SERVICE + no-new-privileges` runtime health `200`; admin deny отсутствует, HTTPS forwarding сохранён | `PASS` локально |
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
 | OPS-QT-001-ACC-005 | Guardrails зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot и forbidden global removal checks | `PASS` локально |
