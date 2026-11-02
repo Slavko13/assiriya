@@ -158,7 +158,16 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(addToCart).toHaveClass(/\badded\b/);
     await expect(page.locator('.az-cart-link b'), 'The header cart badge should reflect the AJAX addition').toHaveText('1');
 
-    await page.locator('.az-cart-link').click();
+    const cartLink = page.locator('a.az-cart-link');
+    await expect(cartLink).toHaveCount(1);
+    const cartHref = await cartLink.getAttribute('href');
+    expect(cartHref).toBeTruthy();
+    const cartUrl = new URL(cartHref!, page.url());
+    expect(cartUrl.origin).toBe(new URL(page.url()).origin);
+    expect(cartUrl.pathname).toBe('/cart/');
+    expect(cartUrl.search).toBe('');
+    expect(cartUrl.hash).toBe('');
+    await cartLink.click();
     await page.waitForLoadState('networkidle');
     expect(new URL(page.url()).pathname, 'The cart link must use the canonical WooCommerce slug').toBe('/cart/');
     const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
@@ -171,8 +180,16 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(cartProductLink).toHaveAttribute('href', sourceProductHref!);
     await expectExactDemoCheckoutNotice(page);
 
-    const checkoutLink = page.locator('.checkout-button, .wc-block-cart__submit-button');
+    const checkoutLink = page.locator('a.checkout-button, a.wc-block-cart__submit-button');
+    await expect(checkoutLink).toHaveCount(1);
     await expect(checkoutLink).toBeVisible();
+    const checkoutHref = await checkoutLink.getAttribute('href');
+    expect(checkoutHref).toBeTruthy();
+    const checkoutUrl = new URL(checkoutHref!, page.url());
+    expect(checkoutUrl.origin).toBe(new URL(page.url()).origin);
+    expect(checkoutUrl.pathname).toBe('/checkout/');
+    expect(checkoutUrl.search).toBe('');
+    expect(checkoutUrl.hash).toBe('');
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
     expect(new URL(page.url()).pathname, 'The checkout link must use the canonical WooCommerce slug').toBe('/checkout/');

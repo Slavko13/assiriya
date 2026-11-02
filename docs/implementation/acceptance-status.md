@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S34:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S35:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -415,6 +415,18 @@ I2-S33 закрывает только browser-visible DOM/wiring текущег
 | I2-S34-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S34 закрывает только browser-visible wiring текущей header form. Search index, fields, ranking, normalization, server completeness, OEM/article/brand semantics, SEO и production business acceptance остаются вне scope.
+
+### I2-S35 — cart/checkout link wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S35-ACC-001 | Header cart link однозначна и same-origin | одна `.az-cart-link`; href origin совпадает с page origin | `PASS` |
+| I2-S35-ACC-002 | Cart route exact до и после клика | pre-click path exact `/cart/`, query/hash пусты; post-click pathname exact `/cart/` | `PASS` |
+| I2-S35-ACC-003 | Active checkout branch однозначна | classic/Blocks union содержит ровно одну видимую link с непустым href | `PASS` |
+| I2-S35-ACC-004 | Checkout route exact до и после клика | pre-click same-origin path exact `/checkout/`, query/hash пусты; post-click pathname exact `/checkout/`; guard notice сохранён | `PASS` |
+| I2-S35-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S35 закрывает только browser-visible link wiring текущего pinned classic/Blocks renderer. Redirect/SEO policy, cross-install Woo compatibility, cart persistence, quantity/price/tax/stock/reservation, auth, production checkout/order/payment остаются вне scope.
 
 ## Технические критерии Итерации 1
 

@@ -1029,6 +1029,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только DOM/transport wiring текущей header search form.
 
+### I2-S35 — cart/checkout link wiring
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-003/PBL-040`; `FR-CART-001` technical/demo partial; production behavior не меняется.
+
+Критерии среза:
+
+- единственная header cart link имеет same-origin exact `/cart/` без query/hash;
+- единственная active classic/Blocks checkout link имеет same-origin exact `/checkout/` без query/hash;
+- существующие post-click pathname assertions сохраняют доказательство фактической навигации;
+- existing AJAX source-card/cart-row identity, badge и exact demo guard сохраняются на `1440/390/360`.
+
+Вне scope: redirect/SEO policy, cross-install Woo compatibility, cart persistence, quantity/price/tax/stock/reservation, auth, production checkout/order/payment.
+
+Выполнено и проверено:
+
+- targeted AJAX/cart scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact link wiring текущего pinned cart/checkout renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
