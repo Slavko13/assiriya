@@ -769,6 +769,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только mutation-isolation cleanup конкретного Woo CRUD fixture.
 
+### I2-S25 — marked custom homepage card contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040` regression safety; поддерживает `I2-S3/I2-S23`; `FR-CAT-002/FR-OFR-002` presentation partial; production behavior не меняется.
+
+Критерии среза:
+
+- exact seeded marked product находится в maintenance-подборке на `1440/390/360`;
+- custom card показывает public demo brand/article и не публикует synthetic `AZ-DEMO-*`;
+- stock/note используют exact marked demo branch;
+- title/media ведут на один product permalink;
+- CTA связана с numeric product ID карточки;
+- existing axe/no-overflow/runtime и visual gates сохраняются.
+
+Вне scope: verified OEM/article, real stock/price, commercial CTA semantics, ownership/master, permalink policy, production lifecycle/RBAC и новая design acceptance.
+
+Выполнено и проверено:
+
+- targeted public viewport scenario: `3 passed`;
+- весь homepage suite: `7 passed`, `2 intentional skipped`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только marked custom-card presentation baseline текущего seeded fixture.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

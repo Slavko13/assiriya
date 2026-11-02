@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S24:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S25:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -295,6 +295,18 @@ I2-S23 закрывает только card-local presentation isolation custom 
 | I2-S24-ACC-005 | Cleanup и regression не оставляют следов | Settings exact-restored; порядок product → category; каждый ID даёт `404`, повторные exact SKU/slug lookup — `0`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S24 закрывает только exact fallback cleanup одного transactional Woo CRUD fixture при потере сохранённого ID. Это не DB-транзакция, не rollback при отказе REST/БД или остановке процесса, не гарантия для всех fixtures и не production lifecycle/master/RBAC acceptance.
+
+### I2-S25 — marked custom homepage card contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S25-ACC-001 | Exact marked fixture детерминированно найден | в maintenance section ровно одна card с exact title `Масляный фильтр MANN-FILTER W 914/2`, numeric `data-product-id` и visibility на `1440/390/360` | `PASS` |
+| I2-S25-ACC-002 | Public demo metadata не раскрывает synthetic SKU | brand exact `MANN-FILTER`, article exact `Арт. W 914/2`; строка article не содержит `AZ-DEMO-*` | `PASS` |
+| I2-S25-ACC-003 | Marked card использует demo presentation branch | stock имеет `is-in-stock` и exact `Демо: есть в наличии`; note — exact `Цена и наличие демонстрационные` | `PASS` |
+| I2-S25-ACC-004 | Route и CTA технически связаны с той же card | title/media используют один product permalink; CTA видима, имеет `В корзину` и exact `data-product_id` карточки | `PASS` |
+| I2-S25-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S25 закрывает только presentation contract текущей seeded marked custom card. `W 914/2` не объявляется подтверждённым OEM/артикулом master-системы; срез не доказывает реальную цену/остаток, commercial CTA, permalink policy, ownership/master или business readiness.
 
 ## Технические критерии Итерации 1
 

@@ -57,6 +57,37 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(productCards.nth(index)).toHaveAttribute('data-product-id', /^\d+$/);
     }
 
+    const demoTitle = 'Масляный фильтр MANN-FILTER W 914/2';
+    const demoCard = page
+      .locator('[aria-labelledby="az-maintenance-title"] .az-product-card')
+      .filter({ has: page.getByRole('link', { name: demoTitle, exact: true }) });
+    await expect(demoCard).toHaveCount(1);
+    await expect(demoCard).toBeVisible();
+    const demoProductId = await demoCard.getAttribute('data-product-id');
+    expect(demoProductId).toMatch(/^\d+$/);
+
+    const demoTitleLink = demoCard.locator('.az-product-card__title');
+    const demoMediaLink = demoCard.locator('.az-product-card__media');
+    await expect(demoTitleLink).toHaveText(demoTitle);
+    await expect(demoTitleLink).toHaveAttribute('href', /\/product\//);
+    const demoPermalink = await demoTitleLink.getAttribute('href');
+    expect(demoPermalink).toBeTruthy();
+    await expect(demoMediaLink).toHaveAttribute('href', demoPermalink!);
+
+    await expect(demoCard.locator('.az-product-card__brand')).toHaveText('MANN-FILTER');
+    const demoArticle = demoCard.locator('.az-product-card__sku');
+    await expect(demoArticle).toHaveText('Арт. W 914/2');
+    await expect(demoArticle).not.toContainText('AZ-DEMO-');
+    const demoStock = demoCard.locator('.az-product-card__stock');
+    await expect(demoStock).toHaveClass(/is-in-stock/);
+    await expect(demoStock).toHaveText('Демо: есть в наличии');
+    await expect(demoCard.locator('.az-product-card__note')).toHaveText('Цена и наличие демонстрационные');
+    const demoAction = demoCard.locator('.add_to_cart_button.ajax_add_to_cart');
+    await expect(demoAction).toHaveCount(1);
+    await expect(demoAction).toBeVisible();
+    await expect(demoAction).toHaveText('В корзину');
+    await expect(demoAction).toHaveAttribute('data-product_id', demoProductId!);
+
     const pageWidth = await page.evaluate(() => ({
       clientWidth: document.documentElement.clientWidth,
       scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
