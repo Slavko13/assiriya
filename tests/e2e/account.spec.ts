@@ -46,9 +46,51 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   const loginForm = page.locator('form.woocommerce-form-login');
   await expect(loginForm).toHaveCount(1);
   await expect(loginForm).toBeVisible();
-  await expect(loginForm.locator('#username')).toBeVisible();
-  await expect(loginForm.locator('#password')).toBeVisible();
-  await expect(loginForm.locator('button[name="login"]')).toBeVisible();
+  await expect(loginForm).toHaveAttribute('method', 'post');
+  const formAction = new URL(await loginForm.evaluate((form: HTMLFormElement) => form.action));
+  expect(formAction.origin).toBe(new URL(page.url()).origin);
+  expect(formAction.pathname).toBe('/my-account/');
+  expect(formAction.search).toBe('');
+  expect(formAction.hash).toBe('');
+
+  const username = loginForm.locator('#username');
+  await expect(username).toBeVisible();
+  await expect(username).toHaveAttribute('name', 'username');
+  await expect(username).toHaveAttribute('type', 'text');
+  await expect(username).toHaveAttribute('autocomplete', 'username');
+  await expect(username).toHaveAttribute('required', '');
+  await expect(username).toHaveAttribute('aria-required', 'true');
+
+  const password = loginForm.locator('#password');
+  await expect(password).toBeVisible();
+  await expect(password).toHaveAttribute('name', 'password');
+  await expect(password).toHaveAttribute('type', 'password');
+  await expect(password).toHaveAttribute('autocomplete', 'current-password');
+  await expect(password).toHaveAttribute('required', '');
+  await expect(password).toHaveAttribute('aria-required', 'true');
+
+  const loginButton = loginForm.locator('button[name="login"]');
+  await expect(loginButton).toBeVisible();
+  await expect(loginButton).toHaveAttribute('type', 'submit');
+
+  const nonce = loginForm.locator('input[name="woocommerce-login-nonce"]');
+  await expect(nonce).toHaveCount(1);
+  await expect(nonce).toHaveAttribute('type', 'hidden');
+  expect(await nonce.inputValue()).not.toBe('');
+
+  const referer = loginForm.locator('input[name="_wp_http_referer"]');
+  await expect(referer).toHaveCount(1);
+  await expect(referer).toHaveValue('/my-account/');
+
+  const lostPasswordLink = loginForm.locator('.lost_password a');
+  await expect(lostPasswordLink).toHaveCount(1);
+  const lostPasswordHref = await lostPasswordLink.getAttribute('href');
+  expect(lostPasswordHref).toBeTruthy();
+  const lostPasswordUrl = new URL(lostPasswordHref!, page.url());
+  expect(lostPasswordUrl.origin).toBe(new URL(page.url()).origin);
+  expect(lostPasswordUrl.pathname).toBe('/my-account/lost-password/');
+  expect(lostPasswordUrl.search).toBe('');
+  expect(lostPasswordUrl.hash).toBe('');
 
   const layout = await page.evaluate(() => ({
     viewportWidth: document.documentElement.clientWidth,

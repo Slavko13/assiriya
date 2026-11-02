@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S32:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S33:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -391,6 +391,18 @@ I2-S31 закрывает только cleanup test-only `shop_manager` identity
 | I2-S32-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S32 закрывает только successful-path mutation isolation одного presentation field. Raw HTML/classes/edge whitespace, public verification после внутренней ошибки или hard kill, failed save/DB/network, concurrent writes, versioning/audit и production CMS acceptance остаются вне scope.
+
+### I2-S33 — guest login form wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S33-ACC-001 | Form transport остаётся canonical и same-origin | effective action exact `/my-account/` без query/hash; origin совпадает; method POST | `PASS` |
+| I2-S33-ACC-002 | Credential controls имеют точную browser semantics | username text/autocomplete/required/aria-required; password password/current-password/required/aria-required; names exact | `PASS` |
+| I2-S33-ACC-003 | Submit и hidden wiring присутствуют однозначно | button type submit; один hidden non-empty `woocommerce-login-nonce`; один `_wp_http_referer` exact `/my-account/` | `PASS` |
+| I2-S33-ACC-004 | Reset entrypoint canonical | один lost-password link; same-origin exact `/my-account/lost-password/` без query/hash | `PASS` |
+| I2-S33-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S33 закрывает только browser-visible DOM/wiring текущего pinned Woo renderer. Наличие nonce не доказывает его server-side enforcement; login/error/reset, cookies/session, CSRF attack, rate limiting, MFA, IDOR, roles/customer data и production IAM остаются вне scope.
 
 ## Технические критерии Итерации 1
 

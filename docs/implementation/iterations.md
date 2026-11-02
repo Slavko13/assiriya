@@ -979,6 +979,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact restore одного presentation field в успешном test transaction.
 
+### I2-S33 — guest login form wiring
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-009/PBL-040`; `FR-AUTH-002/TC-037/038` technical partial; production behavior и auth state не меняются.
+
+Критерии среза:
+
+- effective form action same-origin exact `/my-account/`, без query/hash; method POST;
+- username/password names, types, autocomplete, required и aria-required exact;
+- ровно один hidden non-empty Woo login nonce и exact `/my-account/` referer;
+- login button submit; lost-password URL same-origin exact `/my-account/lost-password/` без query/hash;
+- существующие axe, no-overflow и runtime gates проходят на `1440/390/360`.
+
+Вне scope: server-side nonce/CSRF enforcement, valid/invalid login, reset behavior, cookies/session, brute-force/rate limit, MFA, IDOR, roles/customer data/privacy и production IAM.
+
+Выполнено и проверено:
+
+- targeted public viewport scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только DOM/wiring гостевой login form текущего pinned Woo renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
