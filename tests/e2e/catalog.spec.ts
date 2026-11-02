@@ -62,10 +62,26 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
     'Every selected homepage category should retain a same-origin WooCommerce taxonomy URL',
   ).toBe(true);
 
-  const shopUrl = await page.locator('.az-catalog-button').getAttribute('href');
-  expect(shopUrl, 'The header must expose the configured WooCommerce shop URL').toBeTruthy();
-  expect(new URL(shopUrl!, page.url()).pathname, 'The repaired catalog route must use the canonical WooCommerce slug').toBe('/shop/');
-  await page.goto(shopUrl!, { waitUntil: 'networkidle' });
+  const catalogLink = page.locator('a.az-catalog-button');
+  await expect(catalogLink).toHaveCount(1);
+  await expect(catalogLink).toBeVisible();
+  await expect(catalogLink).toHaveAccessibleName('Каталог товаров');
+  const catalogHref = await catalogLink.getAttribute('href');
+  expect(catalogHref, 'The header must expose the configured WooCommerce shop URL').toBeTruthy();
+  const catalogUrl = new URL(catalogHref!, page.url());
+  expect(catalogUrl.origin).toBe(homeOrigin);
+  expect(catalogUrl.pathname, 'The repaired catalog route must use the canonical WooCommerce slug').toBe('/shop/');
+  expect(catalogUrl.search).toBe('');
+  expect(catalogUrl.hash).toBe('');
+
+  await catalogLink.click();
+  await page.waitForLoadState('networkidle');
+  await page.mouse.move(0, 0);
+  const loadedCatalogUrl = new URL(page.url());
+  expect(loadedCatalogUrl.origin).toBe(catalogUrl.origin);
+  expect(loadedCatalogUrl.pathname).toBe(catalogUrl.pathname);
+  expect(loadedCatalogUrl.search).toBe('');
+  expect(loadedCatalogUrl.hash).toBe('');
   await expect(page.getByRole('heading', { level: 1, name: 'Каталог товаров' })).toBeVisible();
 
   const shopBreadcrumb = page.locator('.woocommerce-breadcrumb');

@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S39:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S40:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -475,6 +475,18 @@ I2-S38 закрывает только browser-visible identity/transport одн
 | I2-S39-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S39 закрывает только request transport одного simple demo item текущего pinned Woo AJAX renderer. Response fragment schema, update/remove/duplicate/concurrency, price/tax/stock/reservation/persistence и production cart correctness остаются вне scope.
+
+### I2-S40 — exact header catalog-link navigation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S40-ACC-001 | Header control имеет exact link semantics | ровно один visible `a.az-catalog-button`; accessible name exact `Каталог товаров` | `PASS` |
+| I2-S40-ACC-002 | Pre-click destination exact | href same-origin exact `/shop/`; query/hash пусты | `PASS` |
+| I2-S40-ACC-003 | Фактическая навигация сохраняет contract | click загружает тот же origin/path; query/hash остаются пустыми | `PASS` |
+| I2-S40-ACC-004 | Existing catalog identity сохранена | shop H1, breadcrumb, curated category/product checks, a11y/no-overflow/runtime и visual capture сохранены | `PASS` |
+| I2-S40-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S40 закрывает только browser-visible wiring текущей configured header catalog link в pinned local renderer. Woo page-option repair, redirect/canonical/SEO policy, arbitrary permalink/proxy behavior, cross-install compatibility и production catalog acceptance остаются вне scope.
 
 ## Технические критерии Итерации 1
 

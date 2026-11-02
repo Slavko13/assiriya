@@ -18,7 +18,7 @@
 - классическая тема `avtozakup` с desktop 1440 и provisional mobile 390/360;
 - плагин `avtozakup-core`: Settings API главной, безопасный demo seed, checkout guard и интерфейсы будущих адаптеров;
 - 8 демонстрационных категорий верхнего уровня, 10 WooCommerce-товаров, 6 project-owned страниц и 4 read-only Woo page references; Settings различает одноимённые options по `#ID` и принимает не более 8 существующих root-категорий;
-- первый срез Итерации 2: динамическая настроенная WooCommerce shop page с восемью curated категориями, общими category cards, явной идентичностью по selected term ID, чистыми accessible names и переходом в category archive;
+- первый срез Итерации 2: единственная header catalog link имеет exact accessible name и same-origin `/shop/` href без query/fragment, фактически открывает настроенную WooCommerce shop page с восемью curated категориями, общими category cards, явной идентичностью по selected term ID, чистыми accessible names и переходом в category archive;
 - technical demo PDP baseline: явная provenance, fail-closed technical SKU, unconfirmed availability, отсутствие неподтверждённых related products и exact loop-product-ID → PDP POST-form/submit wiring;
 - marked custom homepage card baseline: public demo brand/article без synthetic `AZ-DEMO-*`, explicit demo stock/note и техническая связность permalink/CTA на `1440/390/360`;
 - exact AJAX cart identity: CTA ID/quantity сверяются с exact POST payload, единственная cart row — с exact title/permalink clicked product, а cart/checkout links имеют same-origin canonical paths без query/fragment на `1440/390/360`;

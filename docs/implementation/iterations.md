@@ -1153,6 +1153,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact request transport одного simple demo item текущего pinned Woo AJAX renderer.
 
+### I2-S40 — exact header catalog-link navigation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040`; `FR-CAT-001` technical partial; production behavior не меняется.
+
+Критерии среза:
+
+- header catalog control — ровно один visible anchor с exact accessible name `Каталог товаров`;
+- pre-click href same-origin exact `/shop/` без query/hash;
+- фактический click загружает exact-equal origin/path без query/hash;
+- existing H1/breadcrumb/categories/products/a11y/no-overflow/runtime/visual gates сохраняются.
+
+Вне scope: Woo page-option repair, redirect/canonical/SEO policy, arbitrary permalink/proxy behavior, cross-install compatibility и production catalog acceptance.
+
+Выполнено и проверено:
+
+- targeted catalog scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact configured header catalog-link wiring текущего pinned local renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
