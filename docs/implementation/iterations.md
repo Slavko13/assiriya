@@ -1470,6 +1470,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current provisional mobile Chrome native-Space menu renderer contract; desktop — presentation boundary only.
 
+### I2-S53 — guest login-form local Tab order
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S30/I2-S33/I2-S50/I2-S51`; `PBL-009/PBL-040`, `FR-AUTH-002` renderer-only technical partial и `NFR-A11Y-002` technical partial; direct Paper control mapping отсутствует. `DG-002/018` остаются open; `TC-040`, `TC-037/038` и `FR-AUTH-003` этим срезом не принимаются.
+
+Критерии среза:
+
+- current form имеет ровно по одному visible и non-empty named username, password, visibility toggle, remember checkbox, login submit и lost-password anchor;
+- от focused username пять Tab дают exact последовательность остальных пяти controls;
+- от lost-password anchor пять Shift+Tab дают exact reverse sequence назад к username;
+- после programmatic focus username только traversal-сегмент S53 отправляет Tab/Shift+Tab; после forward и reverse legs exact URL, пустые credentials, `type=password` и unchecked remember state остаются неизменны; activation submit/link не проверяется.
+
+Вне scope: entry from header/before username, after-link behavior, wrap/cycle/focus trap, full-page tab order, focus style/contrast каждого control, Enter/Space activation, credentials, submit/POST, login/session/cookies/server handling, recovery behavior, localization, screen-reader/AT/browser matrix, other Woo versions, full WCAG и production IAM/security acceptance.
+
+Выполнено и проверено:
+
+- production code unchanged: current native Woo DOM order уже удовлетворяет узкому локальному контракту, tabindex/focus manager не добавлялись;
+- targeted account scenario: `3 passed` на `1440/390/360`;
+- independent review: код/mapping подтверждены; overclaim finding закрыт отдельной проверкой state после каждого directional leg и исключением activation claim;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Woo/Chrome six-stop local login-form focus-order renderer contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

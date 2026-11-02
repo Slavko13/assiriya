@@ -186,6 +186,33 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   expect(lostPasswordUrl.search).toBe('');
   expect(lostPasswordUrl.hash).toBe('');
 
+  const loginTabStops = [username, password, passwordToggle, rememberCheckbox, loginButton, lostPasswordLink];
+  for (const tabStop of loginTabStops) {
+    await expect(tabStop).toHaveCount(1);
+    await expect(tabStop).toBeVisible();
+    await expect(tabStop).toHaveAccessibleName(/\S/);
+  }
+  const tabOrderUrl = page.url();
+  const expectLoginTraversalState = async () => {
+    expect(page.url()).toBe(tabOrderUrl);
+    expect(await username.inputValue()).toBe('');
+    expect(await password.inputValue()).toBe('');
+    await expect(password).toHaveAttribute('type', 'password');
+    await expect(rememberCheckbox).not.toBeChecked();
+  };
+  await username.focus();
+  await expect(username).toBeFocused();
+  for (let index = 1; index < loginTabStops.length; index += 1) {
+    await page.keyboard.press('Tab');
+    await expect(loginTabStops[index]).toBeFocused();
+  }
+  await expectLoginTraversalState();
+  for (let index = loginTabStops.length - 2; index >= 0; index -= 1) {
+    await page.keyboard.press('Shift+Tab');
+    await expect(loginTabStops[index]).toBeFocused();
+  }
+  await expectLoginTraversalState();
+
   const layout = await page.evaluate(() => ({
     viewportWidth: document.documentElement.clientWidth,
     pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),

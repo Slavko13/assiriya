@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S52:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S53:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -636,6 +636,18 @@ I2-S51 closes only the current pinned Woo/Chrome native checkbox Tab/Space/focus
 | I2-S52-ACC-005 | Desktop/regression gates preserved | desktop retains hidden-toggle/visible-panel presentation boundary; targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S52 closes only the current provisional Chrome `390/360` native Space state/name/focus/pathname/vertical-scroll round-trip; desktop evidence is the initial presentation boundary only. It does not prove link activation/destinations, full tab order, outside-click, focus trap, full scroll/scroll-lock behavior, resize/orientation, touch/real-device behavior, screen-reader announcement, AT/browser matrix, approved mobile design, full WCAG or production navigation acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
+
+### I2-S53 — guest login-form local Tab order
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S53-ACC-001 | Six exact local stops are usable | username, password, visibility button, remember checkbox, login submit and lost-password anchor each have one visible instance and a non-empty accessible name | `PASS` |
+| I2-S53-ACC-002 | Forward local order exact | from focused username, five successive Tab presses focus the remaining controls in exact DOM/interaction order | `PASS` |
+| I2-S53-ACC-003 | Reverse local order exact | from lost-password anchor, five successive Shift+Tab presses return through the exact reverse sequence to username | `PASS` |
+| I2-S53-ACC-004 | Directional-leg state remains exact | after programmatically focusing username, the S53 traversal segment emits only Tab/Shift+Tab; after forward and reverse legs exact page URL, empty username/password, `type=password` and unchecked remember state remain unchanged | `PASS / TECHNICAL` |
+| I2-S53-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
+
+I2-S53 closes only the current pinned Woo/Chrome six-stop local login-form forward/reverse focus order and end-of-each-leg URL/state stability under Tab/Shift+Tab input. It does not prove entry from before username, behavior after the lost-password anchor, wrap/cycle/focus trap, full-page order, focus-style visibility/contrast for every control, click/Enter/Space activation, credential validation, submit/POST, login/session/cookies, lost-password recovery, localization, screen-reader/AT/browser matrix, cross-Woo-version compatibility, full WCAG or production IAM/security. `DG-002/018` remain open; `TC-040`, `TC-037/038` and `FR-AUTH-003` are not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
