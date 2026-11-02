@@ -1297,6 +1297,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current theme-owned SCR-001 native-dialog renderer и keyboard/focus round-trip в Chrome.
 
+### I2-S46 — mobile primary-nav Escape/focus contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-010/PBL-040`; `NFR-UX-001/002` и `NFR-A11Y-002` technical partial; navigation content не меняется.
+
+Критерии среза:
+
+- shared state helper сохраняет существующий click `aria-expanded`/`is-open` contract;
+- на 390/360 focused toggle + Enter открывает menu с focus на toggle; Escape exact-restores collapsed state и toggle focus;
+- второй Enter открывает, Tab переводит focus на exact first link `Выбрать автомобиль`, Escape из descendant закрывает и возвращает focus toggle;
+- Escape в closed state остаётся no-op; desktop hidden-toggle/visible-panel boundary сохраняется.
+
+Вне scope: outside-click, dynamic open/close label, focus trap/roving tabindex, link activation/destinations, scroll lock, resize/orientation/breakpoint transitions, Space/AT/browser matrix, approved mobile design и production navigation acceptance.
+
+Выполнено и проверено:
+
+- JavaScript syntax: `PASS`; targeted homepage scenario: `3 passed` на `1440/390/360`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current provisional mobile Chrome renderer Escape/focus contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

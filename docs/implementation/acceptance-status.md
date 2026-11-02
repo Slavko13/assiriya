@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S45:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S46:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -548,6 +548,19 @@ I2-S44 закрывает только current Woo-injected DOM/client type/acce
 | I2-S45-ACC-006 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; PHP/JS syntax и config preflight `10 passed` | `PASS` |
 
 I2-S45 закрывает только current theme-owned SCR-001 native-dialog semantics, renderer relation и keyboard/focus round-trip в Chrome. Реальность/доступность phone/email, external app activation, hours/holidays, Telegram/MAX, callback/form/CRM/SLA, AT/browser matrix и production contact acceptance остаются вне scope.
+
+### I2-S46 — mobile primary-nav Escape/focus contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S46-ACC-001 | Existing toggle behavior preserved | shared state helper synchronizes exact `aria-expanded` and `is-open`; click round-trip remains open→closed on 390/360 | `PASS` |
+| I2-S46-ACC-002 | Toggle keyboard Escape exact | focused toggle Enter-opens while focus remains toggle; Escape exact-restores expanded false, no `is-open`, hidden panel and toggle focus | `PASS` |
+| I2-S46-ACC-003 | Panel-descendant Escape exact | second Enter opens; Tab focuses exact first visible link `Выбрать автомобиль`; bubbled Escape closes and returns focus to toggle | `PASS` |
+| I2-S46-ACC-004 | Closed Escape is no-op | second Escape in collapsed state preserves expanded false, no `is-open`, hidden panel and toggle focus | `PASS` |
+| I2-S46-ACC-005 | Desktop boundary unchanged | desktop toggle remains hidden and panel visible; mobile-only keyboard assertions are viewport-gated | `PASS` |
+| I2-S46-ACC-006 | Responsive/regression gates preserved | targeted `3 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; JavaScript syntax `PASS`; independent review no findings | `PASS` |
+
+I2-S46 closes only the current provisional 390/360 Chrome renderer Escape/focus contract. Outside-click, dynamic button name, focus trap/roving tabindex, link activation/destinations, scroll lock, resize/orientation/breakpoint transitions, Space/AT/browser matrix, approved mobile design and production navigation acceptance remain outside scope.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

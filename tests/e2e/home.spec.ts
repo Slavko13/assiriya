@@ -155,6 +155,39 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
       await expect(navPanel).not.toHaveClass(/\bis-open\b/);
       await expect(navPanel).toBeHidden();
+
+      await navToggle.focus();
+      await expect(navToggle).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      await expect(navToggle).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navToggle).toBeFocused();
+
+      await page.keyboard.press('Enter');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      const firstNavLink = navPanel.getByRole('link', { name: 'Выбрать автомобиль', exact: true });
+      await expect(firstNavLink).toHaveCount(1);
+      await page.keyboard.press('Tab');
+      await expect(firstNavLink).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navToggle).toBeFocused();
+
+      await page.keyboard.press('Escape');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navToggle).toBeFocused();
     }
 
     const contactTriggers = page.locator('button[data-contact-open]');

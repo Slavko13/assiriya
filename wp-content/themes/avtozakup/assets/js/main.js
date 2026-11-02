@@ -4,11 +4,21 @@
   const navToggle = document.querySelector('[data-nav-toggle]');
   const navPanel = document.querySelector('[data-nav-panel]');
   if (navToggle && navPanel) {
-    navToggle.addEventListener('click', () => {
-      const open = navToggle.getAttribute('aria-expanded') !== 'true';
+    const setNavOpen = (open) => {
       navToggle.setAttribute('aria-expanded', String(open));
       navPanel.classList.toggle('is-open', open);
+    };
+    const closeNavOnEscape = (event) => {
+      if (event.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true') return;
+      event.preventDefault();
+      setNavOpen(false);
+      navToggle.focus();
+    };
+    navToggle.addEventListener('click', () => {
+      setNavOpen(navToggle.getAttribute('aria-expanded') !== 'true');
     });
+    navToggle.addEventListener('keydown', closeNavOnEscape);
+    navPanel.addEventListener('keydown', closeNavOnEscape);
   }
 
   const contactDialog = document.querySelector('[data-contact-dialog]');
