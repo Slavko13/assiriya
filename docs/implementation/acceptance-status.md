@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S35:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S36:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -427,6 +427,18 @@ I2-S34 закрывает только browser-visible wiring текущей hea
 | I2-S35-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S35 закрывает только browser-visible link wiring текущего pinned classic/Blocks renderer. Redirect/SEO policy, cross-install Woo compatibility, cart persistence, quantity/price/tax/stock/reservation, auth, production checkout/order/payment остаются вне scope.
+
+### I2-S36 — marked PDP add-to-cart form identity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S36-ACC-001 | Catalog identity однозначна | marked loop card содержит одну add-to-cart anchor; `data-product_id` — positive numeric string | `PASS` |
+| I2-S36-ACC-002 | PDP form transport exact | одна `form.cart`; method exact POST; effective action same-origin и exact текущий product path без query/hash | `PASS` |
+| I2-S36-ACC-003 | Submit identity совпадает с loop product | один `button.single_add_to_cart_button[name=add-to-cart]`; type submit; value exact-equal loop product ID | `PASS` |
+| I2-S36-ACC-004 | Demo action label exact | submit text exact `Добавить в демо-корзину`; cart state не мутируется | `PASS` |
+| I2-S36-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S36 закрывает только browser-visible identity/transport wiring текущего pinned simple-product renderer. Cart state, quantity/price/stock/reservation, variable/external products, cross-install Woo compatibility и production commerce остаются вне scope.
 
 ## Технические критерии Итерации 1
 

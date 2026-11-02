@@ -205,6 +205,11 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   }).first();
   await expect(productCard).toBeVisible();
   const expectedName = (await productCard.locator('.woocommerce-loop-product__title').innerText()).trim();
+  const loopAction = productCard.locator('a.add_to_cart_button[data-product_id]');
+  await expect(loopAction).toHaveCount(1);
+  const productId = await loopAction.getAttribute('data-product_id');
+  expect(productId).toMatch(/^\d+$/);
+  expect(Number(productId)).toBeGreaterThan(0);
   await productCard.locator('.woocommerce-loop-product__link').click();
   await page.waitForLoadState('networkidle');
 
@@ -240,7 +245,21 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   await expect(demoMeta.locator('.posted_in a')).toHaveAttribute('href', /\/product-category\//);
 
   await expect(page.locator('p.stock')).toContainText('Демо-наличие не подтверждено внешними системами');
-  await expect(page.locator('button.single_add_to_cart_button')).toContainText('Добавить в демо-корзину');
+  const cartForm = page.locator('form.cart');
+  await expect(cartForm).toHaveCount(1);
+  await expect(cartForm).toHaveAttribute('method', 'post');
+  const productUrl = new URL(page.url());
+  const formAction = new URL(await cartForm.evaluate((form: HTMLFormElement) => form.action));
+  expect(formAction.origin).toBe(productUrl.origin);
+  expect(formAction.pathname).toBe(productUrl.pathname);
+  expect(formAction.search).toBe('');
+  expect(formAction.hash).toBe('');
+
+  const addToCartSubmit = cartForm.locator('button.single_add_to_cart_button[name="add-to-cart"]');
+  await expect(addToCartSubmit).toHaveCount(1);
+  await expect(addToCartSubmit).toHaveAttribute('type', 'submit');
+  await expect(addToCartSubmit).toHaveAttribute('value', productId!);
+  await expect(addToCartSubmit).toHaveText('Добавить в демо-корзину');
   await expect(page.locator('section.related.products')).toHaveCount(0);
 
   const accessibility = await new AxeBuilder({ page }).analyze();

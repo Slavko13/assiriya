@@ -1053,6 +1053,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact link wiring текущего pinned cart/checkout renderer.
 
+### I2-S36 — marked PDP add-to-cart form identity
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-003/011/PBL-040`; `FR-CART-001/FR-CAT-002` technical/demo partial; production behavior и cart state не меняются.
+
+Критерии среза:
+
+- marked loop action даёт один positive numeric product ID;
+- единственная PDP `form.cart` имеет exact POST и effective same-origin current-product action без query/hash;
+- единственный named submit имеет exact type и value, совпадающий с loop product ID;
+- submit label exact `Добавить в демо-корзину` на `1440/390/360`;
+- existing provenance/SKU/availability/description/a11y/runtime/visual gates сохраняются.
+
+Вне scope: cart state, quantity/price/stock/reservation, variable/external products, cross-install Woo compatibility и production commerce.
+
+Выполнено и проверено:
+
+- targeted marked PDP scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact add-to-cart form wiring текущего pinned simple-product renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
