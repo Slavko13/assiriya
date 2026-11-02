@@ -595,6 +595,12 @@ test.describe('WordPress administration', () => {
     const heroTitle = page.locator('#hero_title');
     await expect(heroTitle).toBeVisible();
     const originalTitle = await heroTitle.inputValue();
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const originalRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
+      lines.map((line) => (line.textContent ?? '').trim()),
+    );
+    expect(originalRenderedTitleLines.length).toBeGreaterThan(0);
+    await page.goto('/wp-admin/admin.php?page=avtozakup');
     const marker = `E2E проверка редактирования ${Date.now()}`;
 
     try {
@@ -607,7 +613,10 @@ test.describe('WordPress administration', () => {
       await expect(page.locator('#hero_title')).toHaveValue(marker);
 
       await page.goto('/', { waitUntil: 'networkidle' });
-      await expect(page.locator('.az-hero h1')).toContainText(marker);
+      const mutatedRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
+        lines.map((line) => (line.textContent ?? '').trim()),
+      );
+      expect(mutatedRenderedTitleLines).toEqual([marker]);
     } finally {
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       await page.locator('#hero_title').fill(originalTitle);
@@ -616,7 +625,14 @@ test.describe('WordPress administration', () => {
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
       ]);
+      await expect(page.locator('#hero_title')).toHaveValue(originalTitle);
     }
+
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const restoredRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
+      lines.map((line) => (line.textContent ?? '').trim()),
+    );
+    expect(restoredRenderedTitleLines).toEqual(originalRenderedTitleLines);
 
     const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);
     expect(restoredStoredSelections).toEqual(originalSelections);

@@ -953,6 +953,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только identity-isolation cleanup конкретного temporary `shop_manager` при выполнении `finally`.
 
+### I2-S32 — exact hero content restore
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040` test mutation isolation; поддерживает admin save/restore; production behavior не меняется.
+
+Критерии среза:
+
+- до mutation снимаются exact значение `hero_title` и непустой normalized массив public `.az-heading-line`;
+- marker сохраняется в Settings и exact-рендерится в public hero;
+- `finally` восстанавливает original value и проверяет exact admin field после reload;
+- successful path сравнивает exact normalized public text/order с исходным snapshot;
+- существующие exact category/popular/stock restore assertions сохраняются.
+
+Вне scope: raw HTML/classes/edge whitespace, public verification после внутренней ошибки или hard kill, failed save/БД/сеть, concurrent writes, content versioning/audit и production CMS acceptance.
+
+Выполнено и проверено:
+
+- targeted hero scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact restore одного presentation field в успешном test transaction.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

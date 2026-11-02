@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S31:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S32:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -379,6 +379,18 @@ I2-S30 закрывает только гостевой entrypoint и форму
 | I2-S31-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S31 закрывает только cleanup test-only `shop_manager` identity при выполнении `finally`. Hard kill, старые usernames других marker, отказ delete/БД/сети/Settings, concurrency, error aggregation и production IAM остаются вне scope.
+
+### I2-S32 — exact hero content restore
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S32-ACC-001 | Baseline снят до mutation | exact `hero_title` прочитан из Settings; public `.az-heading-line` сохранены как непустой normalized text array | `PASS` |
+| I2-S32-ACC-002 | Изменение реально проходит оба слоя | marker exact-сохранён в admin field и exact-отрендерен в public hero до cleanup | `PASS` |
+| I2-S32-ACC-003 | `finally` подтверждает exact stored restore | original value повторно сохранён; перезагруженное поле exact-equal исходному | `PASS` |
+| I2-S32-ACC-004 | Successful path подтверждает exact public restore | normalized text и порядок `.az-heading-line` exact-equal pre-mutation snapshot; category/popular/stock restore gates сохранены | `PASS` |
+| I2-S32-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S32 закрывает только successful-path mutation isolation одного presentation field. Raw HTML/classes/edge whitespace, public verification после внутренней ошибки или hard kill, failed save/DB/network, concurrent writes, versioning/audit и production CMS acceptance остаются вне scope.
 
 ## Технические критерии Итерации 1
 
