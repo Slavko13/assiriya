@@ -1201,6 +1201,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только pinned guest remember-me DOM/default state/client label-toggle wiring.
 
+### I2-S42 — responsive primary-navigation toggle
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-010/PBL-040`; `NFR-UX-001/002` technical partial; navigation content не меняется.
+
+Критерии среза:
+
+- единственные button/panel exact-linked через `aria-controls`, ID и data markers;
+- initial collapsed state: `aria-expanded=false`, panel без `is-open`;
+- desktop: toggle hidden, panel visible; hidden control DOM text проверяется без ложного accessible-tree claim;
+- mobile 390/360: visible control exact named, open click синхронизирует expanded/class/visibility, second click exact-restores closed state.
+
+Вне scope: menu link destinations, keyboard/focus/Escape/outside-click, dynamic button name, resize/orientation, persistence, other browsers и production navigation acceptance.
+
+Выполнено и проверено:
+
+- targeted homepage scenario: `3 passed` после viewport-aware уточнения (исходный all-viewport accessible-name assertion честно дал `2 passed / 1 failed` на hidden desktop control);
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current-renderer responsive toggle→panel DOM/state contract.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

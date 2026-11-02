@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S41:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S42:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -499,6 +499,18 @@ I2-S40 закрывает только browser-visible wiring текущей con
 | I2-S41-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S41 закрывает только DOM structure/default state/browser label-toggle текущего pinned Woo guest renderer. POST payload/server handling, cookie/session lifetime, persistence, login/logout/reset, CSRF, privacy/consent, localization, other browsers/versions и production IAM остаются вне scope.
+
+### I2-S42 — responsive primary-navigation toggle
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S42-ACC-001 | Toggle и panel связаны однозначно | один button с `data-nav-toggle`, `aria-controls=az-primary-nav`, type button; один matching `#az-primary-nav[data-nav-panel]` | `PASS` |
+| I2-S42-ACC-002 | Initial state viewport-aware | `aria-expanded=false`, panel без `is-open`; desktop toggle hidden/panel visible; mobile toggle visible/panel hidden | `PASS` |
+| I2-S42-ACC-003 | Mobile accessibility/state exact | на 390/360 visible toggle имеет accessible name `Открыть меню`; первый click даёт expanded/open/visible, второй exact-restores collapsed/closed/hidden | `PASS` |
+| I2-S42-ACC-004 | Desktop semantics не переутверждены | hidden desktop toggle проверяет только DOM screen-reader text; accessible-name assertion применяется только к visible mobile control | `PASS` |
+| I2-S42-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S42 закрывает только current-renderer DOM binding и viewport-aware open/close state. Menu link destinations, keyboard/focus/Escape/outside-click, dynamic button name, resize/orientation, persistence, other browsers и production navigation acceptance остаются вне scope.
 
 ## Технические критерии Итерации 1
 

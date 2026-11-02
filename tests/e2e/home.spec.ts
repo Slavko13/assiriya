@@ -65,6 +65,26 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(page.locator(selector), `Required homepage section is missing: ${selector}`).toBeVisible();
     }
 
+    const navToggle = page.locator(
+      'button.az-mobile-toggle[data-nav-toggle][aria-controls="az-primary-nav"]',
+    );
+    const navPanel = page.locator('#az-primary-nav[data-nav-panel]');
+    await expect(navToggle).toHaveCount(1);
+    await expect(navToggle).toHaveAttribute('type', 'button');
+    await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(navToggle.locator('.screen-reader-text')).toHaveText('Открыть меню');
+    await expect(navPanel).toHaveCount(1);
+    await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+
+    if (testInfo.project.name === 'desktop-chrome-1440') {
+      await expect(navToggle).toBeHidden();
+      await expect(navPanel).toBeVisible();
+    } else {
+      await expect(navToggle).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      await expect(navPanel).toBeHidden();
+    }
+
     const productCards = page.locator('.az-product-card');
     const productCount = await productCards.count();
     expect(productCount, 'The homepage must render WooCommerce product cards').toBeGreaterThan(0);
@@ -125,6 +145,17 @@ test.describe('АВТОЗАКУП homepage', () => {
     ).toEqual([]);
 
     await captureStableVisual(page, testInfo, `homepage-${testInfo.project.name}.png`);
+
+    if (testInfo.project.name !== 'desktop-chrome-1440') {
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+    }
 
     expectNoRuntimeErrors(runtimeErrors);
   });
