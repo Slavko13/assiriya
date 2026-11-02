@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 import { compareRenderedPixels } from './visual';
 
@@ -129,4 +130,57 @@ test('theme entrypoints expose a visible skip-link focus transfer', async ({ pag
     await expect(primary).toBeVisible();
     await expect(primary).toBeFocused();
   }
+});
+
+test('compact header keeps account and cart links named', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 900 });
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const accountLink = page.locator('.az-account-actions > a:first-child');
+  const accountLabel = accountLink.locator('span');
+  await expect(accountLink).toHaveCount(1);
+  await expect(accountLink).toBeVisible();
+  await expect(accountLink).toHaveAttribute('aria-labelledby', 'az-account-action-label');
+  await expect(accountLabel).toHaveCount(1);
+  await expect(accountLabel).toHaveAttribute('id', 'az-account-action-label');
+  await expect(accountLabel).toBeHidden();
+  await expect(accountLink).toHaveAccessibleName('Войти');
+
+  const cartLink = page.locator('.az-account-actions > a.az-cart-link');
+  const cartLabel = cartLink.locator('span');
+  const cartCount = cartLink.locator('b');
+  await expect(cartLink).toHaveCount(1);
+  await expect(cartLink).toBeVisible();
+  await expect(cartLink).toHaveAttribute('aria-labelledby', 'az-cart-action-label az-cart-count');
+  await expect(cartLabel).toHaveCount(1);
+  await expect(cartLabel).toHaveAttribute('id', 'az-cart-action-label');
+  await expect(cartLabel).toBeHidden();
+  await expect(cartCount).toHaveCount(1);
+  await expect(cartCount).toHaveAttribute('id', 'az-cart-count');
+  await expect(cartCount).toBeVisible();
+  const cartCountText = (await cartCount.innerText()).trim();
+  expect(cartCountText).toMatch(/^\d+$/);
+  await expect(cartLink).toHaveAccessibleName(`Корзина ${cartCountText}`);
+
+  for (const [link, pathname] of [
+    [accountLink, '/my-account/'],
+    [cartLink, '/cart/'],
+  ] as const) {
+    const href = await link.getAttribute('href');
+    expect(href).toBeTruthy();
+    const url = new URL(href!, page.url());
+    expect(url.origin).toBe(new URL(page.url()).origin);
+    expect(url.pathname).toBe(pathname);
+    expect(url.search).toBe('');
+    expect(url.hash).toBe('');
+  }
+
+  const accessibility = await new AxeBuilder({ page }).include('.az-header').analyze();
+  const blockingViolations = accessibility.violations.filter((violation) =>
+    ['serious', 'critical'].includes(violation.impact ?? ''),
+  );
+  expect(
+    blockingViolations,
+    `Serious/critical compact-header axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
 });

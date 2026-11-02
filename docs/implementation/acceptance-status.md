@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S54:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S55:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -660,6 +660,18 @@ I2-S53 closes only the current pinned Woo/Chrome six-stop local login-form forwa
 | I2-S54-ACC-005 | Regression/data gates preserved | pre-fix focus assertion failed as expected; post-fix targeted `1 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S54 closes only the pinned desktop Chrome skip-link focus-transfer path for representative front-page, regular-page and Woo renderer families. `index.php` has source/lint evidence but no stable runtime route in this slice. It does not prove mobile behavior, every route/template combination, actual focus-style contrast/manual appearance, screen-reader announcement, AT/browser matrix, full-page tab order, routing/SEO/content, full WCAG or business acceptance. `DG-018` remains open; checkout `TC-040` is not claimed.
+
+### I2-S55 — compact-header account/cart accessible names
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S55-ACC-001 | Exact ARIA relations survive hidden visual labels | at `900×900`, each hidden label span exists once with exact ID; account/cart anchors reference exact IDs, cart also references the one visible count badge ID | `PASS` |
+| I2-S55-ACC-002 | Computed names remain truthful | account exact name is `Войти`; cart exact name is `Корзина {current visible numeric badge text}` | `PASS` |
+| I2-S55-ACC-003 | Entrypoint hrefs remain canonical | account same-origin exact `/my-account/`; cart same-origin exact `/cart/`; query/hash empty | `PASS` |
+| I2-S55-ACC-004 | Compact header axe gate is clean | header-scoped axe has zero serious/critical violations at exact `900×900` | `PASS / TECHNICAL` |
+| I2-S55-ACC-005 | Regression/data gates preserved | pre-fix account exact-name assertion failed; post-fix targeted `1 passed`; `header.php` lint; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S55 closes only current guest compact-header renderer relationships and initial computed accessible names at exact `900px` in pinned Chrome. It does not prove authenticated header states, link activation, login/cart mutation, cart count post-AJAX accessible-name refresh or live announcement, pluralization, focus order/style, account-link design at `≤600px`, localization matrix, screen-reader/AT/browser matrix, full responsive/WCAG or production IAM/commerce acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -1522,6 +1522,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned desktop Chrome skip-link focus transfer for representative front/page/Woo renderer families.
 
+### I2-S55 — compact-header account/cart accessible names
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S30/I2-S35`; `UI-SCR002-006/007`, `PBL-009/PBL-019/PBL-010/PBL-040`, `FR-AUTH-002/FR-CART-001` entrypoint renderer partial и `NFR-A11Y-002` technical partial. `DG-017/018` остаются open; checkout `TC-040` и auth/cart business acceptance не заявляются.
+
+Критерии среза:
+
+- на exact `900×900` visible account/cart anchors имеют по одному CSS-hidden localized span с unique exact IDs;
+- account exact `aria-labelledby` вычисляет name `Войти`;
+- cart exact relation к label + visible count badge вычисляет `Корзина {current numeric badge text}` без static label;
+- href сохраняют same-origin exact `/my-account/` и `/cart/` без query/hash;
+- header-scoped axe serious/critical violations отсутствуют.
+
+Вне scope: authenticated header states, link activation, login/cart mutation, post-AJAX accessible-name refresh/live announcement, pluralization, focus order/style, account-link design at `≤600px`, localization matrix, screen-reader/AT/browser matrix, full responsive/WCAG и production IAM/commerce acceptance.
+
+Выполнено и проверено:
+
+- pre-fix diagnostic: compact account link exact-name assertion получил empty name;
+- production fix: `header.php` использует exact `aria-labelledby` existing nodes; PHP lint `PASS`;
+- targeted compact-header scenario: `1 passed`; independent review подтвердил ARIA semantics, exact relation assertions добавлены;
+- full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned guest Chrome compact-header accessible-name renderer contract at exact `900px`.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
