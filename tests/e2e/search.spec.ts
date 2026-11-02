@@ -24,12 +24,29 @@ test('shows a truthful product-search empty state', async ({ page }, testInfo) =
   const query = 'AZ-NO-RESULT-9F3C & "probe"';
   await page.goto('/', { waitUntil: 'networkidle' });
 
+  const searchForm = page.locator('form.az-search');
+  await expect(searchForm).toHaveCount(1);
+  await expect(searchForm).toHaveAttribute('method', 'get');
+  const searchAction = new URL(await searchForm.evaluate((form: HTMLFormElement) => form.action));
+  expect(searchAction.origin).toBe(new URL(page.url()).origin);
+  expect(searchAction.pathname).toBe('/');
+  expect(searchAction.search).toBe('');
+  expect(searchAction.hash).toBe('');
+
   await expect(page.locator('.az-search__type')).toContainText('По товарам');
-  const search = page.getByRole('searchbox', { name: 'Поиск товаров' });
+  const search = searchForm.getByRole('searchbox', { name: 'Поиск товаров' });
+  await expect(search).toHaveAttribute('type', 'search');
+  await expect(search).toHaveAttribute('name', 's');
   await expect(search).toHaveAttribute('placeholder', 'Введите запрос');
-  await expect(page.locator('.az-search input[name="post_type"]')).toHaveValue('product');
+  const searchScope = searchForm.locator('input[name="post_type"]');
+  await expect(searchScope).toHaveCount(1);
+  await expect(searchScope).toHaveAttribute('type', 'hidden');
+  await expect(searchScope).toHaveValue('product');
+  const searchSubmit = searchForm.getByRole('button', { name: 'Найти', exact: true });
+  await expect(searchSubmit).toHaveCount(1);
+  await expect(searchSubmit).toHaveAttribute('type', 'submit');
   await search.fill(query);
-  await page.getByRole('button', { name: 'Найти' }).click();
+  await searchSubmit.click();
   await page.waitForLoadState('networkidle');
 
   const resultUrl = new URL(page.url());

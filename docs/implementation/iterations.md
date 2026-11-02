@@ -1004,6 +1004,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только DOM/wiring гостевой login form текущего pinned Woo renderer.
 
+### I2-S34 — product-search form wiring
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-002/006/012/PBL-040` search safety partial; production behavior не меняется.
+
+Критерии среза:
+
+- одна header search form имеет exact GET и effective same-origin root action без query/hash;
+- accessible searchbox имеет exact `type=search`, `name=s` и placeholder;
+- один hidden scope control имеет exact `type=hidden`, `name=post_type`, value `product`;
+- один submit button «Найти» имеет exact `type=submit`;
+- существующий special-character submit сохраняет exact query и product scope на `1440/390/360`.
+
+Вне scope: index/fields/ranking/normalization, OEM/article/brand semantics, server completeness, SEO/canonical policy и production business search acceptance.
+
+Выполнено и проверено:
+
+- targeted empty-search scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только DOM/transport wiring текущей header search form.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

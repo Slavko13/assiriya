@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S33:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S34:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -403,6 +403,18 @@ I2-S32 закрывает только successful-path mutation isolation одн
 | I2-S33-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S33 закрывает только browser-visible DOM/wiring текущего pinned Woo renderer. Наличие nonce не доказывает его server-side enforcement; login/error/reset, cookies/session, CSRF attack, rate limiting, MFA, IDOR, roles/customer data и production IAM остаются вне scope.
+
+### I2-S34 — product-search form wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S34-ACC-001 | Form transport exact и same-origin | одна `form.az-search`; method exact GET; effective action same-origin exact `/` без query/hash | `PASS` |
+| I2-S34-ACC-002 | Query control имеет точную semantics | accessible searchbox имеет `type=search`, `name=s`, exact placeholder | `PASS` |
+| I2-S34-ACC-003 | Product-only scope явно передаётся | один hidden control `name=post_type`, `type=hidden`, value exact `product` | `PASS` |
+| I2-S34-ACC-004 | Submit control и фактический GET сохранены | один exact «Найти» button `type=submit`; special-character query и `post_type` exact-preserved в result URL | `PASS` |
+| I2-S34-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S34 закрывает только browser-visible wiring текущей header form. Search index, fields, ranking, normalization, server completeness, OEM/article/brand semantics, SEO и production business acceptance остаются вне scope.
 
 ## Технические критерии Итерации 1
 
