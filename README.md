@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **32 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **33 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -76,7 +76,7 @@ npm run test:e2e
 
 Перед установкой opt-in сверьте exact root `BASE_URL` и убедитесь, что стенд локальный или disposable и принадлежит вам: admin suite временно меняет settings и создаёт/удаляет Woo fixtures. Этот suite не является production smoke; trace/video/screenshot для admin project отключены.
 
-Текущий локальный результ: **34 tests: 32 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity и root/max-8 input boundary, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. Mutating Settings-тесты сохраняют полный исходный порядок category/popular/stock selections и подтверждают exact restore; fixtures удаляются с проверкой `404`. Все 18 actual screenshots снимаются общим fail-fast helper после загрузки шрифтов, активации lazy images и успешного decode; захват сериализован между workers. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
+Текущий локальный результат: **35 tests: 33 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity и root/max-8 input boundary, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. Mutating Settings-тесты сохраняют полный исходный порядок category/popular/stock selections и подтверждают exact restore; fixtures удаляются с проверкой `404`. Все 18 actual screenshots снимаются общим fail-fast helper после загрузки шрифтов, активации lazy images и декодирования layout-visible `<img>`/CSS backgrounds; захват сериализован между workers, а существующий PNG сохраняется только при строго ограниченной decoded-pixel эквивалентности. На Windows локальный suite использует один worker, потому что shared Chrome compositor под параллельной нагрузкой давал крупные небезопасные visual diff; CI уже был serial. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Точные правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
 
 ## Persistence, backup и restore
 

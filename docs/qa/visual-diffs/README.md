@@ -51,7 +51,9 @@ report-home-YYYYMMDD.md
 - полная страница после network idle и загрузки изображений;
 - отдельно фиксировать browser console/page errors.
 
-Автоматический capture выполняет общий `tests/e2e/visual.ts`: на время прохода отключает smooth scroll, ждёт fonts, последовательно прокручивает страницу для lazy loading, требует `complete`, положительные natural dimensions и успешный `decode()` у layout-visible изображений, возвращает scroll/focus и только затем снимает full page. Ошибка/таймаут не маскируются. Межпроцессный lock сериализует capture между Playwright workers.
+Автоматический capture выполняет общий `tests/e2e/visual.ts`: на время прохода отключает smooth scroll, ждёт fonts и `decode()` layout-visible CSS background URLs, последовательно прокручивает страницу для lazy loading, требует `complete`, положительные natural dimensions и успешный `decode()` у layout-visible `<img>`, возвращает scroll/focus и только затем снимает full page в CSS-pixel scale. Ошибка/таймаут не маскируются. Межпроцессный lock сериализует capture между Playwright workers; `EEXIST` и Windows-only `EPERM` означают contention только внутри bounded timeout. Обычный локальный Windows suite использует один worker, чтобы исключить доказанный noise общего Chrome compositor; CI и раньше использовал один worker.
+
+Перед записью helper сначала проверяет byte equality, затем сравнивает decoded RGBA. Existing artifact сохраняется только при `≤10` изменённых пикселях и максимальной дельте любого RGBA-канала `≤1`. Отдельное исключение для доказанного inline-SVG antialias noise допускает `≤2` пикселя с дельтой `≤64`, только если все координаты находятся внутри видимого `svg.az-icon`. Любое превышение, изменение вне иконки, другой размер или decode error считается material: candidate записывается либо тест падает.
 
 ## Что проверять
 
@@ -124,6 +126,16 @@ report-home-YYYYMMDD.md
 - до сериализации параллельный прогон менял 2 из 18 hashes, а isolated capture был стабилен; после cross-worker lock два последовательных targeted-прогона дали `18 passed` и byte-identical SHA-256 для всех 18 файлов;
 - полный regression: `33` tests = `31 passed`, `2 intentional skipped`, `0 failed`; hashes совпали с последним targeted-прогоном;
 - representative desktop/mobile artifacts просмотрены; baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не объявляется pixel-perfect.
+
+## Tolerance-aware visual retention I2-S20
+
+- последующие прогоны выявили редкое PNG encoder/compositor noise: byte hash мог отличаться при одинаковых decoded pixels либо на 1—2 antialias pixels inline SVG; историческое доказательство I2-S17 при этом не пересматривается;
+- helper дополнительно ждёт layout-visible CSS backgrounds и сохраняет existing PNG только по двум строго ограниченным RGBA-правилам выше; material candidate продолжает записываться;
+- comparator boundary test проверяет exact, `10/11` pixels, channel delta `1/2`, SVG `2/3`, delta `64/65`, inside/outside и разные размеры;
+- parallel Windows diagnostics правильно классифицировали как material два крупных нестабильных кадра (`502 px / delta 32` и `5740 px / delta 3`); пороги не расширялись, вместо этого Windows local suite переведён на один worker;
+- два обычных targeted run: `19 passed` каждый = comparator + 18 capture scenarios; baseline→run1 и run1→run2 hashes всех 19 repository PNG (18 actual + Paper reference) остались неизменны;
+- serial full regression: `35` tests = `33 passed`, `2 intentional skipped`, `0 failed`; hashes снова неизменны, inventory published/temp product/temp category = `10/0/0`;
+- baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; tolerance не является visual approval или pixel-perfect claim.
 
 ## Отчёт
 

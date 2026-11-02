@@ -1,5 +1,104 @@
 import { expect, test } from '@playwright/test';
 
+import { compareRenderedPixels } from './visual';
+
+test('visual artifact comparison retains only explicitly bounded pixel noise', async ({ page }) => {
+  const dataUrls = await page.evaluate(() => {
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.classList.add('az-icon');
+    icon.style.cssText = 'position:fixed;left:4px;top:0;width:3px;height:1px;display:block';
+    document.body.append(icon);
+
+    const createPng = (width: number, changedPixels: number[] = [], channelDelta = 0): string => {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = 1;
+      const context = canvas.getContext('2d');
+      if (!context) {
+        throw new Error('Could not create test canvas');
+      }
+      const pixels = context.createImageData(width, 1);
+      for (let pixel = 0; pixel < width; pixel += 1) {
+        const offset = pixel * 4;
+        pixels.data[offset] = 100 + (changedPixels.includes(pixel) ? channelDelta : 0);
+        pixels.data[offset + 1] = 110;
+        pixels.data[offset + 2] = 120;
+        pixels.data[offset + 3] = 255;
+      }
+      context.putImageData(pixels, 0, 0);
+      return canvas.toDataURL('image/png');
+    };
+
+    return {
+      baseline: createPng(20),
+      tenByOne: createPng(20, Array.from({ length: 10 }, (_, index) => index), 1),
+      elevenByOne: createPng(20, Array.from({ length: 11 }, (_, index) => index), 1),
+      oneByTwo: createPng(20, [0], 2),
+      twoBySixtyFourInsideSvg: createPng(20, [4, 5], 64),
+      threeBySixtyFourInsideSvg: createPng(20, [4, 5, 6], 64),
+      twoBySixtyFourOutsideSvg: createPng(20, [0, 1], 64),
+      twoBySixtyFiveInsideSvg: createPng(20, [4, 5], 65),
+      differentSize: createPng(21),
+    };
+  });
+  const decode = (dataUrl: string): Buffer => {
+    const encoded = dataUrl.split(',', 2)[1];
+    if (!encoded) {
+      throw new Error('Canvas PNG data URL did not contain a payload');
+    }
+    return Buffer.from(encoded, 'base64');
+  };
+  const baseline = decode(dataUrls.baseline);
+
+  await expect(compareRenderedPixels(page, baseline, Buffer.from(baseline))).resolves.toEqual({
+    equivalent: true,
+    changedPixels: 0,
+    maxChannelDelta: 0,
+    retention: 'exact',
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.tenByOne))).resolves.toEqual({
+    equivalent: true,
+    changedPixels: 10,
+    maxChannelDelta: 1,
+    retention: 'bounded-channel-noise',
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.elevenByOne))).resolves.toMatchObject({
+    equivalent: false,
+    changedPixels: 11,
+    maxChannelDelta: 1,
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.oneByTwo))).resolves.toMatchObject({
+    equivalent: false,
+    changedPixels: 1,
+    maxChannelDelta: 2,
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.twoBySixtyFourInsideSvg))).resolves.toEqual({
+    equivalent: true,
+    changedPixels: 2,
+    maxChannelDelta: 64,
+    retention: 'inline-svg-antialias-noise',
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.threeBySixtyFourInsideSvg))).resolves.toMatchObject({
+    equivalent: false,
+    changedPixels: 3,
+    maxChannelDelta: 64,
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.twoBySixtyFourOutsideSvg))).resolves.toMatchObject({
+    equivalent: false,
+    changedPixels: 1,
+    maxChannelDelta: 64,
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.twoBySixtyFiveInsideSvg))).resolves.toMatchObject({
+    equivalent: false,
+    changedPixels: 1,
+    maxChannelDelta: 65,
+  });
+  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.differentSize))).resolves.toMatchObject({
+    equivalent: false,
+    maxChannelDelta: 255,
+  });
+});
+
 test('homepage exposes a visible keyboard focus entry point', async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
 

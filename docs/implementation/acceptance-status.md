@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S19:** `34` tests = `32 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S20:** `35` tests = `33 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -234,6 +234,18 @@ I2-S18 закрывает только Settings/runtime top-level/max-8 boundary
 | I2-S19-ACC-005 | Regression/data не ухудшены | targeted mutating Settings `3 passed`; full `34`: `32 passed`, `2 skipped`; published products / temp CRUD products / temp CRUD categories = `10/0/0` | `PASS` |
 
 I2-S19 закрывает только mutation isolation тестового harness. Production behavior, RBAC, master data и business acceptance не менялись.
+
+### I2-S20 — tolerance-aware visual artifact retention
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S20-ACC-001 | Layout-visible CSS backgrounds готовы до capture | computed `background-image` URLs собраны и проходят `decode()`/positive natural dimensions с timeout до scroll/screenshot | `PASS` |
+| I2-S20-ACC-002 | Строго ограниченный encoder/compositor noise не переписывает existing PNG | byte equality fast path; decoded RGBA retain только при `≤10` changed pixels и max channel delta `≤1`; screenshot использует CSS-pixel scale | `PASS` |
+| I2-S20-ACC-003 | SVG antialias exception строго локализован | retain только `≤2` pixels, delta `≤64` и все coordinates внутри visible `svg.az-icon`; tests проверяют `2/3`, `64/65`, inside/outside и dimension mismatch | `PASS` |
+| I2-S20-ACC-004 | Windows shared-compositor noise не маскируется | параллельная диагностика правильно записала material diff `502 px / delta 32` и `5740 px / delta 3`; local Windows config переведён на 1 worker, cross-worker lock и bounded `EEXIST`/`EPERM` retry сохранены | `PASS` |
+| I2-S20-ACC-005 | Regression/data/visual не ухудшены | два targeted run: `19 passed` каждый, baseline→run1 и run1→run2 hashes unchanged; serial full `35`: `33 passed`, `2 skipped`, hashes unchanged; inventory `10/0/0` | `PASS` |
+
+I2-S20 закрывает только устойчивость хранения actual visual evidence к доказанному ограниченному renderer noise. Material candidate по-прежнему записывается; Paper/mobile baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` по `DEC-019/020`.
 
 ## Технические критерии Итерации 1
 

@@ -27,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `34` tests, `32 passed`, `2 intentional skipped`, `0 failed`; root/max-8 hostile POST и lossless Settings transactions проходят; 18 screenshots используют fail-fast stabilization | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17/S18/S19 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `35` tests, `33 passed`, `2 intentional skipped`, `0 failed`; 18 screenshots используют fail-fast stabilization и bounded decoded-RGBA retention; Windows local suite serial из-за shared-compositor noise | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17/S18/S19/S20 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -40,10 +40,10 @@
 
 ## Последний подтверждённый прогон
 
-- Playwright: `34` tests = `32 passed`, `2 intentional skipped`, `0 failed`.
+- Playwright: `35` tests = `33 passed`, `2 intentional skipped`, `0 failed`.
 - Playwright env preflight: `6 passed`; no-target/unsafe-target/partial-admin states fail closed before browser.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
-- Visual evidence: два последовательных targeted-прогона по 18 capture points прошли `18/18`; SHA-256 всех 18 PNG совпали, а последующий полный regression сохранил тот же набор hashes.
+- Visual evidence: исторические два последовательных I2-S17 targeted-прогона по 18 capture points прошли `18/18`; два I2-S20 targeted run прошли `19/19` (comparator + 18 captures) без hash changes, serial Windows full regression также сохранил все 19 repository PNG.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.
 - Woo category/product CRUD с отражением на главной и cleanup, cart count, classic/Woo Blocks cart/checkout guard и keyboard/focus entry point — `PASS`.
 - Configured shop page → curated categories → «Тормозная система» archive, breadcrumb, products и no-overflow на `1440/390/360` — `PASS`.
@@ -59,6 +59,7 @@
 - Category cards → decorative CSS art excluded from accessibility tree; link accessible name equals visible term name on homepage/shop and all viewports — `PASS`.
 - Post-only/mixed crafted search scopes → no product/shop presentation leakage, params preserved, no-overflow/runtime на `1440/390/360` — `PASS`.
 - Authenticated temporary unmarked product → exact strict one-result card and PDP without demo semantics, exact user SKU/stock/content, force-delete cleanup; post-full inventory `10/0` — `PASS`.
+- Post-full inventory I2-S20: `10` published products / `0` temporary E2E products / `0` temporary E2E categories — `PASS`.
 - Runtime: WordPress `7.1.4`, WooCommerce `11.2.1`, PHP `8.3.36`, MariaDB `11.4.13`.
 - Seed после I2-S2B: `8` categories, `10` products, `10` attachments, `6` plugin-owned pages + `4` Woo page references, menu `24`; options `4/5/6/7`, confirm no-op и seed ×2 подтверждены.
 

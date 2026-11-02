@@ -630,6 +630,35 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только побочные мутации и cleanup тестового harness. Остальные продуктовые и security gaps остаются открыты.
 
+### I2-S20 — tolerance-aware visual artifact retention
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040`, regression evidence для `NFR-UX-001—003` и `TC-039/040`; production presentation и design scope не меняются.
+
+Критерии среза:
+
+- layout-visible CSS background URLs декодированы до capture, full-page screenshot снимается в CSS pixels;
+- existing PNG сохраняется только при exact bytes, `≤10` RGBA-changed pixels с delta `≤1` либо `≤2` pixels с delta `≤64` строго внутри visible `svg.az-icon`;
+- любое превышение, dimension mismatch или decode failure не маскируется;
+- Windows cross-worker lock повторяет `EEXIST`/`EPERM` до bounded timeout;
+- обычный local Windows suite использует один worker, поскольку shared compositor под параллельной нагрузкой дал material diff за пределами безопасных tolerance bounds;
+- comparator имеет граничные positive/negative tests, а полный regression не меняет visual hashes.
+
+Вне scope: утверждение Paper/mobile baseline, pixel-perfect redesign, общий perceptual threshold, маскирование динамических областей и production DOM/CSS/PHP.
+
+Выполнено и проверено:
+
+- capture helper ждёт computed CSS backgrounds, сравнивает decoded RGBA и аннотирует причину retention;
+- exact/`10×1`, `11×1`, `1×2`, SVG `2×64`, `3×64`, outside SVG, `2×65` и dimension mismatch покрыты одним desktop comparator test;
+- редкий Windows `EPERM` на exclusive-file open диагностирован полным прогоном и закрыт platform-scoped retry;
+- два parallel Windows full run выявили material shared-compositor diff (`502 px / delta 32` и `5740 px / delta 3`); comparator правильно не скрыл их, поэтому безопасный threshold не расширялся;
+- local Windows config переведён на `workers: 1`; два targeted visual slice: `19 passed` каждый, baseline→run1 и run1→run2 hashes неизменны;
+- serial full regression: `35` tests, `33 passed`, `2 intentional skipped`, `0 failed`; hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary E2E products / `0` temporary E2E categories; независимый review после cleanup bitmap замечаний не оставил.
+
+Статус закрывает только устойчивость хранения actual screenshots к строго ограниченному renderer noise. Baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` по `DEC-019/020`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
