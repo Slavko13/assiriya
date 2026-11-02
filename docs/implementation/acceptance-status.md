@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S18:** `34` tests = `32 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S19:** `34` tests = `32 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -222,6 +222,18 @@ I2-S17 закрывает только воспроизводимость actual
 | I2-S18-ACC-005 | Regression/data/visual не ухудшены | PHP lint; targeted `1 passed`; existing CRUD `1 passed`; full `34`: `32 passed`, `2 skipped`; 18 hashes unchanged; inventory products/temp SKU/temp categories `10/0/0` | `PASS` |
 
 I2-S18 закрывает только Settings/runtime top-level/max-8 boundary. Production taxonomy master, hierarchy design, legacy merge/delete/redirect policy и RBAC остаются open.
+
+### I2-S19 — lossless Settings test transactions
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S19-ACC-001 | Test writes не меняют order соседних multiselects | hero, hostile category и Woo CRUD перед submit подставляют ordered hidden values для неизменяемых category/popular/stock fields | `PASS` |
+| I2-S19-ACC-002 | Полный stored product order не обрезается public limit | selected-first admin options читаются полностью; homepage сравнивается с exact `.slice(0, 5)` для popular/stock | `PASS` |
+| I2-S19-ACC-003 | Restore проверяется по stored и public state | category/popular/stock stored arrays exact-equal исходным; public category order и оба 5-item prefix exact-equal | `PASS` |
+| I2-S19-ACC-004 | CRUD cleanup не блокируется предыдущей ошибкой | nested `finally`: restore → product delete/`404` → category delete/`404` | `PASS` |
+| I2-S19-ACC-005 | Regression/data не ухудшены | targeted mutating Settings `3 passed`; full `34`: `32 passed`, `2 skipped`; published products / temp CRUD products / temp CRUD categories = `10/0/0` | `PASS` |
+
+I2-S19 закрывает только mutation isolation тестового harness. Production behavior, RBAC, master data и business acceptance не менялись.
 
 ## Технические критерии Итерации 1
 

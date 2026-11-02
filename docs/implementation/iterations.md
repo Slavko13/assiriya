@@ -603,6 +603,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только fail-closed category selection boundary. Taxonomy master-data и legacy policy остаются open.
 
+### I2-S19 — lossless Settings test transactions
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040`, safety существующих admin-write E2E; production behavior и business scope не меняются.
+
+Критерии среза:
+
+- каждый mutating Settings test сохраняет точный исходный порядок category, popular и stock selections;
+- product selections читаются полностью из selected-first Settings options, а не из ограниченного пятью homepage output;
+- неизменяемые multiselects отправляются ordered hidden inputs вместо DOM/title order;
+- restore подтверждается и по stored arrays, и по публичному category order / первым пяти product IDs;
+- Woo CRUD cleanup выполняется независимо: restore → product → category, exact resources после delete дают `404`.
+
+Вне scope: production Settings redesign, RBAC, taxonomy/product master-data, изменение seed и business acceptance.
+
+Выполнено и проверено:
+
+- общий helper поддерживает ordered category/popular/stock submission;
+- S18 hostile category POST сохраняет обе product selections; hero save/restore стабилизирует все multiselects перед обоими submit;
+- Woo CRUD снимает полный stored order, не обрезает selection хвост homepage limit и exact-restores все три массива;
+- targeted mutating suite: `3 passed`, `0 failed`; независимый review: замечаний нет;
+- full regression: `34` tests, `32 passed`, `2 intentional skipped`, `0 failed`;
+- post-full inventory: `10` published products / `0` temporary CRUD products / `0` temporary CRUD categories.
+
+Статус закрывает только побочные мутации и cleanup тестового harness. Остальные продуктовые и security gaps остаются открыты.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

@@ -10,7 +10,7 @@
 | WooCommerce | WC `11.2.1` активен; category/product create → edit → selection → homepage → cleanup пройден | master-data и коммерческая семантика только после DEC | `DONE` для технического CRUD Итерации 1 |
 | MariaDB | MariaDB `11.4.13`; restart persistence подтверждён | production monitoring/retention после deploy | `DONE` для локального persistence |
 | Theme SCR-002 | desktop `1440`, mobile `390` и `360` screenshots; sections, overflow, axe и browser errors проверены; Paper comparison задокументирован | утверждение assets/baseline после DEC-019 | `DONE` для Iteration 1; `DESIGN_REVIEW_REQUIRED`, не pixel-perfect |
-| Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены; одноимённые category options показывают local `#ID` | negative capability/RBAC test | `DONE` для admin save/restore и I2-S16 category identity clarity |
+| Editable content | admin login/menu и save → homepage → restore исходного hero title пройдены; все mutating tests exact-restored category/popular/stock order; одноимённые category options показывают local `#ID` | negative capability/RBAC test | `DONE` для admin save/restore, I2-S16 clarity и I2-S19 mutation isolation |
 | Demo catalog | `8` selected categories, `10` products, `10` attachments; `6` plugin-owned pages + `4` read-only Woo references; fresh bootstrap и post-repair seed ×2 идемпотентны; legacy taxonomy не мутируется | бизнес-master-data только после DEC | `DONE` для seed ownership/idempotency и I2-S14 identity boundary; не production catalog |
 | Catalog SCR-005 | configured `/shop/` и homepage показывают те же 8 selected top-level term IDs; Settings различает одноимённые terms по `#ID`, показывает только roots и сохраняет максимум 8; legacy terms исключены; link accessible name чистый | demo provenance Woo cards/PDP | `DONE` для `I2-S1/S14/S15/S16/S18`; `PBL-010/011 partial / PROVISIONAL` |
 | Woo page ownership | seeder не создаёт/переназначает core pages; fail-closed repair переключил локальные options на `/shop/`, `/cart/`, `/checkout/`; старые marked IDs в Trash | SEO redirects/canonical policy только отдельным решением | `DONE` для `I2-S2A/B`; `PBL-039 partial` |
@@ -27,7 +27,7 @@
 | Backup/restore | парный DB+uploads backup проверен; isolated restore drill прошёл | production retention и scheduled recovery drill | `DONE` для локального drill |
 | Git deployment | ff-only/pre-backup/smoke script подготовлен, но Git remote и серверный target не подтверждены | создать/подтвердить remote, branch и staging/server access | `BLOCKED`; не DEPLOYED |
 | Server | доступ и диагностика не подтверждены | inventory existing sites/proxy/ports/volumes | `BLOCKED / NOT_DEPLOYED` |
-| E2E/a11y/visual | текущий Playwright: `34` tests, `32 passed`, `2 intentional skipped`, `0 failed`; root/max-8 hostile Settings POST проходит; 18 screenshots используют fail-fast stabilization и остаются byte-identical | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17/S18 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
+| E2E/a11y/visual | текущий Playwright: `34` tests, `32 passed`, `2 intentional skipped`, `0 failed`; root/max-8 hostile POST и lossless Settings transactions проходят; 18 screenshots используют fail-fast stabilization | утверждение visual baseline после DEC-019/020 | Iteration 1 и I2-S1/S3/S4/S5/S6/S7/S8/S9/S10/S11/S12/S13/S14/S15/S16/S17/S18/S19 technical acceptance PASS; `DESIGN_REVIEW_REQUIRED` |
 
 ## Известные блокеры
 
@@ -55,6 +55,7 @@
 - Woo breadcrumb → «Главная», configured shop «Каталог товаров», exact product-search label; category/product/page names и URLs preserved — `PASS`.
 - Settings selected category IDs → exact homepage set → identical ordered shop IDs/URLs; 50 same-name unselected legacy terms excluded — `PASS`.
 - Forged Settings payload child + duplicate + 9 roots → child rejected, unique input order preserved, first 8 roots saved; exact settings order restored, root/child fixtures deleted — `PASS`.
+- Hero/S18/Woo CRUD writes → exact stored category/popular/stock orders restored, public 5-item prefixes exact; CRUD product/category delete + `404` — `PASS`.
 - Category cards → decorative CSS art excluded from accessibility tree; link accessible name equals visible term name on homepage/shop and all viewports — `PASS`.
 - Post-only/mixed crafted search scopes → no product/shop presentation leakage, params preserved, no-overflow/runtime на `1440/390/360` — `PASS`.
 - Authenticated temporary unmarked product → exact strict one-result card and PDP without demo semantics, exact user SKU/stock/content, force-delete cleanup; post-full inventory `10/0` — `PASS`.

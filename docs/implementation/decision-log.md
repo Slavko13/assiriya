@@ -31,6 +31,7 @@
 | TECH-025 | 2026-11-02 | Category options в project Settings показывают локальный term ID рядом с именем | В текущей БД много одноимённых legacy terms; `name (#ID)` позволяет администратору различить записи и сверить selected identity без изменения value/taxonomy | принято для I2-S16; ID остаётся instance-local, master/merge policy open |
 | TECH-026 | 2026-11-02 | Actual screenshots проходят единый fail-fast stabilization и сериализованный capture | Параллельные full-page captures конкурировали за lazy-load/paint и меняли 2 из 18 PNG; helper временно отключает smooth scroll, ждёт fonts, прокручивает страницу, проверяет visible images/decoded pixels, возвращает scroll/focus и берёт межпроцессный lock | принято для I2-S17; visual baseline остаётся provisional до DEC-019/020 |
 | TECH-027 | 2026-11-02 | Curated category Settings принимают только 8 существующих root terms в порядке первого вхождения | UI, sanitizer и runtime обязаны одинаково держать I2-S1 top-level/max-8 invariant; forged child/duplicate/9th IDs fail closed без taxonomy mutation | принято для I2-S18; production taxonomy master/legacy cleanup остаются open |
+| TECH-028 | 2026-11-02 | Mutating Settings E2E сохраняют multiselect values через ordered hidden inputs и проверяют публичный prefix | Обычный HTML multi-select отправляет DOM/title order и мог тихо переставлять category/product selections; полный stored product order читается из selected-first admin renderer, public cards проверяют первые 5 | принято для I2-S19; относится только к test mutation isolation |
 
 ## Состояние DEC
 

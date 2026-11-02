@@ -5,6 +5,12 @@ type RuntimeErrors = {
   page: string[];
 };
 
+type HomepageSelectionOrder = {
+  categoryIds: string[];
+  popularProductIds: string[];
+  stockProductIds: string[];
+};
+
 function watchRuntimeErrors(page: Page): RuntimeErrors {
   const errors: RuntimeErrors = { console: [], page: [] };
   page.on('console', (message) => {
@@ -38,30 +44,85 @@ test.describe('WordPress administration', () => {
     ]);
   }
 
-  async function submitCategoryIds(page: Page, categoryIds: string[]): Promise<void> {
+  async function submitHomepageSelections(
+    page: Page,
+    selections: Partial<HomepageSelectionOrder>,
+  ): Promise<void> {
     await page.goto('/wp-admin/admin.php?page=avtozakup');
-    const categorySelect = page.locator('#category_ids');
-    await expect(categorySelect).toBeVisible();
-    await categorySelect.evaluate((element, ids) => {
-      const select = element as HTMLSelectElement;
-      const form = select.form;
-      if (!form) {
-        throw new Error('Category select must belong to the Settings form');
-      }
-
-      select.disabled = true;
-      ids.forEach((id) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = select.name;
-        input.value = id;
-        form.appendChild(input);
-      });
-    }, categoryIds);
+    await stageHomepageSelections(page, selections);
     await Promise.all([
       page.waitForURL(/settings-updated=true/),
       page.locator('#submit').click(),
     ]);
+  }
+
+  async function stageHomepageSelections(
+    page: Page,
+    selections: Partial<HomepageSelectionOrder>,
+  ): Promise<void> {
+    const orderedFields = [
+      { selector: '#category_ids', values: selections.categoryIds },
+      { selector: '#popular_product_ids', values: selections.popularProductIds },
+      { selector: '#stock_product_ids', values: selections.stockProductIds },
+    ];
+    for (const { selector, values } of orderedFields) {
+      if (values === undefined) {
+        continue;
+      }
+      const select = page.locator(selector);
+      await expect(select).toBeVisible();
+      await select.evaluate((element, ids) => {
+        const field = element as HTMLSelectElement;
+        const form = field.form;
+        if (!form) {
+          throw new Error('Ordered Settings select must belong to a form');
+        }
+
+        field.disabled = true;
+        ids.forEach((id) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = field.name;
+          input.value = id;
+          form.appendChild(input);
+        });
+      }, values);
+    }
+  }
+
+  async function readStoredHomepageSelectionOrder(page: Page): Promise<HomepageSelectionOrder> {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const categoryIds = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+      cards.map((card) => card.getAttribute('data-category-id') ?? ''),
+    );
+    await page.goto('/wp-admin/admin.php?page=avtozakup');
+    const [popularProductIds, stockProductIds] = await Promise.all([
+      page.locator('#popular_product_ids option:checked').evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value),
+      ),
+      page.locator('#stock_product_ids option:checked').evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value),
+      ),
+    ]);
+
+    return { categoryIds, popularProductIds, stockProductIds };
+  }
+
+  async function readRenderedHomepageSelectionOrder(page: Page): Promise<HomepageSelectionOrder> {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const [categoryIds, popularProductIds, stockProductIds] = await Promise.all([
+      page.locator('#catalog .az-category-card').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('data-category-id') ?? ''),
+      ),
+      page.locator('[aria-labelledby="az-maintenance-title"] .az-product-card').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('data-product-id') ?? ''),
+      ),
+      page.locator('[aria-labelledby="az-stock-title"] .az-product-card').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('data-product-id') ?? ''),
+      ),
+    ]);
+
+    return { categoryIds, popularProductIds, stockProductIds };
   }
 
   test('logs in and exposes the Автозакуп menu without modifying data', async ({ page }) => {
@@ -152,6 +213,8 @@ test.describe('WordPress administration', () => {
     let childCategoryId = 0;
     let originalCaptured = false;
     let originalCategoryIds: string[] = [];
+    let originalPopularProductIds: string[] = [];
+    let originalStockProductIds: string[] = [];
 
     await logIn(page);
     await page.goto('/wp-admin/');
@@ -163,13 +226,17 @@ test.describe('WordPress administration', () => {
     const requestHeaders = { 'X-WP-Nonce': restNonce };
 
     try {
-      await page.goto('/', { waitUntil: 'networkidle' });
-      originalCategoryIds = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
-        cards.map((card) => card.getAttribute('data-category-id') ?? ''),
-      );
+      const originalSelections = await readStoredHomepageSelectionOrder(page);
+      originalCategoryIds = originalSelections.categoryIds;
+      originalPopularProductIds = originalSelections.popularProductIds;
+      originalStockProductIds = originalSelections.stockProductIds;
       originalCaptured = true;
       expect(originalCategoryIds).toHaveLength(8);
+      expect(originalPopularProductIds.length).toBeGreaterThanOrEqual(5);
+      expect(originalStockProductIds.length).toBeGreaterThanOrEqual(5);
       expect(originalCategoryIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+      expect(originalPopularProductIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+      expect(originalStockProductIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
 
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       await expect(page.locator('#category_ids + .description')).toHaveText('Можно выбрать до 8 категорий верхнего уровня.');
@@ -217,11 +284,15 @@ test.describe('WordPress administration', () => {
       const submittedRootIds = [String(rootCategoryId), ...originalCategoryIds];
       expect(new Set(submittedRootIds).size).toBe(9);
       const expectedCategoryIds = submittedRootIds.slice(0, 8);
-      await submitCategoryIds(page, [
-        String(childCategoryId),
-        submittedRootIds[0],
-        ...submittedRootIds,
-      ]);
+      await submitHomepageSelections(page, {
+        categoryIds: [
+          String(childCategoryId),
+          submittedRootIds[0],
+          ...submittedRootIds,
+        ],
+        popularProductIds: originalPopularProductIds,
+        stockProductIds: originalStockProductIds,
+      });
 
       const selectedAfter = await page.locator('#category_ids option:checked').evaluateAll((options) =>
         options.map((option) => (option as HTMLOptionElement).value),
@@ -252,12 +323,20 @@ test.describe('WordPress administration', () => {
     } finally {
       try {
         if (originalCaptured) {
-          await submitCategoryIds(page, originalCategoryIds);
-          await page.goto('/', { waitUntil: 'networkidle' });
-          const restoredCategoryIds = await page.locator('#catalog .az-category-card').evaluateAll((cards) =>
-            cards.map((card) => card.getAttribute('data-category-id') ?? ''),
-          );
-          expect(restoredCategoryIds).toEqual(originalCategoryIds);
+          const originalSelections = {
+            categoryIds: originalCategoryIds,
+            popularProductIds: originalPopularProductIds,
+            stockProductIds: originalStockProductIds,
+          };
+          await submitHomepageSelections(page, originalSelections);
+          const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);
+          expect(restoredStoredSelections).toEqual(originalSelections);
+          const restoredRenderedSelections = await readRenderedHomepageSelectionOrder(page);
+          expect(restoredRenderedSelections).toEqual({
+            categoryIds: originalCategoryIds,
+            popularProductIds: originalPopularProductIds.slice(0, 5),
+            stockProductIds: originalStockProductIds.slice(0, 5),
+          });
         }
       } finally {
         try {
@@ -297,7 +376,7 @@ test.describe('WordPress administration', () => {
   test('saves homepage presentation content and restores the original value', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
     await logIn(page);
-    await page.goto('/wp-admin/admin.php?page=avtozakup');
+    const originalSelections = await readStoredHomepageSelectionOrder(page);
 
     const heroTitle = page.locator('#hero_title');
     await expect(heroTitle).toBeVisible();
@@ -306,6 +385,7 @@ test.describe('WordPress administration', () => {
 
     try {
       await heroTitle.fill(marker);
+      await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
@@ -317,11 +397,21 @@ test.describe('WordPress administration', () => {
     } finally {
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       await page.locator('#hero_title').fill(originalTitle);
+      await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
       ]);
     }
+
+    const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);
+    expect(restoredStoredSelections).toEqual(originalSelections);
+    const restoredRenderedSelections = await readRenderedHomepageSelectionOrder(page);
+    expect(restoredRenderedSelections).toEqual({
+      categoryIds: originalSelections.categoryIds,
+      popularProductIds: originalSelections.popularProductIds.slice(0, 5),
+      stockProductIds: originalSelections.stockProductIds.slice(0, 5),
+    });
 
     expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
     expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
@@ -460,8 +550,10 @@ test.describe('WordPress administration', () => {
     let restNonce = '';
     let categoryId = 0;
     let productId = 0;
+    let originalCaptured = false;
     let originalCategoryIds: string[] = [];
     let originalProductIds: string[] = [];
+    let originalStockProductIds: string[] = [];
 
     await logIn(page);
     await page.goto('/wp-admin/');
@@ -474,6 +566,18 @@ test.describe('WordPress administration', () => {
     const requestHeaders = { 'X-WP-Nonce': restNonce };
 
     try {
+      const originalSelections = await readStoredHomepageSelectionOrder(page);
+      originalCategoryIds = originalSelections.categoryIds;
+      originalProductIds = originalSelections.popularProductIds;
+      originalStockProductIds = originalSelections.stockProductIds;
+      originalCaptured = true;
+      expect(originalCategoryIds).toHaveLength(8);
+      expect(originalProductIds.length).toBeGreaterThanOrEqual(5);
+      expect(originalStockProductIds.length).toBeGreaterThanOrEqual(5);
+      expect(originalCategoryIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+      expect(originalProductIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+      expect(originalStockProductIds.every((id) => /^\d+$/.test(id) && Number(id) > 0)).toBe(true);
+
       const categoryResponse = await page.request.post('/wp-json/wc/v3/products/categories', {
         headers: requestHeaders,
         data: { name: categoryName, slug: `e2e-category-${marker}` },
@@ -511,15 +615,9 @@ test.describe('WordPress administration', () => {
       await expect(categorySelect.locator(`option[value="${categoryId}"]`)).toContainText(categoryName);
       await expect(productSelect.locator(`option[value="${productId}"]`)).toContainText(updatedProductName);
 
-      originalCategoryIds = await categorySelect.locator('option:checked').evaluateAll((options) =>
-        options.map((option) => (option as HTMLOptionElement).value),
-      );
-      originalProductIds = await productSelect.locator('option:checked').evaluateAll((options) =>
-        options.map((option) => (option as HTMLOptionElement).value),
-      );
-
       await categorySelect.selectOption([String(categoryId), ...originalCategoryIds.slice(0, 7)]);
       await productSelect.selectOption([String(productId), ...originalProductIds.slice(0, 4)]);
+      await stageHomepageSelections(page, { stockProductIds: originalStockProductIds });
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
@@ -531,28 +629,47 @@ test.describe('WordPress administration', () => {
       await expect(productCard).toBeVisible();
       await expect(productCard.locator('.az-product-card__title')).toContainText(updatedProductName);
     } finally {
-      if (originalCategoryIds.length || originalProductIds.length) {
-        await page.goto('/wp-admin/admin.php?page=avtozakup');
-        await page.locator('#category_ids').selectOption(originalCategoryIds);
-        await page.locator('#popular_product_ids').selectOption(originalProductIds);
-        await Promise.all([
-          page.waitForURL(/settings-updated=true/),
-          page.locator('#submit').click(),
-        ]);
-      }
-
-      if (productId > 0 && restNonce) {
-        const deleteProductResponse = await page.request.delete(`/wp-json/wc/v3/products/${productId}?force=true`, {
-          headers: requestHeaders,
-        });
-        expect(deleteProductResponse.ok(), await deleteProductResponse.text()).toBeTruthy();
-      }
-
-      if (categoryId > 0 && restNonce) {
-        const deleteCategoryResponse = await page.request.delete(`/wp-json/wc/v3/products/categories/${categoryId}?force=true`, {
-          headers: requestHeaders,
-        });
-        expect(deleteCategoryResponse.ok(), await deleteCategoryResponse.text()).toBeTruthy();
+      try {
+        if (originalCaptured) {
+          const originalSelections = {
+            categoryIds: originalCategoryIds,
+            popularProductIds: originalProductIds,
+            stockProductIds: originalStockProductIds,
+          };
+          await submitHomepageSelections(page, originalSelections);
+          const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);
+          expect(restoredStoredSelections).toEqual(originalSelections);
+          const restoredRenderedSelections = await readRenderedHomepageSelectionOrder(page);
+          expect(restoredRenderedSelections).toEqual({
+            categoryIds: originalCategoryIds,
+            popularProductIds: originalProductIds.slice(0, 5),
+            stockProductIds: originalStockProductIds.slice(0, 5),
+          });
+        }
+      } finally {
+        try {
+          if (productId > 0 && restNonce) {
+            const deleteProductResponse = await page.request.delete(`/wp-json/wc/v3/products/${productId}?force=true`, {
+              headers: requestHeaders,
+            });
+            expect(deleteProductResponse.ok(), await deleteProductResponse.text()).toBeTruthy();
+            const verifyProductCleanup = await page.request.get(`/wp-json/wc/v3/products/${productId}`, {
+              headers: requestHeaders,
+            });
+            expect(verifyProductCleanup.status()).toBe(404);
+          }
+        } finally {
+          if (categoryId > 0 && restNonce) {
+            const deleteCategoryResponse = await page.request.delete(`/wp-json/wc/v3/products/categories/${categoryId}?force=true`, {
+              headers: requestHeaders,
+            });
+            expect(deleteCategoryResponse.ok(), await deleteCategoryResponse.text()).toBeTruthy();
+            const verifyCategoryCleanup = await page.request.get(`/wp-json/wc/v3/products/categories/${categoryId}`, {
+              headers: requestHeaders,
+            });
+            expect(verifyCategoryCleanup.status()).toBe(404);
+          }
+        }
       }
     }
 
