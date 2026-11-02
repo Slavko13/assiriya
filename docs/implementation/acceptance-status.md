@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S37:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S38:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -451,6 +451,18 @@ I2-S36 закрывает только browser-visible identity/transport wiring
 | I2-S37-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S37 закрывает только exact URL contract self-contained temporary category при текущей permalink-конфигурации. Taxonomy master/legacy redirects, SEO/canonical policy, arbitrary Unicode slugs, cross-install Woo acceptance и production lifecycle остаются вне scope.
+
+### I2-S38 — unmarked PDP add-to-cart form identity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S38-ACC-001 | Loop action сохраняет REST identity | одна add-to-cart anchor; `data-product_id` exact-equal temporary product ID; action visible/non-empty/non-demo | `PASS` |
+| I2-S38-ACC-002 | PDP form transport exact | одна `form.cart`; method exact POST; effective action same-origin/current-product path; query/hash пусты | `PASS` |
+| I2-S38-ACC-003 | PDP submit сохраняет REST identity | один named submit; type submit; value exact-equal temporary product ID | `PASS` |
+| I2-S38-ACC-004 | Negative demo boundary сохранена | submit visible, non-empty и не содержит demo-copy; exact locale label намеренно не фиксируется | `PASS` |
+| I2-S38-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S38 закрывает только browser-visible identity/transport одного temporary unmarked simple product. Cart state, localization, quantity/price/stock/reservation, variable/external products, cross-install Woo compatibility и production commerce остаются вне scope.
 
 ## Технические критерии Итерации 1
 
