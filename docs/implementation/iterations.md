@@ -1548,6 +1548,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned guest Chrome compact-header accessible-name renderer contract at exact `900px`.
 
+### I2-S56 — mobile-nav breakpoint state reconciliation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S42/I2-S46/I2-S48/I2-S52`; `SCR-002` header, `PBL-010/PBL-040`, `NFR-A11Y-002` re-entry truthfulness technical partial. `DG-017/018` остаются open; checkout `TC-040` и production navigation acceptance не заявляются.
+
+Критерии среза:
+
+- на `390/360` exact click создаёт open mobile state: true/`is-open`/visible/name `Закрыть меню`;
+- crossing current CSS boundary к exact `901px` скрывает toggle и показывает panel по desktop CSS, но DOM state нормализуется false/no-class/hidden-label `Открыть меню`;
+- crossing обратно к exact original viewport даёт visible collapsed toggle с computed name `Открыть меню` и hidden panel;
+- exact page URL не меняется; existing shared state helper остаётся единственным writer.
+
+Вне scope: desktop hidden-toggle accessible-name/visible-panel aria truthfulness, focus/scroll preservation, arbitrary repeated or same-side resize, real orientation/device, initial/bfcache/SPA reconciliation, link activation/content, screen-reader/AT/browser matrix, approved responsive design, full WCAG и production navigation acceptance.
+
+Выполнено и проверено:
+
+- pre-fix diagnostic: both mobile projects retained `aria-expanded=true` at `901px` and failed;
+- production fix: one document-lifetime MQL change listener delegates to idempotent `setNavOpen(false)` on both boundary directions; JavaScript syntax `PASS`;
+- targeted homepage scenario: `3 passed`; independent review found no code issues and confirmed hidden-control claim boundary;
+- full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Chrome exact-breakpoint DOM reconciliation and mobile re-entry renderer contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

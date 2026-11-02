@@ -25,6 +25,10 @@
     });
     navToggle.addEventListener('keydown', closeNavOnEscape);
     navPanel.addEventListener('keydown', closeNavOnEscape);
+    const navBreakpoint = window.matchMedia('(max-width: 900px)');
+    const resetNavAtBreakpoint = () => setNavOpen(false);
+    if (navBreakpoint.addEventListener) navBreakpoint.addEventListener('change', resetNavAtBreakpoint);
+    else navBreakpoint.addListener(resetNavAtBreakpoint);
   }
 
   const contactDialog = document.querySelector('[data-contact-dialog]');

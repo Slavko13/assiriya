@@ -242,6 +242,29 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navPanel).toBeHidden();
       await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
+
+      const mobileViewport = page.viewportSize();
+      expect(mobileViewport).toBeTruthy();
+      const breakpointUrl = page.url();
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAccessibleName('Закрыть меню');
+      await page.setViewportSize({ width: 901, height: mobileViewport!.height });
+      await expect(navToggle).toBeHidden();
+      await expect(navPanel).toBeVisible();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navLabel).toHaveText('Открыть меню');
+      await page.setViewportSize(mobileViewport!);
+      await expect(navToggle).toBeVisible();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navLabel).toHaveText('Открыть меню');
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      expect(page.url()).toBe(breakpointUrl);
     }
 
     const contactTriggers = page.locator('button[data-contact-open]');

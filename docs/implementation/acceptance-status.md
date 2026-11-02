@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S55:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S56:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -672,6 +672,18 @@ I2-S54 closes only the pinned desktop Chrome skip-link focus-transfer path for r
 | I2-S55-ACC-005 | Regression/data gates preserved | pre-fix account exact-name assertion failed; post-fix targeted `1 passed`; `header.php` lint; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S55 closes only current guest compact-header renderer relationships and initial computed accessible names at exact `900px` in pinned Chrome. It does not prove authenticated header states, link activation, login/cart mutation, cart count post-AJAX accessible-name refresh or live announcement, pluralization, focus order/style, account-link design at `≤600px`, localization matrix, screen-reader/AT/browser matrix, full responsive/WCAG or production IAM/commerce acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
+
+### I2-S56 — mobile-nav breakpoint state reconciliation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S56-ACC-001 | Mobile state is open before crossing | on both `390/360`, exact toggle click gives expanded true, `is-open`, visible panel and computed name `Закрыть меню` | `PASS` |
+| I2-S56-ACC-002 | Desktop crossing normalizes hidden-control DOM state | at exact `901px`, toggle is hidden and panel visible by desktop CSS; DOM state is false/no `is-open`, hidden label text `Открыть меню` | `PASS / TECHNICAL` |
+| I2-S56-ACC-003 | Mobile re-entry remains collapsed | after returning to the exact original viewport, toggle is visible false/open-name, panel lacks `is-open` and is hidden | `PASS` |
+| I2-S56-ACC-004 | Shared implementation and URL boundary remain exact | one document-lifetime MQL change listener calls existing `setNavOpen(false)` on both crossings; exact page URL remains unchanged | `PASS / TECHNICAL` |
+| I2-S56-ACC-005 | Regression/data gates preserved | pre-fix mobile assertions retained true and failed; JS syntax `PASS`; targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S56 closes only current pinned Chrome exact `max-width:900px` boundary DOM-normalization and safe re-entry for initial `390/360` viewports. Because the desktop toggle is hidden, this does not claim desktop accessible-name or visible-panel `aria-expanded` semantics. It also does not prove focus/scroll preservation, arbitrary repeated/same-side resize, real orientation/device behavior, initial/bfcache/SPA reconciliation, link activation/content, screen-reader/AT/browser matrix, approved responsive design, full WCAG or production navigation acceptance. `DG-017/018` remain open and checkout `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
