@@ -688,6 +688,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает один отрицательный capability check project Settings. Полный `TC-037/PBL-036` остаётся partial до утверждённой матрицы, server audit и остальных security controls.
 
+### I2-S22 — unmarked category-archive isolation
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040` regression safety; `FR-CAT-001/002` presentation partial; production catalog behavior не меняется.
+
+Критерии среза:
+
+- self-contained unique root category и unmarked published product;
+- переход на archive по реальной taxonomy-ссылке с PDP;
+- exact H1, единственная exact product card и отсутствие demo provenance;
+- штатный add-to-cart без demo-copy;
+- exact Settings no-mutation;
+- nested cleanup строго product → category с ID `404` и exact SKU/slug lookup `0`.
+
+Вне scope: category ownership/master, hierarchy/legacy merge/delete/redirect policy, production RBAC, real stock/price и lifecycle.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только отрицательную presentation-boundary unmarked товара в taxonomy loop; category ownership/master и business acceptance остаются открытыми.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

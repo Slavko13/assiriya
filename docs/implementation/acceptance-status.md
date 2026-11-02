@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S21:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S22:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -259,6 +259,18 @@ I2-S20 закрывает только устойчивость хранения
 | I2-S21-ACC-006 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed`, `2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S21 закрывает только один WordPress capability boundary для project Settings. Woo `shop_manager` не приравнивается к аналитической роли «Менеджер»; denied-attempt audit, MFA, session/rate-limit controls, all-role/API/object matrix и полный `TC-037/PBL-036` остаются open.
+
+### I2-S22 — unmarked category-archive isolation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S22-ACC-001 | Fixture изолирован от demo/master данных | REST создаёт unique root `product_cat` и unique published unmarked product, назначенный только этой категории | `PASS` |
+| I2-S22-ACC-002 | Taxonomy route и состав архива точны | переход выполняется по реальной category-ссылке с PDP; `body.tax-product_cat`, exact H1 и ровно одна exact product card подтверждены | `PASS` |
+| I2-S22-ACC-003 | Unmarked card не получает demo presentation | в exact category card отсутствует `data-demo-provenance`; штатный add-to-cart видим, непуст и не содержит demo-copy | `PASS` |
+| I2-S22-ACC-004 | Тест не меняет project Settings | form snapshot `avtozakup_homepage[...]` exact-equal до fixture и после полного cleanup | `PASS` |
+| I2-S22-ACC-005 | Cleanup и regression не оставляют следов | product удалён раньше category; exact ID дают `404`, exact SKU/slug lookup — `0`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S22 закрывает только отрицательную presentation-boundary unmarked товара в taxonomy loop. Он не доказывает category ownership/master, hierarchy/legacy policy, production RBAC, актуальность stock/price или lifecycle.
 
 ## Технические критерии Итерации 1
 
