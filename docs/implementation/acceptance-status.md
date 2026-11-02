@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S23:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S24:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -283,6 +283,18 @@ I2-S22 закрывает только отрицательную presentation-b
 | I2-S23-ACC-005 | Regression и cleanup не оставляют следов | product удалён раньше category, оба exact ID дают `404`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S23 закрывает только card-local presentation isolation custom homepage helper. Общий collection-level demo disclaimer остаётся намеренным; срез не доказывает реальную актуальность stock/price, offer/master ownership, production RBAC/lifecycle или responsive/a11y acceptance.
+
+### I2-S24 — exact Woo CRUD fixture fallback cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S24-ACC-001 | Cleanup identifiers известны независимо от REST response body | unique SKU и category slug объявляются до create; category create использует exact predeclared slug | `PASS` |
+| I2-S24-ACC-002 | Fallback lookup реально проверяется normal run | product lookup по exact SKU и category lookup по exact slug выполняются всегда; при известном ID результат обязан его содержать | `PASS` |
+| I2-S24-ACC-003 | Delete остаётся строго ограниченным | удаляется union known ID и `id > 0`, дополнительно отфильтрованных клиентом по exact SKU/slug; search/name и широкого delete нет | `PASS` |
+| I2-S24-ACC-004 | Ошибка lookup не маскируется и не отменяет доступный cleanup | lookup error сохраняется; известные IDs сначала удаляются, затем исходная ошибка пробрасывается; category cleanup остаётся внешним `finally` после product cleanup | `PASS` |
+| I2-S24-ACC-005 | Cleanup и regression не оставляют следов | Settings exact-restored; порядок product → category; каждый ID даёт `404`, повторные exact SKU/slug lookup — `0`; targeted `1`, admin `7`, full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S24 закрывает только exact fallback cleanup одного transactional Woo CRUD fixture при потере сохранённого ID. Это не DB-транзакция, не rollback при отказе REST/БД или остановке процесса, не гарантия для всех fixtures и не production lifecycle/master/RBAC acceptance.
 
 ## Технические критерии Итерации 1
 

@@ -742,6 +742,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только отрицательную card-local presentation-boundary custom homepage helper.
 
+### I2-S24 — exact Woo CRUD fixture fallback cleanup
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040` test mutation isolation; поддерживает `I2-S19/I2-S23`; production behavior не меняется.
+
+Критерии среза:
+
+- unique SKU и category slug известны до REST create;
+- normal run всегда выполняет exact SKU/slug lookup и сверяет известный ID;
+- cleanup IDs — deduplicated union known ID и exact-filtered lookup IDs;
+- Settings restore остаётся первым этапом, fixture cleanup идёт product → category;
+- каждый удалённый ID даёт `404`, повторные exact lookup — `0`;
+- lookup error не проглатывается: known-ID cleanup выполняется до rethrow.
+
+Вне scope: DB transaction, crash/network-proof rollback, недействительный nonce, отказ REST delete/БД, cleanup всех fixtures, production lifecycle/master/RBAC.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только mutation-isolation cleanup конкретного Woo CRUD fixture.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
