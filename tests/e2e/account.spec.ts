@@ -69,6 +69,28 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   await expect(password).toHaveAttribute('required', '');
   await expect(password).toHaveAttribute('aria-required', 'true');
 
+  const rememberLabel = loginForm.locator('label.woocommerce-form-login__rememberme');
+  await expect(rememberLabel).toHaveCount(1);
+  await expect(rememberLabel).toBeVisible();
+  const rememberCheckbox = loginForm.locator(
+    'label.woocommerce-form-login__rememberme > input#rememberme[name="rememberme"]',
+  );
+  await expect(rememberCheckbox).toHaveCount(1);
+  await expect(rememberCheckbox).toHaveAttribute('type', 'checkbox');
+  await expect(rememberCheckbox).toHaveAttribute('value', 'forever');
+  await expect(rememberCheckbox).toHaveAccessibleName(/\S/);
+  await expect(rememberCheckbox).not.toBeChecked();
+  const rememberText = loginForm.locator(
+    'label.woocommerce-form-login__rememberme > input#rememberme[name="rememberme"] + span',
+  );
+  await expect(rememberText).toHaveCount(1);
+  await expect(rememberText).toBeVisible();
+  await expect(rememberText).toContainText(/\S/);
+  await rememberText.click();
+  await expect(rememberCheckbox).toBeChecked();
+  await rememberText.click();
+  await expect(rememberCheckbox).not.toBeChecked();
+
   const loginButton = loginForm.locator('button[name="login"]');
   await expect(loginButton).toBeVisible();
   await expect(loginButton).toHaveAttribute('type', 'submit');

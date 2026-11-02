@@ -23,7 +23,7 @@
 - marked custom homepage card baseline: public demo brand/article без synthetic `AZ-DEMO-*`, explicit demo stock/note и техническая связность permalink/CTA на `1440/390/360`;
 - exact AJAX cart identity: CTA ID/quantity сверяются с exact POST payload, единственная cart row — с exact title/permalink clicked product, а cart/checkout links имеют same-origin canonical paths без query/fragment на `1440/390/360`;
 - exact demo checkout guard: cart/checkout показывают единый полный safety message, classic button имеет disabled/`aria-disabled`, Store API возвращает тот же message с exact `403` contract;
-- guest My Account baseline: canonical same-origin `/my-account/`, desktop-visible «Войти», намеренно скрытый mobile entry в DOM и штатная гостевая Woo login form с exact POST/input/nonce/referer/reset-link wiring на `1440/390/360`;
+- guest My Account baseline: canonical same-origin `/my-account/`, desktop-visible «Войти», намеренно скрытый mobile entry в DOM и штатная гостевая Woo login form с exact POST/input/nonce/referer/reset-link wiring; remember-me checkbox имеет non-empty accessible label, initial unchecked и text-label toggle round-trip на `1440/390/360`;
 - provisional generic product search: exact same-origin GET/action/`s`/`post_type=product`/submit wiring, escaped results/no-results context, включая scoped one-result page без Woo auto-redirect, и canonical возврат в каталог; field index/article/brand/ranking не заявлены;
 - fail-closed search scope: post-only и mixed post types не получают product-search presentation;
 - scoped public Woo copy: shop H1/count, product-search count, breadcrumbs, demo actions и PDP description labels; unapproved ordering UI снят только на shop/search, полная локализация остаётся отдельной задачей;

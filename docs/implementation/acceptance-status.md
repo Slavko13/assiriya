@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S40:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S41:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -487,6 +487,18 @@ I2-S39 закрывает только request transport одного simple dem
 | I2-S40-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S40 закрывает только browser-visible wiring текущей configured header catalog link в pinned local renderer. Woo page-option repair, redirect/canonical/SEO policy, arbitrary permalink/proxy behavior, cross-install compatibility и production catalog acceptance остаются вне scope.
+
+### I2-S41 — guest remember-me control wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S41-ACC-001 | Remember-me структура однозначна | одна visible label; один direct-child `#rememberme[name=rememberme]`; один adjacent visible text span | `PASS` |
+| I2-S41-ACC-002 | Checkbox semantics exact | input type checkbox, value `forever`, non-empty accessible name | `PASS` |
+| I2-S41-ACC-003 | Default и client toggle сохранены | initial unchecked; два клика по text span дают unchecked → checked → unchecked | `PASS` |
+| I2-S41-ACC-004 | Срез не инициирует auth mutation | test не вводит credentials и не активирует submit; проверяется только client checkbox round-trip | `PASS` |
+| I2-S41-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S41 закрывает только DOM structure/default state/browser label-toggle текущего pinned Woo guest renderer. POST payload/server handling, cookie/session lifetime, persistence, login/logout/reset, CSRF, privacy/consent, localization, other browsers/versions и production IAM остаются вне scope.
 
 ## Технические критерии Итерации 1
 
