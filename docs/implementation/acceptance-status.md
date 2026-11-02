@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S26:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S27:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -319,6 +319,18 @@ I2-S25 закрывает только presentation contract текущей seed
 | I2-S26-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S26 закрывает только identity одного AJAX-added demo item на текущем локальном cart renderer. Не доказаны quantity/price/tax, reservation, persistence/concurrency, auth/guest policy, checkout/order/payment и cross-install classic/Blocks acceptance.
+
+### I2-S27 — exact root/child category fixture cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S27-ACC-001 | Cleanup identifiers известны до REST create | unique root/child slugs объявлены заранее, используются в create payload и exact-equal REST response | `PASS` |
+| I2-S27-ACC-002 | Fallback lookup реально проверяется normal run и остаётся узким | exact slug lookup выполняется всегда; client filter требует exact slug и positive ID; cleanup IDs — deduplicated union known/found IDs | `PASS` |
+| I2-S27-ACC-003 | Restore и dependency order сохранены | полный category/popular/stock order exact-restored до cleanup; child удаляется раньше root; каждый удалённый ID даёт `404`, repeated exact lookup — `0` | `PASS` |
+| I2-S27-ACC-004 | Lookup error не маскируется и root cleanup остаётся достижим | доступные known IDs удаляются до rethrow; outer `finally` запускает root cleanup даже после child failure | `PASS` |
+| I2-S27-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S27 закрывает только exact fallback cleanup текущего root/child fixture при выполнении `finally`. Hard kill, старые slugs других marker, отказ delete/БД/сети, concurrency, error aggregation и transactional rollback остаются вне scope.
 
 ## Технические критерии Итерации 1
 

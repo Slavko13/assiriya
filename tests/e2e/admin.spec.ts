@@ -375,6 +375,8 @@ test.describe('WordPress administration', () => {
     const marker = Date.now();
     const rootName = `E2E корневая категория ${marker}`;
     const childName = `E2E дочерняя категория ${marker}`;
+    const rootSlug = `e2e-root-category-${marker}`;
+    const childSlug = `e2e-child-category-${marker}`;
     let restNonce = '';
     let rootCategoryId = 0;
     let childCategoryId = 0;
@@ -391,6 +393,52 @@ test.describe('WordPress administration', () => {
     });
     expect(restNonce, 'WordPress REST nonce should be exposed to an authenticated administrator').not.toBe('');
     const requestHeaders = { 'X-WP-Nonce': restNonce };
+    const cleanupCategoryByExactSlug = async (knownId: number, slug: string): Promise<void> => {
+      const lookupUrl = `/wp-json/wc/v3/products/categories?slug=${encodeURIComponent(slug)}&per_page=100`;
+      const cleanupIds = new Set<number>(knownId > 0 ? [knownId] : []);
+      let lookupError: unknown;
+      let lookupFailed = false;
+
+      try {
+        const lookupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
+        expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
+        const lookupCategories = await lookupResponse.json();
+        const exactLookupIds = lookupCategories
+          .filter((category: { id?: number; slug?: string }) => (
+            category.slug === slug && Number(category.id) > 0
+          ))
+          .map((category: { id: number }) => Number(category.id));
+        exactLookupIds.forEach((id: number) => cleanupIds.add(id));
+        if (knownId > 0) {
+          expect(exactLookupIds).toContain(knownId);
+        }
+      } catch (error) {
+        lookupFailed = true;
+        lookupError = error;
+      }
+
+      for (const cleanupId of cleanupIds) {
+        const deleteResponse = await page.request.delete(
+          `/wp-json/wc/v3/products/categories/${cleanupId}?force=true`,
+          { headers: requestHeaders },
+        );
+        expect(deleteResponse.ok(), await deleteResponse.text()).toBeTruthy();
+        const deletedResponse = await page.request.get(
+          `/wp-json/wc/v3/products/categories/${cleanupId}`,
+          { headers: requestHeaders },
+        );
+        expect(deletedResponse.status()).toBe(404);
+      }
+
+      if (lookupFailed) {
+        throw lookupError;
+      }
+
+      const verifyCleanupResponse = await page.request.get(lookupUrl, { headers: requestHeaders });
+      expect(verifyCleanupResponse.ok(), await verifyCleanupResponse.text()).toBeTruthy();
+      const remainingCategories = await verifyCleanupResponse.json();
+      expect(remainingCategories.filter((category: { slug?: string }) => category.slug === slug)).toHaveLength(0);
+    };
 
     try {
       const originalSelections = await readStoredHomepageSelectionOrder(page);
@@ -420,7 +468,7 @@ test.describe('WordPress administration', () => {
         headers: requestHeaders,
         data: {
           name: rootName,
-          slug: `e2e-root-category-${marker}`,
+          slug: rootSlug,
           parent: 0,
         },
       });
@@ -428,13 +476,14 @@ test.describe('WordPress administration', () => {
       const rootCategory = await rootResponse.json();
       rootCategoryId = Number(rootCategory.id);
       expect(rootCategoryId).toBeGreaterThan(0);
+      expect(rootCategory.slug).toBe(rootSlug);
       expect(Number(rootCategory.parent)).toBe(0);
 
       const childResponse = await page.request.post('/wp-json/wc/v3/products/categories', {
         headers: requestHeaders,
         data: {
           name: childName,
-          slug: `e2e-child-category-${marker}`,
+          slug: childSlug,
           parent: rootCategoryId,
         },
       });
@@ -442,6 +491,7 @@ test.describe('WordPress administration', () => {
       const childCategory = await childResponse.json();
       childCategoryId = Number(childCategory.id);
       expect(childCategoryId).toBeGreaterThan(0);
+      expect(childCategory.slug).toBe(childSlug);
       expect(Number(childCategory.parent)).toBe(rootCategoryId);
 
       await page.goto('/wp-admin/admin.php?page=avtozakup');
@@ -507,30 +557,12 @@ test.describe('WordPress administration', () => {
         }
       } finally {
         try {
-          if (childCategoryId > 0 && restNonce) {
-            const deleteResponse = await page.request.delete(
-              `/wp-json/wc/v3/products/categories/${childCategoryId}?force=true`,
-              { headers: requestHeaders },
-            );
-            expect(deleteResponse.ok(), await deleteResponse.text()).toBeTruthy();
-            const verifyCleanupResponse = await page.request.get(
-              `/wp-json/wc/v3/products/categories/${childCategoryId}`,
-              { headers: requestHeaders },
-            );
-            expect(verifyCleanupResponse.status()).toBe(404);
+          if (restNonce) {
+            await cleanupCategoryByExactSlug(childCategoryId, childSlug);
           }
         } finally {
-          if (rootCategoryId > 0 && restNonce) {
-            const deleteResponse = await page.request.delete(
-              `/wp-json/wc/v3/products/categories/${rootCategoryId}?force=true`,
-              { headers: requestHeaders },
-            );
-            expect(deleteResponse.ok(), await deleteResponse.text()).toBeTruthy();
-            const verifyCleanupResponse = await page.request.get(
-              `/wp-json/wc/v3/products/categories/${rootCategoryId}`,
-              { headers: requestHeaders },
-            );
-            expect(verifyCleanupResponse.status()).toBe(404);
+          if (restNonce) {
+            await cleanupCategoryByExactSlug(rootCategoryId, rootSlug);
           }
         }
       }

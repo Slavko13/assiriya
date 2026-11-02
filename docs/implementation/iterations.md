@@ -822,6 +822,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact identity текущего локального AJAX-added demo item.
 
+### I2-S27 — exact root/child category fixture cleanup
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040` test mutation isolation; поддерживает `I2-S18`; production behavior не меняется.
+
+Критерии среза:
+
+- unique root/child slugs известны до REST create и exact-equal response;
+- normal run всегда выполняет exact slug lookup и сверяет известный ID;
+- cleanup IDs — strict-filtered deduplicated union known/found IDs;
+- Settings restore остаётся первым, cleanup идёт child → root;
+- каждый удалённый ID даёт `404`, repeated exact lookup — `0`;
+- lookup error пробрасывается после попытки available known-ID cleanup, root cleanup остаётся во внешнем `finally`.
+
+Вне scope: hard kill, старые fixtures других marker, отказ delete/БД/сети, concurrent run, error aggregation, DB transaction/rollback и production lifecycle/master/RBAC.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только mutation-isolation cleanup конкретного root/child category fixture при выполнении `finally`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
