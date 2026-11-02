@@ -926,6 +926,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только guest My Account entrypoint/form baseline текущего локального renderer.
 
+### I2-S31 — exact temporary shop manager cleanup
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-040` test identity isolation; поддерживает `I2-S21`; production behavior не меняется.
+
+Критерии среза:
+
+- unique username известен до REST create и exact-equal response;
+- normal run всегда выполняет exact username lookup;
+- strict filter требует exact username, positive ID и исключает admin ID;
+- found IDs попадают в deduplicated union до known-ID validation;
+- каждый cleanup ID повторно проверяется как non-admin; delete даёт `deleted=true`, GET `404`, repeated exact lookup `0`;
+- lookup/validation error пробрасывается после available cleanup, Settings/selection snapshots остаются во внешнем `finally`.
+
+Вне scope: hard kill, старые usernames других marker, отказ delete/БД/сети/Settings, concurrent run, error aggregation, DB transaction/rollback и production IAM.
+
+Выполнено и проверено:
+
+- targeted scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только identity-isolation cleanup конкретного temporary `shop_manager` при выполнении `finally`.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

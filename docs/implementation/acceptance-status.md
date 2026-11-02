@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S30:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S31:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -367,6 +367,18 @@ I2-S29 закрывает только единый exact demo-safety contract �
 | I2-S30-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S30 закрывает только гостевой entrypoint и форму текущего локального My Account. Successful login/logout, registration/password reset, cookies/session fixation/CSRF, IDOR, roles, orders/customer data, privacy и production IAM остаются open.
+
+### I2-S31 — exact temporary shop manager cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S31-ACC-001 | Cleanup identifier известен независимо от user ID | unique username объявлен до create; REST response exact-equal username и role `shop_manager` | `PASS` |
+| I2-S31-ACC-002 | Normal run проверяет exact lookup и сохраняет found IDs | encoded search выполняется всегда; client filter требует exact username, positive ID и non-admin; found IDs добавляются до known-ID validation | `PASS` |
+| I2-S31-ACC-003 | Delete остаётся узким и admin-safe | удаляется deduplicated known/found union; каждый ID повторно проверяется как non-admin; delete возвращает `deleted=true`, GET — `404`, repeated exact lookup — `0` | `PASS` |
+| I2-S31-ACC-004 | Lookup error не отменяет доступный cleanup и state verification | доступный union удаляется до rethrow; outer `finally` сохраняет Settings/form и stored selection exact snapshots | `PASS` |
+| I2-S31-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S31 закрывает только cleanup test-only `shop_manager` identity при выполнении `finally`. Hard kill, старые usernames других marker, отказ delete/БД/сети/Settings, concurrency, error aggregation и production IAM остаются вне scope.
 
 ## Технические критерии Итерации 1
 

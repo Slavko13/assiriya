@@ -247,22 +247,33 @@ test.describe('WordPress administration', () => {
         try {
           if (restNonce && adminId > 0) {
             const requestHeaders = { 'X-WP-Nonce': restNonce };
-            let cleanupIds = userId > 0 ? [userId] : [];
-            if (cleanupIds.length === 0) {
+            const lookupUrl = `/wp-json/wp/v2/users?search=${encodeURIComponent(username)}&context=edit&per_page=100`;
+            const cleanupIds = new Set<number>(userId > 0 ? [userId] : []);
+            let lookupError: unknown;
+            let lookupFailed = false;
+
+            try {
               const lookupResponse = await page.request.get(
-                `/wp-json/wp/v2/users?search=${encodeURIComponent(username)}&context=edit&per_page=100`,
+                lookupUrl,
                 { headers: requestHeaders },
               );
               expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
               const users = await lookupResponse.json();
-              cleanupIds = users
+              const exactLookupIds = users
                 .filter((user: { id?: number; username?: string }) => (
                   user.username === username && Number(user.id) > 0 && Number(user.id) !== adminId
                 ))
                 .map((user: { id: number }) => Number(user.id));
+              exactLookupIds.forEach((id: number) => cleanupIds.add(id));
+              if (userId > 0) {
+                expect(exactLookupIds).toContain(userId);
+              }
+            } catch (error) {
+              lookupFailed = true;
+              lookupError = error;
             }
 
-            for (const cleanupId of [...new Set(cleanupIds)]) {
+            for (const cleanupId of cleanupIds) {
               expect(cleanupId).not.toBe(adminId);
               const deleteUserResponse = await page.request.delete(
                 `/wp-json/wp/v2/users/${cleanupId}?force=true&reassign=${adminId}`,
@@ -276,8 +287,12 @@ test.describe('WordPress administration', () => {
               expect(verifyDeletedUser.status()).toBe(404);
             }
 
+            if (lookupFailed) {
+              throw lookupError;
+            }
+
             const verifyLookupResponse = await page.request.get(
-              `/wp-json/wp/v2/users?search=${encodeURIComponent(username)}&context=edit&per_page=100`,
+              lookupUrl,
               { headers: requestHeaders },
             );
             expect(verifyLookupResponse.ok(), await verifyLookupResponse.text()).toBeTruthy();
