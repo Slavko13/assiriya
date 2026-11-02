@@ -116,7 +116,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
 - Playwright env preflight: 6 unit tests passed; missing/unsafe target и partial admin-write opt-in fail closed.
-- Playwright: 35 tests, 33 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, catalog/search/PDP, demo guards и bounded visual comparator.
+- Playwright: 36 tests, 34 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, demo guards и bounded visual comparator.
 
 Эти результаты относятся к локальному адресу `http://localhost:8086/`. Реального server deployment не было: `NOT_DEPLOYED`.
 

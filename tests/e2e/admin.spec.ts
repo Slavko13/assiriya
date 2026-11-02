@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
 type RuntimeErrors = {
   console: string[];
@@ -33,15 +33,28 @@ test.describe('WordPress administration', () => {
     'Set the admin credential pair and E2E_ALLOW_ADMIN_WRITES=1 only for an owned local/disposable target.',
   );
 
-  async function logIn(page: Page): Promise<void> {
+  async function logInWithCredentials(page: Page, username: string, password: string): Promise<void> {
     await page.goto('/wp-login.php');
-    await page.locator('#user_login').fill(adminUser!);
-    await page.locator('#user_pass').fill(adminPassword!);
+    await page.locator('#user_login').fill(username);
+    await page.locator('#user_pass').fill(password);
 
     await Promise.all([
       page.waitForURL(/\/wp-admin(?:\/|$)/),
       page.locator('#wp-submit').click(),
     ]);
+  }
+
+  async function logIn(page: Page): Promise<void> {
+    await logInWithCredentials(page, adminUser!, adminPassword!);
+  }
+
+  async function readHomepageSettingsFormSnapshot(page: Page): Promise<Array<[string, string]>> {
+    await page.goto('/wp-admin/admin.php?page=avtozakup');
+    return page.locator('form[action="options.php"]').evaluate((form) => (
+      Array.from(new FormData(form as HTMLFormElement).entries())
+        .filter(([name]) => name.startsWith('avtozakup_homepage['))
+        .map(([name, value]) => [name, String(value)] as [string, string])
+    ));
   }
 
   async function submitHomepageSelections(
@@ -139,6 +152,160 @@ test.describe('WordPress administration', () => {
 
     expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
     expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+  });
+
+  test('denies Автозакуп settings to a temporary shop manager without mutating them', async ({ page, browser }) => {
+    test.setTimeout(60_000);
+    const runtimeErrors = watchRuntimeErrors(page);
+    const marker = Date.now();
+    const username = `e2e-shop-manager-${marker}`;
+    const email = `${username}@example.test`;
+    const password = `E2E!${marker}zQ9#`;
+    let restNonce = '';
+    let adminId = 0;
+    let userId = 0;
+    let originalSettings: Array<[string, string]> = [];
+    let originalSettingsCaptured = false;
+    let originalSelections: HomepageSelectionOrder | undefined;
+    let restrictedContext: BrowserContext | undefined;
+    let restrictedRuntimeErrors: RuntimeErrors | undefined;
+
+    await logIn(page);
+    originalSettings = await readHomepageSettingsFormSnapshot(page);
+    originalSettingsCaptured = true;
+    expect(originalSettings.length).toBeGreaterThan(0);
+    originalSelections = await readStoredHomepageSelectionOrder(page);
+
+    await page.goto('/wp-admin/');
+    restNonce = await page.evaluate(() => {
+      const settings = (window as Window & { wpApiSettings?: { nonce?: string } }).wpApiSettings;
+      return settings?.nonce ?? '';
+    });
+    expect(restNonce, 'WordPress REST nonce should be exposed to an authenticated administrator').not.toBe('');
+    const requestHeaders = { 'X-WP-Nonce': restNonce };
+
+    try {
+      const currentUserResponse = await page.request.get('/wp-json/wp/v2/users/me?context=edit', {
+        headers: requestHeaders,
+      });
+      expect(currentUserResponse.ok(), await currentUserResponse.text()).toBeTruthy();
+      adminId = Number((await currentUserResponse.json()).id);
+      expect(adminId).toBeGreaterThan(0);
+
+      const createUserResponse = await page.request.post('/wp-json/wp/v2/users', {
+        headers: requestHeaders,
+        data: {
+          username,
+          email,
+          password,
+          roles: ['shop_manager'],
+        },
+      });
+      expect(createUserResponse.ok(), await createUserResponse.text()).toBeTruthy();
+      const createdUser = await createUserResponse.json();
+      userId = Number(createdUser.id);
+      expect(userId).toBeGreaterThan(0);
+      expect(userId).not.toBe(adminId);
+      expect(createdUser.username).toBe(username);
+      expect(createdUser.roles).toContain('shop_manager');
+      expect(createdUser.roles).not.toContain('administrator');
+
+      restrictedContext = await browser.newContext({ baseURL: new URL(page.url()).origin });
+      const restrictedPage = await restrictedContext.newPage();
+      restrictedRuntimeErrors = watchRuntimeErrors(restrictedPage);
+      await logInWithCredentials(restrictedPage, username, password);
+
+      const productsResponse = await restrictedPage.goto('/wp-admin/edit.php?post_type=product', {
+        waitUntil: 'domcontentloaded',
+      });
+      expect(productsResponse?.status()).toBe(200);
+      await expect(restrictedPage.locator('body.wp-admin')).toBeVisible();
+      await expect(restrictedPage.locator('body')).toHaveClass(/post-type-product/);
+      await expect(restrictedPage.locator('#posts-filter')).toBeVisible();
+      await expect(restrictedPage.locator('#menu-posts-product')).toBeVisible();
+      await expect(restrictedPage.locator('#toplevel_page_avtozakup')).toHaveCount(0);
+      expect(restrictedRuntimeErrors.console).toEqual([]);
+      expect(restrictedRuntimeErrors.page).toEqual([]);
+
+      const deniedResponse = await restrictedPage.goto('/wp-admin/admin.php?page=avtozakup', {
+        waitUntil: 'domcontentloaded',
+      });
+      expect(deniedResponse?.status()).toBe(403);
+      const deniedUrl = new URL(restrictedPage.url());
+      expect(deniedUrl.pathname).toBe('/wp-admin/admin.php');
+      expect(deniedUrl.searchParams.get('page')).toBe('avtozakup');
+      await expect(restrictedPage.locator('form[action="options.php"]')).toHaveCount(0);
+      await expect(restrictedPage.locator('#hero_title')).toHaveCount(0);
+      await expect(restrictedPage.locator('#submit')).toHaveCount(0);
+      expect(restrictedRuntimeErrors.console.some((message) => /403 \(Forbidden\)/.test(message))).toBe(true);
+      expect(restrictedRuntimeErrors.console.filter((message) => !/403 \(Forbidden\)/.test(message))).toEqual([]);
+      expect(restrictedRuntimeErrors.page).toEqual([]);
+    } finally {
+      try {
+        await restrictedContext?.close();
+      } finally {
+        try {
+          if (restNonce && adminId > 0) {
+            const requestHeaders = { 'X-WP-Nonce': restNonce };
+            let cleanupIds = userId > 0 ? [userId] : [];
+            if (cleanupIds.length === 0) {
+              const lookupResponse = await page.request.get(
+                `/wp-json/wp/v2/users?search=${encodeURIComponent(username)}&context=edit&per_page=100`,
+                { headers: requestHeaders },
+              );
+              expect(lookupResponse.ok(), await lookupResponse.text()).toBeTruthy();
+              const users = await lookupResponse.json();
+              cleanupIds = users
+                .filter((user: { id?: number; username?: string }) => (
+                  user.username === username && Number(user.id) > 0 && Number(user.id) !== adminId
+                ))
+                .map((user: { id: number }) => Number(user.id));
+            }
+
+            for (const cleanupId of [...new Set(cleanupIds)]) {
+              expect(cleanupId).not.toBe(adminId);
+              const deleteUserResponse = await page.request.delete(
+                `/wp-json/wp/v2/users/${cleanupId}?force=true&reassign=${adminId}`,
+                { headers: requestHeaders },
+              );
+              expect(deleteUserResponse.ok(), await deleteUserResponse.text()).toBeTruthy();
+              expect((await deleteUserResponse.json()).deleted).toBe(true);
+              const verifyDeletedUser = await page.request.get(`/wp-json/wp/v2/users/${cleanupId}?context=edit`, {
+                headers: requestHeaders,
+              });
+              expect(verifyDeletedUser.status()).toBe(404);
+            }
+
+            const verifyLookupResponse = await page.request.get(
+              `/wp-json/wp/v2/users?search=${encodeURIComponent(username)}&context=edit&per_page=100`,
+              { headers: requestHeaders },
+            );
+            expect(verifyLookupResponse.ok(), await verifyLookupResponse.text()).toBeTruthy();
+            const remainingUsers = await verifyLookupResponse.json();
+            expect(remainingUsers.filter((user: { username?: string }) => user.username === username)).toHaveLength(0);
+          }
+        } finally {
+          try {
+            if (originalSettingsCaptured) {
+              const settingsAfterDeniedAccess = await readHomepageSettingsFormSnapshot(page);
+              expect(settingsAfterDeniedAccess).toEqual(originalSettings);
+            }
+          } finally {
+            if (originalSelections) {
+              const selectionsAfterDeniedAccess = await readStoredHomepageSelectionOrder(page);
+              expect(selectionsAfterDeniedAccess).toEqual(originalSelections);
+            }
+          }
+        }
+      }
+    }
+
+    expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+    expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+    const restrictedConsoleErrors = restrictedRuntimeErrors?.console ?? [];
+    expect(restrictedConsoleErrors.some((message) => /403 \(Forbidden\)/.test(message))).toBe(true);
+    expect(restrictedConsoleErrors.filter((message) => !/403 \(Forbidden\)/.test(message)), `Restricted console errors:\n${restrictedConsoleErrors.join('\n')}`).toEqual([]);
+    expect(restrictedRuntimeErrors?.page ?? [], `Restricted page errors:\n${restrictedRuntimeErrors?.page.join('\n') ?? ''}`).toEqual([]);
   });
 
   test('keeps selected category identities isolated from unselected legacy terms', async ({ page }, testInfo) => {

@@ -8,7 +8,7 @@
 
 - локальная сборка и recovery-контур: `READY_FOR_DEPLOYMENT`;
 - сервер: `NOT_DEPLOYED` — серверный доступ и Git `origin` отсутствуют, inventory существующих сайтов и реальный deploy не выполнялись;
-- последний локальный Playwright-прогон: **33 passed, 2 intentionally skipped**;
+- последний локальный Playwright-прогон: **34 passed, 2 intentionally skipped**;
 - Docker persistence: **PASS** — БД и uploads сохранены после restart;
 - парный backup/restore drill для MariaDB + uploads: **PASS**;
 - `DEC-001…DEC-020` остаются открытыми, поэтому демонстрационная витрина не считается готовым коммерческим контуром.
@@ -26,7 +26,7 @@
 - E2E isolation: временный unmarked Woo product не получает demo presentation в каталоге, строгом поиске и PDP; `finally` cleanup и отсутствие temporary SKU проверяются;
 - локальный и production Compose, Caddy с CIDR-ограничением админки, именованные volumes;
 - backup/restore связанного комплекта MariaDB + `uploads`;
-- Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, axe и fail-fast deterministic screenshots;
+- Playwright: публичная главная, AJAX cart, Store API guard, админка, сохранение настроек, `shop_manager` negative capability, axe и fail-fast deterministic screenshots;
 - трассировка требований и честные статусы открытых `DEC-001…DEC-020`.
 
 Цены, остатки и сроки на демо-товарах не являются коммерческим предложением. Реальные поиск/применяемость, поставщики, VIN, B2B, checkout, оплата и доставка не активированы до соответствующих решений и интеграций.
@@ -76,7 +76,7 @@ npm run test:e2e
 
 Перед установкой opt-in сверьте exact root `BASE_URL` и убедитесь, что стенд локальный или disposable и принадлежит вам: admin suite временно меняет settings и создаёт/удаляет Woo fixtures. Этот suite не является production smoke; trace/video/screenshot для admin project отключены.
 
-Текущий локальный результат: **35 tests: 33 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity и root/max-8 input boundary, demo guards, admin save/restore и transactional Woo CRUD/cleanup на `1440/390/360`. Mutating Settings-тесты сохраняют полный исходный порядок category/popular/stock selections и подтверждают exact restore; fixtures удаляются с проверкой `404`. Все 18 actual screenshots снимаются общим fail-fast helper после загрузки шрифтов, активации lazy images и декодирования layout-visible `<img>`/CSS backgrounds; захват сериализован между workers, а существующий PNG сохраняется только при строго ограниченной decoded-pixel эквивалентности. На Windows локальный suite использует один worker, потому что shared Chrome compositor под параллельной нагрузкой давал крупные небезопасные visual diff; CI уже был serial. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Точные правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
+Текущий локальный результат: **36 tests: 34 passed, 2 intentionally skipped**. Оба skip относятся к повторному viewport-независимому Store API guard на двух mobile-проектах; сам guard проходит на desktop-проекте. Suite также проверяет catalog/search/PDP, curated category identity и root/max-8 input boundary, demo guards, admin save/restore, transactional Woo CRUD/cleanup и отказ `shop_manager` в доступе к project Settings при сохранённом доступе к Products. Mutating Settings-тесты сохраняют полный исходный порядок category/popular/stock selections и подтверждают exact restore; fixtures удаляются с проверкой `404`. Все 18 actual screenshots снимаются общим fail-fast helper после загрузки шрифтов, активации lazy images и декодирования layout-visible `<img>`/CSS backgrounds; захват сериализован между workers, а существующий PNG сохраняется только при строго ограниченной decoded-pixel эквивалентности. На Windows локальный suite использует один worker, потому что shared Chrome compositor под параллельной нагрузкой давал крупные небезопасные visual diff; CI уже был serial. HTML-отчёт: [`playwright-report/index.html`](playwright-report/index.html). Точные правила скриншотов и Paper reference: [`docs/qa/visual-diffs/README.md`](docs/qa/visual-diffs/README.md).
 
 ## Persistence, backup и restore
 

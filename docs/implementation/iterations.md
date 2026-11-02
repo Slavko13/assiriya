@@ -659,6 +659,35 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только устойчивость хранения actual screenshots к строго ограниченному renderer noise. Baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` по `DEC-019/020`.
 
+### I2-S21 — project Settings negative capability
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-036`, `TC-037`, `NFR-SEC-005` partial; production capabilities и role model не меняются.
+
+Критерии среза:
+
+- admin REST создаёт unique temporary user только с Woo role `shop_manager`;
+- отдельная browser session доказывает meaningful Products access, но не видит project Settings menu;
+- direct exact Settings URL отвечает `403`, не редиректит на login и не отдаёт форму;
+- denied access не меняет scalar/media form values или exact category/popular/stock order;
+- restricted context, exact user и оба Settings snapshots завершаются nested cleanup независимо;
+- temporary user force-deleted с reassign admin, exact ID даёт `404`, username lookup пуст.
+
+Вне scope: сопоставление Woo `shop_manager` с бизнес-ролью «Менеджер», denied-attempt audit, MFA, session hardening, rate limits, all-role/API/object ownership matrix и production IAM.
+
+Выполнено и проверено:
+
+- общий login helper поддерживает отдельные credentials; Settings form snapshot исключает nonce/action и включает только `avtozakup_homepage[...]`;
+- Products `200`, product body/menu/form и отсутствие project menu подтверждают содержательную ограниченную сессию;
+- direct Settings request остаётся на exact URL, получает `403`; единственный допустимый console class — ожидаемый navigation 403;
+- full form snapshot и existing stored-order helper exact-equal до/после;
+- targeted RBAC: `1 passed`; весь admin suite: `7 passed`; независимые design/security reviews после nested-cleanup fixes — без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; все 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает один отрицательный capability check project Settings. Полный `TC-037/PBL-036` остаётся partial до утверждённой матрицы, server audit и остальных security controls.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

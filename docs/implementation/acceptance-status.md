@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S20:** `35` tests = `33 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S21:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -247,6 +247,19 @@ I2-S19 закрывает только mutation isolation тестового har
 
 I2-S20 закрывает только устойчивость хранения actual visual evidence к доказанному ограниченному renderer noise. Material candidate по-прежнему записывается; Paper/mobile baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED` по `DEC-019/020`.
 
+### I2-S21 — project Settings negative capability
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S21-ACC-001 | Ограниченная сессия реальна и содержательна | admin REST создаёт exact temporary user только с `shop_manager`; отдельная session входит и получает Products `200`, `#posts-filter` и product menu | `PASS` |
+| I2-S21-ACC-002 | Project Settings скрыты в UI | на Products page отсутствует `#toplevel_page_avtozakup`; returned role не содержит `administrator` | `PASS` |
+| I2-S21-ACC-003 | Direct URL запрещён сервером | exact `/wp-admin/admin.php?page=avtozakup` остаётся тем же URL, отвечает `403`; Settings form, hero field и submit отсутствуют | `PASS` |
+| I2-S21-ACC-004 | Отказ не меняет Settings | до/после exact-equal все `avtozakup_homepage[...]` form values и stored order category/popular/stock selections | `PASS` |
+| I2-S21-ACC-005 | Temporary identity очищена независимо | nested cleanup закрывает restricted context, force-deletes exact user с reassign admin, проверяет ID `404` и exact username lookup `0` | `PASS` |
+| I2-S21-ACC-006 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed`, `2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S21 закрывает только один WordPress capability boundary для project Settings. Woo `shop_manager` не приравнивается к аналитической роли «Менеджер»; denied-attempt audit, MFA, session/rate-limit controls, all-role/API/object matrix и полный `TC-037/PBL-036` остаются open.
+
 ## Технические критерии Итерации 1
 
 | ID | Критерий | Доказательство | Статус |
@@ -280,7 +293,7 @@ I2-S20 закрывает только устойчивость хранения
 | TC-005/006 | multiple/stale offers | `BLOCKED`: real SupplierOffer отсутствует |
 | TC-007 | changed offer | `NOT_APPLICABLE` к demo homepage; future cart |
 | TC-031/032 | VIN submit/validation | `BLOCKED`: DEC-017/018, DG-010, CRM |
-| TC-037 | RBAC | admin settings negative capability test `NOT_TESTED`; полный role matrix позже |
+| TC-037 | RBAC | project Settings negative capability для Woo `shop_manager` `PASS / PARTIAL`; denied-attempt audit и полный role/API/object matrix позже |
 | TC-038 | IDOR | защищённых custom objects пока нет; WP baseline требует security suite |
 | TC-039 | responsive chain | homepage `1440/390/360` subset `PASS`; end-to-end business chain `BLOCKED` |
 | TC-040 | accessibility | homepage axe + keyboard focus subset `PASS`; полный target/масштабы остаются DEC-020 |
