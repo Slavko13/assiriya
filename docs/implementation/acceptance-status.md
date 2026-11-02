@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S49:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S50:** `42` tests = `40 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -600,6 +600,18 @@ I2-S48 closes only the current provisional 390/360 Chrome computed accessible-na
 | I2-S49-ACC-006 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; read-only audit confirms no production change needed | `PASS` |
 
 I2-S49 closes only Escape plus the outside-rectangle primary-pointer path for the two current theme-owned native dialogs in pinned Chrome. Bare-dialog padding/border targets, touch-specific gestures, mobile-nav outside-click, all other openers/keys, cancel interception, nested/dirty dialogs, scroll lock/animation/resize/back, AT/browser matrix and real contact/delivery acceptance remain outside scope.
+
+### I2-S50 — guest password-toggle keyboard/focus contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S50-ACC-001 | Exact local keyboard reach | focused `#password` plus one Tab reaches its exact sibling native `button.show-password-input` on `1440/390/360` | `PASS` |
+| I2-S50-ACC-002 | Enter reveal and focus handoff exact | Enter changes `type=password→text` and reveal→conceal accessible name; pinned Woo transfers focus to the empty password input | `PASS` |
+| I2-S50-ACC-003 | Space conceal and name round-trip exact | one Tab reaches the same toggle again; Space changes `type=text→password`, restores the original accessible name and transfers focus to the empty input | `PASS` |
+| I2-S50-ACC-004 | No auth/navigation mutation | credentials remain empty, submit is not activated and pathname remains exact `/my-account/` | `PASS` |
+| I2-S50-ACC-005 | Responsive/regression gates preserved | targeted `3 passed`; full `42`: `40 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
+
+I2-S50 closes only the current pinned Woo/Chrome DOM/keyboard/type/accessibility-label/focus handoff for the guest password-visibility control. It does not prove credentials, submit/POST, successful or failed login, session/cookie/CSRF enforcement, localization, visible-focus manual review, OS capture, autofill/password-manager behavior, screen-reader/AT/browser matrix, cross-Woo-version compatibility or production IAM/security acceptance.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

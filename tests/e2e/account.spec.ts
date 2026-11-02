@@ -89,6 +89,26 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   await expect(passwordToggle).toHaveAttribute('aria-label', revealLabel!);
   await expect(passwordToggle).toHaveAccessibleName(revealLabel!);
 
+  await password.focus();
+  await expect(password).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(passwordToggle).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(password).toHaveAttribute('type', 'text');
+  await expect(passwordToggle).toHaveAttribute('aria-label', concealLabel!);
+  await expect(passwordToggle).toHaveAccessibleName(concealLabel!);
+  await expect(password).toBeFocused();
+  expect(await password.inputValue()).toBe('');
+  await page.keyboard.press('Tab');
+  await expect(passwordToggle).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(password).toHaveAttribute('type', 'password');
+  await expect(passwordToggle).toHaveAttribute('aria-label', revealLabel!);
+  await expect(passwordToggle).toHaveAccessibleName(revealLabel!);
+  await expect(password).toBeFocused();
+  expect(await password.inputValue()).toBe('');
+  expect(new URL(page.url()).pathname).toBe('/my-account/');
+
   const rememberLabel = loginForm.locator('label.woocommerce-form-login__rememberme');
   await expect(rememberLabel).toHaveCount(1);
   await expect(rememberLabel).toBeVisible();

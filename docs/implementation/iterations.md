@@ -1394,6 +1394,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current two theme-owned native-dialog Escape/outside-rectangle primary-pointer paths в pinned Chrome.
 
+### I2-S50 — guest password-toggle keyboard/focus contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S44`; `PBL-009/PBL-040`, `FR-AUTH-002` renderer-only technical partial и `NFR-A11Y-002` technical partial. `DG-002` и весь auth/security business scope остаются open.
+
+Критерии среза:
+
+- focused empty password input передаёт focus exact sibling native visibility button ровно одним Tab;
+- Enter меняет password→text и reveal→conceal accessible name; Woo переводит focus обратно в password input;
+- повторный Tab и Space меняют text→password, возвращают исходное имя и снова переводят focus в input;
+- input остаётся пустым, submit не активируется, pathname остаётся exact `/my-account/`.
+
+Вне scope: credentials/value, submit/POST, successful/failed login, logout/reset, session/cookies, server-side CSRF, localization, visible-focus manual review, OS capture, autofill/password managers, screen-reader/AT/browser matrix, other Woo/browser versions и production IAM/security acceptance.
+
+Выполнено и проверено:
+
+- production code unchanged: native button и текущий Woo focus handoff уже удовлетворяют контракту, duplicate keydown handler не нужен;
+- targeted account scenario: `3 passed` на `1440/390/360`;
+- independent read-only review: findings отсутствуют, границы claims подтверждены;
+- full regression: `42` tests, `40 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Woo/Chrome password-toggle keyboard/type/name/focus-handoff renderer contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
