@@ -902,6 +902,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact demo checkout guard contract текущего локального renderer.
 
+### I2-S30 — guest My Account entrypoint baseline
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-009/PBL-040`; `FR-AUTH-002/TC-037/038` technical partial; production behavior не меняется.
+
+Критерии среза:
+
+- header account entry имеет canonical same-origin `/my-account/` без query/fragment;
+- desktop entry видима с «Войти», mobile `390/360` сохраняет тот же DOM/href в hidden state;
+- direct guest route успешен и содержит одну штатную Woo login form с username/password/submit;
+- no-overflow, axe serious/critical и runtime gates проходят на трёх viewport.
+
+Вне scope: successful login/logout, registration/password reset, cookies/sessions/CSRF, IDOR, roles, orders/customer data, CRM/privacy и production IAM.
+
+Выполнено и проверено:
+
+- targeted public viewport scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только guest My Account entrypoint/form baseline текущего локального renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

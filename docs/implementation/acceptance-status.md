@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S29:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S30:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -355,6 +355,18 @@ I2-S28 закрывает только exact fallback cleanup одного unmar
 | I2-S29-ACC-005 | Regression/data/visual не ухудшены | guard scenarios `4 passed / 2 skipped`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S29 закрывает только единый exact demo-safety contract активного локального renderer. Не доказаны quantity/price/tax, cart update/remove, reservation, persistence/concurrency, auth/guest policy, production checkout/order/payment и cross-install classic/Blocks acceptance.
+
+### I2-S30 — guest My Account entrypoint baseline
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S30-ACC-001 | Header entry ведёт на canonical same-origin Woo route | первый account action имеет непустой same-origin URL, exact pathname `/my-account/`, без query/fragment | `PASS` |
+| I2-S30-ACC-002 | Responsive presentation соответствует текущему CSS | desktop entry видима и содержит «Войти»; на `390/360` тот же DOM/href намеренно hidden | `PASS` |
+| I2-S30-ACC-003 | Guest destination технически пригодна | successful document, `body.woocommerce-account`, ровно одна visible Woo login form и visible username/password/login controls | `PASS` |
+| I2-S30-ACC-004 | Базовые UX/runtime gates проходят | horizontal overflow отсутствует; axe serious/critical `0`; console/page errors `0` на `1440/390/360` | `PASS` |
+| I2-S30-ACC-005 | Regression/data/visual не ухудшены | targeted `3 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S30 закрывает только гостевой entrypoint и форму текущего локального My Account. Successful login/logout, registration/password reset, cookies/session fixation/CSRF, IDOR, roles, orders/customer data, privacy и production IAM остаются open.
 
 ## Технические критерии Итерации 1
 
