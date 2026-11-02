@@ -48,6 +48,7 @@ test('deployment guardrails preserve foreign services', async () => {
   assert.match(deploy, /Listeners on host ports 80\/443 changed/);
   assert.match(deploy, /avtozakup-quick-tunnel\.lock/);
   assert.match(deploy, /docker volume inspect avtozakup_db_data/);
+  assert.match(deploy, /run --rm -T --no-deps --entrypoint sh wpcli/);
   assert.doesNotMatch(deploy, /docker\s+compose[^\n]*(?:down|--remove-orphans)/);
   assert.doesNotMatch(deploy, /docker\s+(?:system\s+)?prune/);
   assert.doesNotMatch(deploy, /done < <\(docker ps/);

@@ -60,6 +60,7 @@
 | TECH-054 | 2026-11-02 | Временный server preview идёт через отдельный outbound-only Quick Tunnel stack без host ports | Project-owned Caddy сохраняет headers и полностью блокирует public admin; installer проверяет два foreign URL/containers/listeners до и после, не меняя host Caddy | принято для `OPS-QT-001`; случайный URL public/ephemeral, remote run и stable production DNS остаются open |
 | TECH-055 | 2026-11-02 | Владелец явно открывает WordPress login/admin entry в Quick Tunnel preview | Caddy deny из TECH-054 снят; deploy проверяет same-origin login flow, credential остаётся случайным и mode-600, не выводится в лог | заменяет только admin-часть TECH-054 для demo; public brute-force surface принят владельцем, production admin/NFR-SEC-003 остаются open |
 | TECH-056 | 2026-11-02 | Hardened Caddy сохраняет только `NET_BIND_SERVICE` после `cap_drop: ALL` | Official binary имеет file capability и без неё завершается `Operation not permitted`; isolated exact-runtime probe после narrow `cap_add` даёт health `200` на internal `:8080` | исправляет failed first server run; host ports/networks и foreign Caddy не затронуты |
+| TECH-057 | 2026-11-02 | Quick Tunnel WP-CLI bootstrap всегда запускается с `docker compose run -T` | One-command installer приходит через pipe и не имеет TTY; implicit allocation завершалось `the input device is not a TTY` до bootstrap | исправляет second server run; данные сохранены, pre-run paired backup создан, repeat installer остаётся recovery path |
 
 ## Состояние DEC
 

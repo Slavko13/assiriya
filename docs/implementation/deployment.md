@@ -78,7 +78,7 @@ Workflow:
 4. создать mode-600 `.env.quick` со случайными секретами либо сохранить существующий;
 5. при повторном deploy создать парный DB/uploads backup;
 6. запустить outbound-only `cloudflared`, получить новый `https://*.trycloudflare.com` и атомарно сохранить его как `PUBLIC_URL`;
-7. build/start/recreate только services Compose-проекта `avtozakup`, выполнить идемпотентный bootstrap и public smoke;
+7. build/start/recreate только services Compose-проекта `avtozakup`, выполнить идемпотентный non-TTY WP-CLI bootstrap (`run -T`) и public smoke;
 8. подтвердить доступность public WordPress login/admin entry point, неизменность двух URL, foreign container IDs/states и listeners 80/443;
 9. вывести `AVTOZAKUP_PREVIEW_URL=...` последней строкой.
 

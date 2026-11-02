@@ -44,7 +44,7 @@
 
 - Playwright: `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`.
 - Playwright/deployment preflight: `10 passed`; no-target/unsafe-target/partial-admin states и Quick Tunnel isolation guards fail closed.
-- Quick Tunnel local package: Bash syntax `PASS`; Compose config `PASS` с `0` published ports; hardened Caddy exact-runtime health `200`; official cloudflared `2026.10.7` image/version `PASS`; первый remote run выявил и локально закрыл missing file-capability, повторный remote run pending.
+- Quick Tunnel local package: Bash syntax `PASS`; Compose config `PASS` с `0` published ports; hardened Caddy exact-runtime health `200`; official cloudflared `2026.10.7` image/version `PASS`; first remote run закрыл file-capability, second подтвердил Caddy healthy и выявил non-TTY WP-CLI boundary; `run -T` fix подготовлен, next remote run pending.
 - Два skip — ожидаемые mobile-копии viewport-независимого Store API guard; guard выполнен в desktop project.
 - Visual evidence: исторические два последовательных I2-S17 targeted-прогона по 18 capture points прошли `18/18`; два I2-S20 targeted run прошли `19/19` (comparator + 18 captures) без hash changes, serial Windows full regression также сохранил все 19 repository PNG.
 - Viewports: desktop `1440`, mobile `390`, mobile `360`; admin save/restore выполняется отдельным desktop project.

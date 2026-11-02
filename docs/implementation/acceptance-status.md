@@ -544,7 +544,7 @@ I2-S44 закрывает только current Woo-injected DOM/client type/acce
 | OPS-QT-001-ACC-002 | Edge config валиден, запускается under hardening и не блокирует public admin | `caddy validate`; exact `read-only + cap_drop ALL + cap_add NET_BIND_SERVICE + no-new-privileges` runtime health `200`; admin deny отсутствует, HTTPS forwarding сохранён | `PASS` локально |
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
-| OPS-QT-001-ACC-005 | Guardrails зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot и forbidden global removal checks | `PASS` локально |
+| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot, forbidden global removal и WP-CLI `run -T` checks | `PASS` локально |
 | OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до server run с двумя реальными URL |
 | OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до server run |
 

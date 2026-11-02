@@ -314,7 +314,7 @@ log "Recreating only the project Caddy container; it has no published host ports
 wait_healthy caddy 180 || fail "The project Caddy did not become healthy."
 
 log "Running the idempotent WordPress bootstrap."
-"${compose_tools[@]}" run --rm --no-deps --entrypoint sh wpcli /workspace/scripts/bootstrap-wordpress.sh
+"${compose_tools[@]}" run --rm -T --no-deps --entrypoint sh wpcli /workspace/scripts/bootstrap-wordpress.sh
 
 log "Waiting for the public Quick Tunnel smoke tests."
 smoke_ok=0
