@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S38:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S39:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -463,6 +463,18 @@ I2-S37 закрывает только exact URL contract self-contained tempora
 | I2-S38-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S38 закрывает только browser-visible identity/transport одного temporary unmarked simple product. Cart state, localization, quantity/price/stock/reservation, variable/external products, cross-install Woo compatibility и production commerce остаются вне scope.
+
+### I2-S39 — exact AJAX add-to-cart request
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S39-ACC-001 | CTA transport inputs однозначны | source card ID exact-equal CTA `data-product_id`; `data-quantity` exact `1` | `PASS` |
+| I2-S39-ACC-002 | AJAX endpoint exact | request method POST; URL same-origin root; единственный `wc-ajax=add_to_cart`; hash пуст | `PASS` |
+| I2-S39-ACC-003 | POST payload сохраняет source identity | URL-encoded payload содержит ровно один exact `product_id` и quantity `1` | `PASS` |
+| I2-S39-ACC-004 | Existing response/result identity сохранена | HTTP success/no error; CTA added; badge `1`; одна cart row exact title/permalink; checkout guards сохранены | `PASS` |
+| I2-S39-ACC-005 | Responsive/runtime gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S39 закрывает только request transport одного simple demo item текущего pinned Woo AJAX renderer. Response fragment schema, update/remove/duplicate/concurrency, price/tax/stock/reservation/persistence и production cart correctness остаются вне scope.
 
 ## Технические критерии Итерации 1
 

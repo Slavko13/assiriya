@@ -1129,6 +1129,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact add-to-cart form identity одного temporary unmarked simple product.
 
+### I2-S39 — exact AJAX add-to-cart request
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-003/PBL-040`; `FR-CART-001` technical/demo partial; production behavior не меняется.
+
+Критерии среза:
+
+- source card ID exact-equal CTA product ID, CTA quantity exact `1`;
+- browser отправляет POST на same-origin root с единственным `wc-ajax=add_to_cart` и пустым hash;
+- URL-encoded payload содержит ровно один exact source product ID и quantity `1`;
+- existing successful response, added state, badge, exact cart-row identity, canonical links и demo guards сохраняются.
+
+Вне scope: response fragment schema, update/remove/duplicate/concurrency, price/tax/stock/reservation, persistence, variable products и production cart correctness.
+
+Выполнено и проверено:
+
+- targeted AJAX/cart scenario: `3 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact request transport одного simple demo item текущего pinned Woo AJAX renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

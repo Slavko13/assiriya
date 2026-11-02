@@ -140,6 +140,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     const sourceProductId = await sourceCard.getAttribute('data-product-id');
     expect(sourceProductId).toMatch(/^\d+$/);
     await expect(addToCart).toHaveAttribute('data-product_id', sourceProductId!);
+    await expect(addToCart).toHaveAttribute('data-quantity', '1');
     const sourceTitleLink = sourceCard.locator('.az-product-card__title');
     const sourceProductName = (await sourceTitleLink.innerText()).trim();
     const sourceProductHref = await sourceTitleLink.getAttribute('href');
@@ -147,12 +148,30 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(sourceProductHref).toBeTruthy();
 
     const addResponsePromise = page.waitForResponse(
-      (response) => response.request().method() === 'POST' && response.url().includes('wc-ajax=add_to_cart'),
+      (response) => {
+        const responseUrl = new URL(response.url());
+        return response.request().method() === 'POST'
+          && responseUrl.searchParams.getAll('wc-ajax').length === 1
+          && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
+      },
     );
     await addToCart.click();
     const addResponse = await addResponsePromise;
 
     expect(addResponse.ok(), `Add-to-cart failed with HTTP ${addResponse.status()}`).toBeTruthy();
+    const addRequest = addResponse.request();
+    expect(addRequest.method()).toBe('POST');
+    expect(addRequest.headers()['content-type']).toMatch(
+      /^application\/x-www-form-urlencoded(?:;|$)/i,
+    );
+    const addUrl = new URL(addRequest.url());
+    expect(addUrl.origin).toBe(new URL(page.url()).origin);
+    expect(addUrl.pathname).toBe('/');
+    expect([...addUrl.searchParams.entries()]).toEqual([['wc-ajax', 'add_to_cart']]);
+    expect(addUrl.hash).toBe('');
+    const addPayload = new URLSearchParams(addRequest.postData() ?? '');
+    expect(addPayload.getAll('product_id')).toEqual([sourceProductId!]);
+    expect(addPayload.getAll('quantity')).toEqual(['1']);
     const responsePayload = await addResponse.json();
     expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
     await expect(addToCart).toHaveClass(/\badded\b/);
