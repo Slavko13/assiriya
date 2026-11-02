@@ -767,7 +767,17 @@ test.describe('WordPress administration', () => {
       await expect(categoryLink).toHaveCount(1);
       const categoryArchiveHref = await categoryLink.getAttribute('href');
       expect(categoryArchiveHref).toBeTruthy();
-      await page.goto(categoryArchiveHref!, { waitUntil: 'networkidle' });
+      const categoryArchiveUrl = new URL(categoryArchiveHref!, page.url());
+      expect(categoryArchiveUrl.origin).toBe(new URL(page.url()).origin);
+      expect(categoryArchiveUrl.pathname).toBe(`/product-category/${categorySlug}/`);
+      expect(categoryArchiveUrl.search).toBe('');
+      expect(categoryArchiveUrl.hash).toBe('');
+      await page.goto(categoryArchiveUrl.toString(), { waitUntil: 'networkidle' });
+      const navigatedCategoryUrl = new URL(page.url());
+      expect(navigatedCategoryUrl.origin).toBe(categoryArchiveUrl.origin);
+      expect(navigatedCategoryUrl.pathname).toBe(categoryArchiveUrl.pathname);
+      expect(navigatedCategoryUrl.search).toBe('');
+      expect(navigatedCategoryUrl.hash).toBe('');
       await expect(page.locator('body')).toHaveClass(/tax-product_cat/);
       await expect(page.getByRole('heading', { level: 1, name: categoryName, exact: true })).toBeVisible();
       const categoryProducts = page.locator('ul.products li.product');

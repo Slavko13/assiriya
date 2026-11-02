@@ -1078,6 +1078,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact add-to-cart form wiring текущего pinned simple-product renderer.
 
+### I2-S37 — exact temporary category archive URL
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-011/PBL-040`; поддерживает `I2-S22`; `FR-CAT-001/002` technical partial; production behavior не меняется.
+
+Критерии среза:
+
+- exact-name PDP taxonomy link единственна и имеет непустой href;
+- pre-navigation URL same-origin exact `/product-category/{fixture-slug}/` без query/hash;
+- фактический loaded origin/path exact-equal href, query/hash остаются пустыми;
+- existing archive H1/card identity, demo-boundary, Settings isolation и product→category cleanup сохраняются.
+
+Вне scope: taxonomy master/legacy redirects, SEO/canonical policy, arbitrary Unicode slugs, cross-install Woo acceptance и production lifecycle.
+
+Выполнено и проверено:
+
+- targeted admin scenario: `1 passed`;
+- весь serial admin suite: `7 passed`;
+- независимый review: без findings;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact URL contract self-contained temporary category fixture.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |
