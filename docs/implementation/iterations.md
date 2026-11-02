@@ -876,6 +876,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только mutation-isolation cleanup конкретного unmarked product/category fixture при выполнении `finally`.
 
+### I2-S29 — exact demo checkout guard contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `PBL-003/PBL-040` regression safety; `FR-CART-001` technical/demo partial; production behavior не меняется.
+
+Критерии среза:
+
+- cart и checkout содержат ровно один notice с единым exact safety message;
+- active Blocks notice имеет `role="status"`;
+- active classic checkout button имеет exact label, native disabled и `aria-disabled="true"`;
+- Store API POST возвращает exact HTTP/code/message/data-status contract;
+- existing AJAX product identity, badge, canonical routes и runtime gates сохраняются.
+
+Вне scope: quantity/price/tax, update/remove cart, stock reservation, persistence/concurrency, auth/guest policy, production checkout/order/payment и cross-install classic/Blocks acceptance.
+
+Выполнено и проверено:
+
+- guard scenarios: `4 passed`, `2 intentional skipped`;
+- весь homepage suite: `7 passed`, `2 intentional skipped`;
+- независимый review: без findings;
+- full regression: `36` tests, `34 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact demo checkout guard contract текущего локального renderer.
+
 ## Следующие итерации
 
 | Итерация-кандидат | Scope по исходному backlog | Gate |

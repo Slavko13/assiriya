@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S28:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S29:** `36` tests = `34 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -343,6 +343,18 @@ I2-S27 закрывает только exact fallback cleanup текущего r
 | I2-S28-ACC-005 | Regression/data/visual не ухудшены | targeted `1 passed`; admin `7 passed`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S28 закрывает только exact fallback cleanup одного unmarked product/category fixture при выполнении `finally`. Hard kill, старые fixtures других marker, отказ delete/БД/сети, concurrency, error aggregation и transactional rollback остаются вне scope.
+
+### I2-S29 — exact demo checkout guard contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S29-ACC-001 | Cart и checkout показывают один exact safety message | на обоих canonical routes ровно один Woo notice с полным normalized text; активный `.avtozakup-demo-notice` имеет `role="status"` | `PASS` |
+| I2-S29-ACC-002 | Classic checkout action явно недоступна | если active renderer classic, exact button label, native `disabled` и `aria-disabled="true"` проверены | `PASS` |
+| I2-S29-ACC-003 | Store API guard использует тот же contract | POST checkout возвращает HTTP `403`, exact code `avtozakup_demo_checkout_disabled`, тот же exact message и `data.status=403` | `PASS` |
+| I2-S29-ACC-004 | Existing AJAX identity/runtime gates сохранены | clicked product exact-equal cart row; badge `1`; cart→checkout canonical paths; runtime errors отсутствуют на `1440/390/360` | `PASS` |
+| I2-S29-ACC-005 | Regression/data/visual не ухудшены | guard scenarios `4 passed / 2 skipped`; homepage `7 passed / 2 skipped`; full `36`: `34 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S29 закрывает только единый exact demo-safety contract активного локального renderer. Не доказаны quantity/price/tax, cart update/remove, reservation, persistence/concurrency, auth/guest policy, production checkout/order/payment и cross-install classic/Blocks acceptance.
 
 ## Технические критерии Итерации 1
 

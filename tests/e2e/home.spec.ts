@@ -8,6 +8,9 @@ type RuntimeErrors = {
   page: string[];
 };
 
+const demoCheckoutMessage = 'Это демонстрационный каталог. Оформление, оплата, резервирование, VIN- и B2B-операции отключены.';
+const demoCheckoutButtonLabel = 'Оформление отключено в демо-режиме';
+
 function watchRuntimeErrors(page: Page): RuntimeErrors {
   const errors: RuntimeErrors = { console: [], page: [] };
 
@@ -24,6 +27,19 @@ function watchRuntimeErrors(page: Page): RuntimeErrors {
 function expectNoRuntimeErrors(errors: RuntimeErrors): void {
   expect(errors.console, `Browser console errors:\n${errors.console.join('\n')}`).toEqual([]);
   expect(errors.page, `Uncaught page errors:\n${errors.page.join('\n')}`).toEqual([]);
+}
+
+async function expectExactDemoCheckoutNotice(page: Page): Promise<void> {
+  const notices = page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: demoCheckoutMessage });
+  await expect(notices).toHaveCount(1);
+  await expect(notices).toHaveText(demoCheckoutMessage);
+
+  const blockNotice = page.locator('.avtozakup-demo-notice');
+  if (await blockNotice.count()) {
+    await expect(blockNotice).toHaveCount(1);
+    await expect(blockNotice).toHaveAttribute('role', 'status');
+    await expect(blockNotice).toHaveText(demoCheckoutMessage);
+  }
 }
 
 test.describe('АВТОЗАКУП homepage', () => {
@@ -153,17 +169,19 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(cartProductLink).toHaveCount(1);
     await expect(cartProductLink).toHaveText(sourceProductName);
     await expect(cartProductLink).toHaveAttribute('href', sourceProductHref!);
-    await expect(page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: 'демонстрационный каталог' })).toBeVisible();
+    await expectExactDemoCheckoutNotice(page);
 
     const checkoutLink = page.locator('.checkout-button, .wc-block-cart__submit-button');
     await expect(checkoutLink).toBeVisible();
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
     expect(new URL(page.url()).pathname, 'The checkout link must use the canonical WooCommerce slug').toBe('/checkout/');
-    await expect(page.locator('.woocommerce-info, .woocommerce-message').filter({ hasText: 'демонстрационный каталог' })).toBeVisible();
-    const classicDisabledButton = page.getByRole('button', { name: 'Оформление отключено в демо-режиме' });
+    await expectExactDemoCheckoutNotice(page);
+    const classicDisabledButton = page.getByRole('button', { name: demoCheckoutButtonLabel, exact: true });
     if (await classicDisabledButton.count()) {
       await expect(classicDisabledButton).toBeDisabled();
+      await expect(classicDisabledButton).toHaveAttribute('aria-disabled', 'true');
+      await expect(classicDisabledButton).toHaveText(demoCheckoutButtonLabel);
     } else {
       await expect(page.locator('.wp-block-woocommerce-checkout')).toBeVisible();
     }
@@ -178,5 +196,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(response.status()).toBe(403);
     const payload = await response.json();
     expect(payload.code).toBe('avtozakup_demo_checkout_disabled');
+    expect(payload.message).toBe(demoCheckoutMessage);
+    expect(payload.data?.status).toBe(403);
   });
 });
