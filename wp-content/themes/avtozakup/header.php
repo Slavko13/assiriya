@@ -24,7 +24,7 @@ $az_settings = avtozakup_home_settings();
 				<a href="<?php echo esc_url( home_url( '/delivery/' ) ); ?>"><?php esc_html_e( 'Доставка и оплата', 'avtozakup' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/returns/' ) ); ?>"><?php esc_html_e( 'Гарантия и возврат', 'avtozakup' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'О магазине', 'avtozakup' ); ?></a>
-				<button type="button" data-contact-open><?php esc_html_e( 'Контакты', 'avtozakup' ); ?></button>
+				<button type="button" data-contact-open aria-haspopup="dialog"><?php esc_html_e( 'Контакты', 'avtozakup' ); ?></button>
 				<span class="az-service-nav__hours"><?php esc_html_e( 'Ежедневно 9:00–20:00', 'avtozakup' ); ?></span>
 			</nav>
 		</div>
@@ -70,7 +70,7 @@ $az_settings = avtozakup_home_settings();
 				);
 				?>
 			</div>
-			<button class="az-contact-link" type="button" data-contact-open><?php echo avtozakup_icon( 'headset' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php esc_html_e( 'Связаться с нами', 'avtozakup' ); ?></button>
+			<button class="az-contact-link" type="button" data-contact-open aria-haspopup="dialog"><?php echo avtozakup_icon( 'headset' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php esc_html_e( 'Связаться с нами', 'avtozakup' ); ?></button>
 		</div>
 	</div>
 </header>

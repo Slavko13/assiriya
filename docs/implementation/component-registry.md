@@ -23,7 +23,7 @@
 | B2B banner | UI-SCR002-017 | `front-page.php` | editable copy | info/status only | DG-009 later; `BLOCKED` |
 | Pickup/delivery block | UI-SCR002-018 | `front-page.php` | editable copy, no tariff | illustrative map/status | SCR-011/012 later; `BLOCKED` |
 | Footer | SCR-002 and full pages | `footer.php` | menus/contact settings | fallback menus/contact modal | общий; `TESTING` |
-| Contact dialog | SCR-001 | `footer.php`, `main.js` | contact settings | open/close/keyboard requires E2E | общий; `TESTING` |
+| Contact dialog | SCR-001/UI-SCR001-003/004/006 | `header.php`, `footer.php`, `main.js` | contact settings | opener dialog semantics; keyboard open/close; visible phone/email renderer relation; focus returns to actual opener | общий; I2-S45 `PASS / TECHNICAL` renderer partial; channel business acceptance `TESTING` |
 | Status dialog | DG-safe placeholder | `footer.php`, `main.js` | local messages only | vehicle/VIN/B2B/delivery explanations | не считать бизнес-UI; `TESTING` |
 | Button/icon/input primitives | повторяются во всех SCR | `helpers.php`, `main.css` | presentation | default/disabled + keyboard skip-link/focus ring проверены | common library; Iteration 1 `PASS`, полный state set развивается |
 

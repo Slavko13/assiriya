@@ -12,10 +12,18 @@
   }
 
   const contactDialog = document.querySelector('[data-contact-dialog]');
+  let contactTrigger = null;
   document.querySelectorAll('[data-contact-open]').forEach((trigger) => {
     trigger.addEventListener('click', () => {
-      if (contactDialog?.showModal) contactDialog.showModal();
+      if (contactDialog?.showModal) {
+        contactTrigger = trigger;
+        contactDialog.showModal();
+      }
     });
+  });
+  contactDialog?.addEventListener('close', () => {
+    if (contactTrigger?.isConnected) contactTrigger.focus();
+    contactTrigger = null;
   });
 
   const statusDialog = document.querySelector('[data-status-dialog-modal]');

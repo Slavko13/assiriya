@@ -157,6 +157,61 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navPanel).toBeHidden();
     }
 
+    const contactTriggers = page.locator('button[data-contact-open]');
+    const contactTriggerCount = await contactTriggers.count();
+    expect(contactTriggerCount, 'At least one contact-dialog trigger is required').toBeGreaterThan(0);
+    for (let index = 0; index < contactTriggerCount; index += 1) {
+      await expect(contactTriggers.nth(index)).toHaveAttribute('aria-haspopup', 'dialog');
+    }
+
+    if (testInfo.project.name !== 'desktop-chrome-1440') {
+      await navToggle.click();
+      await expect(navPanel).toBeVisible();
+    }
+
+    const contactTrigger = page.locator(
+      'button.az-contact-link[type="button"][data-contact-open][aria-haspopup="dialog"]',
+    );
+    const contactDialog = page.locator(
+      'dialog[data-contact-dialog][aria-labelledby="az-contact-title"]',
+    );
+    await expect(contactTrigger).toHaveCount(1);
+    await expect(contactTrigger).toBeVisible();
+    await expect(contactTrigger).toHaveAccessibleName('Связаться с нами');
+    await expect(contactDialog).toHaveCount(1);
+    await expect(contactDialog).toBeHidden();
+    expect(await contactDialog.getAttribute('open')).toBeNull();
+    await contactTrigger.focus();
+    await expect(contactTrigger).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(contactDialog).toBeVisible();
+    await expect(contactDialog).toHaveAttribute('open', '');
+    await expect(contactDialog).toHaveAccessibleName('Связаться с нами');
+    const contactLinks = contactDialog.locator('a.az-dialog__contact');
+    await expect(contactLinks).toHaveCount(2);
+    const phoneLink = contactLinks.nth(0);
+    const emailLink = contactLinks.nth(1);
+    await expect(phoneLink).toBeVisible();
+    await expect(emailLink).toBeVisible();
+    const phoneText = (await phoneLink.innerText()).trim();
+    const emailText = (await emailLink.innerText()).trim();
+    await expect(phoneLink).toHaveAttribute('href', `tel:${phoneText.replace(/[^+\d]/g, '')}`);
+    await expect(emailLink).toHaveAttribute('href', `mailto:${emailText}`);
+    const contactClose = contactDialog.getByRole('button', { name: 'Закрыть', exact: true });
+    await expect(contactClose).toHaveCount(1);
+    await expect(contactClose).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(contactDialog).toBeHidden();
+    expect(await contactDialog.getAttribute('open')).toBeNull();
+    await expect(contactTrigger).toBeFocused();
+
+    if (testInfo.project.name !== 'desktop-chrome-1440') {
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+    }
+
     const cityTrigger = page.locator(
       'button.az-city[data-status-dialog="delivery"][aria-haspopup="dialog"]',
     );

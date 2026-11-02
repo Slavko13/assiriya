@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S44:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S45:** `39` tests = `37 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -535,6 +535,19 @@ I2-S43 закрывает только current theme-owned blocked-state copy, n
 | I2-S44-ACC-005 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S44 закрывает только current Woo-injected DOM/client type/accessibility-label round-trip в Chrome. Exact localization, credential value, keyboard/focus, submit/POST/auth/session, OS capture, clipboard/autofill/password managers, AT/browser matrix, cross-version и production security остаются вне scope.
+
+### I2-S45 — contact-dialog keyboard/focus contract
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S45-ACC-001 | Rendered opener semantics exact | каждый текущий `button[data-contact-open]` имеет `aria-haspopup=dialog`; выбран один visible header button с type/button marker и accessible name `Связаться с нами` | `PASS` |
+| I2-S45-ACC-002 | Initial dialog state exact | один `dialog[data-contact-dialog]`, labelled `az-contact-title`, initial hidden и без boolean `open` | `PASS` |
+| I2-S45-ACC-003 | Keyboard open/focus exact | focused opener + Enter открывает labelled dialog; close button автоматически focused | `PASS` |
+| I2-S45-ACC-004 | Channel rendering relational | ровно два visible current contact anchors; phone href exact-equal `tel:` + normalized visible text, email href exact-equal `mailto:` + visible text; значения не hardcoded и ссылки не активируются; `UI-SCR001-003/004` только renderer partial | `PASS` |
+| I2-S45-ACC-005 | Close/focus origin exact | Enter на close скрывает dialog, убирает `open` и возвращает focus фактическому opener; mobile nav после сценария exact-restored `aria-expanded=false`, no `is-open`, hidden | `PASS` |
+| I2-S45-ACC-006 | Responsive/regression gates сохранены | targeted `3 passed` на `1440/390/360`; full `39`: `37 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; PHP/JS syntax и config preflight `10 passed` | `PASS` |
+
+I2-S45 закрывает только current theme-owned SCR-001 native-dialog semantics, renderer relation и keyboard/focus round-trip в Chrome. Реальность/доступность phone/email, external app activation, hours/holidays, Telegram/MAX, callback/form/CRM/SLA, AT/browser matrix и production contact acceptance остаются вне scope.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

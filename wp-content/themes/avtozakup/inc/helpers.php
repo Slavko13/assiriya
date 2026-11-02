@@ -241,10 +241,10 @@ function avtozakup_footer_buyers_fallback(): void {
 }
 
 function avtozakup_footer_business_fallback(): void {
-	echo '<ul><li><a href="#business">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li><li><button type="button" data-status-dialog="b2b">' . esc_html__( 'Условия сотрудничества', 'avtozakup' ) . '</button></li><li><button type="button" data-contact-open>' . esc_html__( 'Запросить предложение', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/faq/' ) ) . '">' . esc_html__( 'Частые вопросы', 'avtozakup' ) . '</a></li></ul>';
+	echo '<ul><li><a href="#business">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li><li><button type="button" data-status-dialog="b2b">' . esc_html__( 'Условия сотрудничества', 'avtozakup' ) . '</button></li><li><button type="button" data-contact-open aria-haspopup="dialog">' . esc_html__( 'Запросить предложение', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/faq/' ) ) . '">' . esc_html__( 'Частые вопросы', 'avtozakup' ) . '</a></li></ul>';
 }
 
 function avtozakup_footer_info_fallback(): void {
-	echo '<ul><li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'О магазине', 'avtozakup' ) . '</a></li><li><button type="button" data-contact-open>' . esc_html__( 'Контакты', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/documents/' ) ) . '">' . esc_html__( 'Документы', 'avtozakup' ) . '</a></li><li><a href="' . esc_url( get_privacy_policy_url() ?: home_url( '/privacy/' ) ) . '">' . esc_html__( 'Политика конфиденциальности', 'avtozakup' ) . '</a></li></ul>';
+	echo '<ul><li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'О магазине', 'avtozakup' ) . '</a></li><li><button type="button" data-contact-open aria-haspopup="dialog">' . esc_html__( 'Контакты', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/documents/' ) ) . '">' . esc_html__( 'Документы', 'avtozakup' ) . '</a></li><li><a href="' . esc_url( get_privacy_policy_url() ?: home_url( '/privacy/' ) ) . '">' . esc_html__( 'Политика конфиденциальности', 'avtozakup' ) . '</a></li></ul>';
 }
 

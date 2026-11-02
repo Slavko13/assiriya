@@ -1273,6 +1273,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current Woo-injected password type/accessibility-label client round-trip в Chrome.
 
+### I2-S45 — contact-dialog keyboard/focus contract
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** `SCR-001/UI-SCR001-003/004/006` renderer partial, `PBL-040`; `NFR-A11Y-002` technical partial; contact workflow отсутствует.
+
+Критерии среза:
+
+- все rendered theme-owned contact buttons имеют dialog semantics, основной visible header opener — exact type/name/markers;
+- один labelled native contact dialog initial closed; focused opener + Enter открывает его, close auto-focused;
+- current phone/email anchors видимы и relationally преобразуются в escaped `tel:`/`mailto:` href без hardcoded admin values и без активации внешнего приложения;
+- Enter на close закрывает dialog и возвращает focus фактическому opener; mobile nav exact-restored collapsed.
+
+Вне scope: подтверждение phone/email, доступность каналов, часы/праздники, Telegram/MAX, callback/form, external-app behavior, CRM/SLA, AT/browser matrix и production contact acceptance.
+
+Выполнено и проверено:
+
+- targeted homepage scenario: `3 passed` на `1440/390/360`;
+- PHP lint двух изменённых templates и JavaScript syntax: `PASS`; config/deployment preflight: `10 passed`;
+- full regression: `39` tests, `37 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current theme-owned SCR-001 native-dialog renderer и keyboard/focus round-trip в Chrome.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
