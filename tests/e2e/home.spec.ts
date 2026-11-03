@@ -668,7 +668,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(cartUrl.hash).toBe('');
     await cartLink.click();
     await page.waitForLoadState('networkidle');
-    expect(new URL(page.url()).pathname, 'The cart link must use the canonical WooCommerce slug').toBe('/cart/');
+    expect(page.url(), 'The cart link must open the exact canonical WooCommerce URL').toBe(cartUrl.href);
     await expectHeaderCartState(2, 'After full navigation to the cart');
     const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
     await expect(cartItems).toHaveCount(1);
@@ -678,6 +678,22 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(cartProductLink).toHaveCount(1);
     await expect(cartProductLink).toHaveText(sourceProductName);
     await expect(cartProductLink).toHaveAttribute('href', sourceProductHref!);
+    await expectExactDemoCheckoutNotice(page);
+
+    const canonicalCartUrl = cartUrl.href;
+    const reloadResponse = await page.reload({ waitUntil: 'networkidle' });
+    expect(reloadResponse?.ok(), 'The canonical cart reload must return a successful document response').toBe(true);
+    expect(page.url(), 'The reload must preserve the exact canonical cart URL').toBe(canonicalCartUrl);
+    await expectHeaderCartState(2, 'After an immediate canonical cart reload');
+    await expect(cartItems).toHaveCount(1);
+    const reloadedCartItem = cartItems.first();
+    await expect(reloadedCartItem).toContainText(sourceProductName);
+    const reloadedProductLink = reloadedCartItem.locator(
+      '.product-name a, a.wc-block-components-product-name',
+    );
+    await expect(reloadedProductLink).toHaveCount(1);
+    await expect(reloadedProductLink).toHaveText(sourceProductName);
+    await expect(reloadedProductLink).toHaveAttribute('href', sourceProductHref!);
     await expectExactDemoCheckoutNotice(page);
 
     const checkoutLink = page.locator('a.checkout-button, a.wc-block-cart__submit-button');

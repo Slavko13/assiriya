@@ -1823,6 +1823,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только selected current Markdown regression-summary disagreement; formatting intentionally acts as a contract.
 
+### I2-S67 — immediate canonical cart reload continuity
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation I2-S26/I2-S35/I2-S58/I2-S63; `UI-SCR002-007/015`, `PBL-019/PBL-040`, `FR-CART-001` guest renderer/session partial и `NFR-A11Y-002` computed-name partial; no new business rule or production behavior.
+
+Критерии среза:
+
+- after two exact same-product `quantity=1` AJAX adds and canonical cart navigation, one immediate reload returns a successful document response and preserves the exact cart URL;
+- visible header relation/count/name remain exact `2`/`Корзина 2`;
+- one exact source-product row/permalink and exact demo checkout notice remain after reload;
+- checkout journey continues through a locator created from the reloaded document.
+
+Выполнено и проверено:
+
+- existing cart scenario extended after its initial cart-row/guard assertions and before checkout locator creation;
+- targeted public projects: `3 passed` on `1440/390/360`;
+- full serial regression: `49` = `47 passed / 2 intentional skipped`, `0 failed`;
+- 19 repository PNG unchanged; post-suite inventory `10/0/0/0`;
+- production theme/plugin source and business data contracts unchanged.
+
+Вне scope: server-only attribution, delayed/repeated reload, history back/forward, new tab, browser restart, cookie TTL, authenticated merge, cross-device, arbitrary/mixed products or quantities, update/remove/concurrency/reservation, live SR/AT, browser matrix and production persistence/commerce.
+
+Статус закрывает только one immediate canonical cart reload in the same guest Chrome session/current Woo renderer.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

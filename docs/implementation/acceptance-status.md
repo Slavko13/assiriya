@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S66 documentation drift guard:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. Runtime evidence остаётся прогоном I2-S64; I2-S65 менял только документы, а I2-S66 — только config test/package wiring и документы.
+**Текущий regression после I2-S67 cart reload continuity:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S67 расширяет существующий public cart scenario и не меняет число tests.
 
 ## Технические критерии Итерации 2
 
@@ -804,6 +804,18 @@ I2-S65 is a handoff/documentation synchronization only. It adds no runtime, func
 | I2-S66-ACC-005 | Scope remains truthful | no production, Playwright spec, browser, screenshot, inventory or server mutation; latest runtime evidence remains I2-S64 `47 passed / 2 skipped`, 19 PNG unchanged and inventory `10/0/0/0` | `PASS` |
 
 I2-S66 prevents silent disagreement among the selected current Markdown summaries and requires deliberate tuple updates. It does not derive results from a Playwright report, prove evidence freshness, validate historical counts or deployment chronology, auto-edit documents, or add functional/security/WCAG/production acceptance. Its anchored Markdown wording is intentionally a formatting contract.
+
+### I2-S67 — immediate canonical cart reload continuity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S67-ACC-001 | Canonical cart document reload succeeds without route drift | after two exact same-product AJAX additions and full cart navigation, `page.reload({ waitUntil: 'networkidle' })` returns successful response and preserves the exact URL | `PASS / TECHNICAL` |
+| I2-S67-ACC-002 | Header cart state survives the reload | visible exact header link/badge retain `aria-labelledby`, count `2` and computed name `Корзина 2` on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S67-ACC-003 | Exact cart identity and safety renderer survive the reload | one cart row remains; exact source product name/permalink and exact demo checkout notice are re-asserted from the reloaded document | `PASS / TECHNICAL` |
+| I2-S67-ACC-004 | Journey continues from the new document | checkout locator is created after reload; canonical `/checkout/` navigation, header state and demo checkout guard remain successful | `PASS / TECHNICAL` |
+| I2-S67-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S67 closes only one immediate canonical `/cart/` reload in the same guest Chrome context after two exact same-product `quantity=1` AJAX additions. It does not prove server-only rendering, delayed/repeated reload, back/forward, new tab, browser restart, cookie TTL, authenticated merge, cross-device behavior, arbitrary/mixed products or quantities, update/remove/concurrency/reservation, live SR/AT, other browsers, production persistence or commerce correctness.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
