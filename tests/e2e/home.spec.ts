@@ -270,6 +270,56 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
 
+      const internalNavSourceUrl = new URL(page.url());
+      const internalVinLink = navPanel.locator('a.az-nav-cta--quiet[href="#vin-request"]');
+      const internalVinTarget = page.locator('section#vin-request[tabindex="-1"]');
+      await expect(internalVinLink).toHaveCount(1);
+      await expect(internalVinTarget).toHaveCount(1);
+      await page.keyboard.press('Enter');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toBeVisible();
+      await expect(internalVinLink).toHaveAccessibleName('Подбор по VIN');
+      await page.keyboard.press('Tab');
+      await page.keyboard.press('Tab');
+      await expect(internalVinLink).toBeFocused();
+      await expect(internalVinLink).toBeVisible();
+      await page.keyboard.press('Enter');
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navLabel).toHaveText('Открыть меню');
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      await expect(internalVinTarget).toBeVisible();
+      await expect(internalVinTarget).toBeFocused();
+      const internalNavTargetUrl = new URL(page.url());
+      expect(internalNavTargetUrl.origin).toBe(internalNavSourceUrl.origin);
+      expect(internalNavTargetUrl.pathname).toBe(internalNavSourceUrl.pathname);
+      expect(internalNavTargetUrl.search).toBe(internalNavSourceUrl.search);
+      expect(internalNavTargetUrl.hash).toBe('#vin-request');
+      await page.evaluate(() => {
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      });
+      expect(new URL(page.url()).hash).toBe('');
+
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toBeVisible();
+      await expect(internalVinLink).toBeVisible();
+      await internalVinLink.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      const pointerNavTargetUrl = new URL(page.url());
+      expect(pointerNavTargetUrl.origin).toBe(internalNavSourceUrl.origin);
+      expect(pointerNavTargetUrl.pathname).toBe(internalNavSourceUrl.pathname);
+      expect(pointerNavTargetUrl.search).toBe(internalNavSourceUrl.search);
+      expect(pointerNavTargetUrl.hash).toBe('#vin-request');
+      await page.evaluate(() => {
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      });
+      expect(new URL(page.url()).hash).toBe('');
+
       const outsidePointerUrl = page.url();
       await navToggle.click();
       await expect(navToggle).toHaveAttribute('aria-expanded', 'true');

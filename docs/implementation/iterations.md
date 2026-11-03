@@ -1700,6 +1700,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current homepage skip-link transfer в pinned Chrome public projects `1440/390/360`; desktop evidence S54 для representative front/page/Woo renderer families сохраняется.
 
+### I2-S62 — mobile-nav internal VIN-link dismissal/focus transfer
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S42/S46/S48/S52/S56/S59`; `SCR-002/UI-SCR002-009` renderer navigation partial; `PBL-010/PBL-040`; `NFR-A11Y-002` technical partial. `DG-017/018` остаются open; `FR-VIN-001` business completion не заявляется.
+
+Критерии среза:
+
+- на `390/360` exact visible/named internal VIN anchor закрывает mobile nav через shared state при pointer и native Enter activation, сохраняя origin/path/search и exact `#vin-request`;
+- keyboard/non-pointer same-document activation имеет guarded source-level focus handoff, а реальный Enter-сценарий заканчивается focus на visible `section#vin-request[tabindex=-1]`;
+- panel padding остаётся open, contact button/dialog ancestry и focus-return не ломаются, desktop presentation boundary сохраняется.
+
+Вне scope: VIN validation/submit/contact/consent/CRM, arbitrary anchors/routes/fragments/encoded IDs, pointer/outside-click focus outcome, scroll landing/in-viewport focus, focus-ring/announcement, modified clicks, touch/swipe/multi-pointer, screen-reader/AT/browser/device matrix, approved mobile design, full WCAG и production navigation/VIN acceptance.
+
+Выполнено и проверено:
+
+- pre-fix targeted run: desktop `1 passed`, mobile `2 failed` с `aria-expanded=true` после exact fragment activation;
+- delegated panel bubble handler закрывает только descendant anchors через existing `setNavOpen(false)` и не отменяет default activation;
+- первый fix дал targeted `3 passed`, но independent P2 review выявил потерю keyboard focus на `BODY`; labelled VIN section получил `tabindex=-1`, а guarded requestAnimationFrame source path выполняется только для keyboard/non-pointer same-document fragment;
+- final targeted scenario: `3 passed`; `main.js` syntax и changed PHP template lint прошли; independent final reviews закрыли P2 без новых findings;
+- full regression: `46` tests, `44 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только exact homepage internal VIN-link dismissal и итоговый Enter focus outcome в pinned Chrome на `390/360`.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

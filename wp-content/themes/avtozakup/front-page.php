@@ -71,7 +71,7 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 		</div>
 	</section>
 
-	<section id="vin-request" class="az-vin az-container" aria-labelledby="az-vin-title">
+	<section id="vin-request" class="az-vin az-container" tabindex="-1" aria-labelledby="az-vin-title">
 		<div class="az-vin__visual" style="--az-vin-image:url('<?php echo esc_url( (string) $settings['vin_image'] ); ?>')">
 			<div><span><?php esc_html_e( 'ПОДБОР ПО VIN', 'avtozakup' ); ?></span><h2><?php esc_html_e( 'Нужна помощь', 'avtozakup' ); ?><br><?php esc_html_e( 'с подбором?', 'avtozakup' ); ?></h2><p><?php esc_html_e( 'Поможем найти нужную деталь по VIN и вашему описанию.', 'avtozakup' ); ?></p></div>
 		</div>

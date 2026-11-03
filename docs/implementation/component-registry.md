@@ -5,7 +5,7 @@
 
 | Компонент | Источник Paper / UI | Код | Данные | Состояния в Итерации 1 | Переиспользование / статус |
 |---|---|---|---|---|---|
-| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | nav click/Enter/Space/Escape/name; exact breakpoint reset/re-entry; inside/outside click with preserved target activation and dialog ancestry; contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48/S49/S52/S56/S59 nav/dialog `PASS / TECHNICAL`, overall `TESTING` |
+| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | nav click/Enter/Space/Escape/name; exact breakpoint reset/re-entry; inside/outside click plus internal VIN pointer/Enter dismissal with preserved fragment and guarded non-pointer target-focus handoff; dialog ancestry/contact retained; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48/S49/S52/S56/S59/S62 nav/dialog `PASS / TECHNICAL`, overall `TESTING` |
 | Skip link / primary landmark | direct Paper control mapping отсутствует | `header.php`, four theme main templates, `main.css` | none | first Tab on homepage at `1440/390/360` gives visible fully-in-viewport `:focus-visible` link and exact main transfer; desktop front/page/Woo renderer-family evidence retained | I2-S54/S61 `PASS / TECHNICAL`; generic index runtime, other mobile routes, SR/AT/browser/full WCAG open |
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |
@@ -21,7 +21,7 @@
 | Woo breadcrumb | SCR-005/006/009; PBL-010/011/012 partial | named Woo breadcrumb filters | configured shop URL + exact product-search request | «Главная», «Каталог товаров», product-search label; category/product/page crumbs preserved | I2-S12 `PASS / PROVISIONAL`; full i18n/SEO/design open |
 | Product card/row | UI-SCR002-013—015 | `helpers.php`, Woo filters | WC product | demo/real label, in/out stock; standard Woo direct-add loop имеет explicit demo action; CRUD/render проверен | I2-S3/S7 `PASS / PROVISIONAL`; business meaning `BLOCKED` |
 | Product detail technical baseline | SCR-009 partial | Woo hooks/filters, no template override | WC product + demo marker | provenance, technical SKU, unconfirmed availability, demo action, description labels; related suppressed for demo; unmarked isolation E2E | I2-S3/S4/S7/S8 `PASS / PROVISIONAL`; full PDP `BLOCKED` |
-| VIN entry block | UI-SCR002-016 | `front-page.php` | no persistence | partial input + exact DEC-017/018 status/focus, no submit | I2-S47 renderer `PASS / TECHNICAL`; SCR-004/domain `BLOCKED` |
+| VIN entry block | UI-SCR002-016 | `front-page.php` | no persistence | partial input + exact DEC-017/018 status/focus, no submit; exact `#vin-request[tabindex=-1]` receives internal-nav Enter focus without joining Tab order | I2-S47/S62 renderer/navigation `PASS / TECHNICAL`; SCR-004/domain `BLOCKED` |
 | B2B banner | UI-SCR002-017 | `front-page.php` | editable copy | info + exact DEC-016 status/focus only | I2-S47 renderer `PASS / TECHNICAL`; DG-009/domain `BLOCKED` |
 | Pickup/delivery block | UI-SCR002-018 | `front-page.php` | editable copy, no tariff | illustrative map/status | SCR-011/012 later; `BLOCKED` |
 | Footer | SCR-002 and full pages | `footer.php` | menus/contact settings | fallback menus/contact modal | общий; `TESTING` |

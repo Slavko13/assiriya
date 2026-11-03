@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S61:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S62:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -744,6 +744,18 @@ I2-S60 closes only the current pinned Chrome single-layer computed keyboard-focu
 | I2-S61-ACC-005 | Regression/data gates preserved | targeted `3 passed`; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; two independent reviews found no findings | `PASS` |
 
 I2-S61 closes only the current homepage skip-link transfer in pinned Chrome public projects at `1440/390/360`, while I2-S54 retains desktop evidence for representative front-page, regular-page and Woo renderer families. It does not prove other mobile routes/renderer families, screen-reader announcement, focus-ring contrast/color/occlusion or manual visibility, touch-only behavior, AT/browser/device matrix, full WCAG or production business acceptance. `DG-018` remains open and `TC-040` is not claimed.
+
+### I2-S62 — mobile-nav internal VIN-link dismissal/focus transfer
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S62-ACC-001 | Internal link and opt-in destination are exact | one visible/named `a.az-nav-cta--quiet[href="#vin-request"]` when the mobile panel is open; one `section#vin-request[tabindex="-1"]`, absent from the ordinary Tab sequence | `PASS / TECHNICAL` |
+| I2-S62-ACC-002 | Pointer activation preserves action while dismissing | real pointer click produces false/no-class/hidden/`Открыть меню` and preserves origin/path/search plus exact `#vin-request` on `390/360` | `PASS / TECHNICAL` |
+| I2-S62-ACC-003 | Keyboard activation does not lose focus | toggle opens by Enter, two real Tabs reach the exact link, Enter preserves the fragment, dismisses the panel and finishes focused on the visible opt-in VIN section | `PASS / TECHNICAL` |
+| I2-S62-ACC-004 | Existing event boundaries remain intact | panel-padding click stays open; contact button/dialog ancestry and focus-return assertions remain passing; outside-link and desktop presentation paths remain passing | `PASS` |
+| I2-S62-ACC-005 | Regression/data gates preserved | pre-fix desktop passed/mobile `2 failed` at retained expanded state; first fix targeted `3 passed`, then P2 hidden-focus finding was closed; final targeted `3 passed`; JS/PHP syntax; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
+
+I2-S62 closes only current pinned Chrome homepage behavior for the exact internal VIN anchor on `390/360`. It does not prove VIN validation/submit/contact/consent/CRM, destination business correctness, arbitrary panel anchors/routes/fragments or encoded IDs, pointer/outside-click focus outcome, scroll landing/in-viewport focus, focus-ring/announcement, modified clicks, touch/swipe/multi-pointer, screen-reader/AT/browser/device matrix, approved mobile design, full WCAG or production navigation/VIN acceptance. `DG-017/018` remain open; `FR-VIN-001` and `TC-040` are not claimed complete.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

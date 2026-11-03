@@ -25,6 +25,35 @@
     });
     navToggle.addEventListener('keydown', closeNavOnEscape);
     navPanel.addEventListener('keydown', closeNavOnEscape);
+    navPanel.addEventListener('click', (event) => {
+      if (navToggle.getAttribute('aria-expanded') !== 'true') return;
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const link = target.closest('a[href]');
+      if (!link || !navPanel.contains(link)) return;
+      let fragmentTarget = null;
+      let fragmentUrl = null;
+      if (event instanceof MouseEvent && event.detail === 0 && !event.defaultPrevented && link instanceof HTMLAnchorElement) {
+        const currentUrl = new URL(window.location.href);
+        const linkUrl = new URL(link.href, currentUrl);
+        const isSameDocument = linkUrl.origin === currentUrl.origin
+          && linkUrl.pathname === currentUrl.pathname
+          && linkUrl.search === currentUrl.search;
+        const candidateTarget = linkUrl.hash ? document.getElementById(linkUrl.hash.slice(1)) : null;
+        if (isSameDocument && candidateTarget instanceof HTMLElement && candidateTarget.getAttribute('tabindex') === '-1') {
+          fragmentTarget = candidateTarget;
+          fragmentUrl = linkUrl;
+        }
+      }
+      setNavOpen(false);
+      if (fragmentTarget && fragmentUrl) {
+        window.requestAnimationFrame(() => {
+          if (fragmentTarget.isConnected && window.location.hash === fragmentUrl.hash) {
+            fragmentTarget.focus({ preventScroll: true });
+          }
+        });
+      }
+    });
     document.addEventListener('click', (event) => {
       if (navToggle.getAttribute('aria-expanded') !== 'true') return;
       const target = event.target;
