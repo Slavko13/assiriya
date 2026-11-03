@@ -62,6 +62,33 @@ async function expectExactDemoCheckoutNotice(page: Page): Promise<void> {
 }
 
 test.describe('АВТОЗАКУП homepage', () => {
+  test('transfers homepage skip-link focus across public viewports', async ({ page }) => {
+    const runtimeErrors = watchRuntimeErrors(page);
+    await page.goto('/', { waitUntil: 'networkidle' });
+    const initialUrl = new URL(page.url());
+
+    await page.keyboard.press('Tab');
+    const skipLink = page.locator('.az-skip-link[href="#primary"]');
+    await expect(skipLink).toHaveCount(1);
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toBeVisible();
+    await expect(skipLink).toBeInViewport({ ratio: 1 });
+    expect(await skipLink.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+
+    await page.keyboard.press('Enter');
+    const targetUrl = new URL(page.url());
+    expect(targetUrl.origin).toBe(initialUrl.origin);
+    expect(targetUrl.pathname).toBe(initialUrl.pathname);
+    expect(targetUrl.search).toBe(initialUrl.search);
+    expect(targetUrl.hash).toBe('#primary');
+    const primary = page.locator('main#primary[tabindex="-1"]');
+    await expect(primary).toHaveCount(1);
+    await expect(primary).toBeVisible();
+    await expect(primary).toBeFocused();
+
+    expectNoRuntimeErrors(runtimeErrors);
+  });
+
   test('renders the complete homepage, remains accessible and does not overflow', async ({ page }, testInfo) => {
     const runtimeErrors = watchRuntimeErrors(page);
     await page.goto('/', { waitUntil: 'networkidle' });

@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S60:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S61:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -732,6 +732,18 @@ I2-S59 closes only current pinned Chrome outside-click state reconciliation on `
 | I2-S60-ACC-005 | Regression/data gates preserved | initial presence-only helper rejected by P2 review; first hardening run exposed and fixed a declaration-order test error; branch-specific delta and true-unfocused baseline review findings closed; final targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
 
 I2-S60 closes only the current pinned Chrome single-layer computed keyboard-focus signal for the six existing guest-login controls. It does not prove focus-ring color/contrast/occlusion or manual visibility, full-page/outside-form/wrap order, mouse-focus behavior, activation/submit/POST, credentials/auth/session/recovery, OS/autofill/password-manager behavior, AT/SR/browser/Woo matrix, full WCAG or production IAM/security. `DG-018` remains open and `TC-040` is not claimed.
+
+### I2-S61 — homepage skip-link public-viewport transfer
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S61-ACC-001 | First keyboard stop is exact and unique | after a fresh homepage load, the first real Tab focuses the sole `.az-skip-link[href="#primary"]` on public projects `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S61-ACC-002 | Focused link is exposed in the viewport | the exact link is visible, matches `:focus-visible` and passes Playwright full-ratio in-viewport assertion at all three public widths | `PASS / TECHNICAL` |
+| I2-S61-ACC-003 | Activation transfers URL fragment and focus exactly | Enter preserves origin/path/search, adds exact `#primary` and focuses the one visible `main#primary[tabindex="-1"]` | `PASS / TECHNICAL` |
+| I2-S61-ACC-004 | Runtime and existing renderer evidence remain intact | no watched runtime errors; no production source changed; the earlier S54 desktop front/page/Woo renderer-family contract remains in the full suite | `PASS` |
+| I2-S61-ACC-005 | Regression/data gates preserved | targeted `3 passed`; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; two independent reviews found no findings | `PASS` |
+
+I2-S61 closes only the current homepage skip-link transfer in pinned Chrome public projects at `1440/390/360`, while I2-S54 retains desktop evidence for representative front-page, regular-page and Woo renderer families. It does not prove other mobile routes/renderer families, screen-reader announcement, focus-ring contrast/color/occlusion or manual visibility, touch-only behavior, AT/browser/device matrix, full WCAG or production business acceptance. `DG-018` remains open and `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

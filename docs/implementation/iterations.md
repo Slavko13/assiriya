@@ -1676,6 +1676,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Chrome single-layer computed keyboard-focus signal for the six current guest-login controls.
 
+### I2-S61 — homepage skip-link public-viewport transfer
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S54`; `PBL-040` и `NFR-A11Y-002` technical partial. `DG-018` остаётся open; direct Paper control/business mapping отсутствует.
+
+Критерии среза:
+
+- на public projects `1440/390/360` первый Tab exact-focuses единственную homepage skip link;
+- ссылка видима, полностью находится во viewport, matches `:focus-visible` и указывает exact `#primary`;
+- Enter добавляет exact fragment и переводит focus на visible `main#primary[tabindex=-1]` без runtime errors.
+
+Вне scope: другие mobile routes/renderer families, screen-reader announcement, focus-ring contrast/color/occlusion, manual visual review, touch-only activation, AT/browser/device matrix, full WCAG и production business acceptance.
+
+Выполнено и проверено:
+
+- отдельный homepage scenario сохраняет fresh first-keyboard-stop semantics и не меняет URL/focus существующего большого homepage scenario;
+- public projects `1440/390/360`: exact unique skip link focused, visible, fully in viewport and matches `:focus-visible`; Enter preserves origin/path/search, adds exact `#primary` and focuses visible `main#primary[tabindex="-1"]`;
+- targeted scenario: `3 passed`; full regression: `46` tests, `44 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users;
+- production source не менялся; два independent reviews found no findings.
+
+Статус закрывает только current homepage skip-link transfer в pinned Chrome public projects `1440/390/360`; desktop evidence S54 для representative front/page/Woo renderer families сохраняется.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
