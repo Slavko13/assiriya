@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S68 checkout-to-cart browser Back:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S68 расширяет существующий public cart scenario и не меняет число tests.
+**Текущий regression после I2-S69 recovery local focus edge:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S69 расширяет существующий public account scenario и не меняет число tests.
 
 ## Технические критерии Итерации 2
 
@@ -828,6 +828,18 @@ I2-S67 closes only one immediate canonical `/cart/` reload in the same guest Chr
 | I2-S68-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S68 closes only one immediate checkout→cart browser Back traversal in the same page/context after the exact S67 journey. It deliberately does not attribute restoration to BFCache, browser cache or server response and does not prove Forward, repeated history, reload after Back, new tab/restart/cookie TTL, authenticated merge, cross-device behavior, arbitrary/mixed products or quantities, cart mutation/concurrency, AT/browser matrix or production persistence/commerce.
+
+### I2-S69 — recovery-form local keyboard focus edge
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S69-ACC-001 | Local reverse traversal reaches the identifier | after programmatic submit focus seeds only the local edge, real `Shift+Tab` focuses the exact visible/named recovery identifier on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S69-ACC-002 | Local forward traversal returns to submit | one real `Tab` from identifier focuses the exact visible/named recovery submit without an unexpected intermediate tab stop | `PASS / TECHNICAL` |
+| I2-S69-ACC-003 | Each keyboard stop has a changed visible focus signal | identifier and submit both match `:focus-visible`; computed box-shadow or outline differs from its unfocused baseline, has non-transparent color and non-zero geometry | `PASS / TECHNICAL` |
+| I2-S69-ACC-004 | Traversal remains non-mutating | exact recovery URL stays unchanged, identifier remains empty and no POST reaches the exact recovery action | `PASS` |
+| I2-S69-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S69 closes only the local submit↔identifier keyboard edge after a programmatic submit seed in pinned Chrome/current Woo renderer. It does not prove arrival focus after GET, entry/full-page order, wrap/trap, activation, ring contrast/occlusion/manual appearance, screen-reader/AT or browser matrix, identifier validation/submission/neutral response/enumeration, email/token/password/session, nonce enforcement/CSRF/rate limiting or production IAM/security.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

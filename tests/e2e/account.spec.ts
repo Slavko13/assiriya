@@ -361,6 +361,18 @@ test('opens the guest lost-password entrypoint without submitting recovery', asy
   await expect(submit).toBeVisible();
   await expect(submit).toHaveAccessibleName(/\S/);
 
+  await submit.focus();
+  await expect(submit).toBeFocused();
+  const identifierUnfocusedStyle = await readComputedFocusStyle(identifier);
+  await page.keyboard.press('Shift+Tab');
+  await expectComputedFocusStyle(identifier, identifierUnfocusedStyle);
+  const submitUnfocusedStyle = await readComputedFocusStyle(submit);
+  await page.keyboard.press('Tab');
+  await expectComputedFocusStyle(submit, submitUnfocusedStyle);
+  await expect(identifier).toHaveValue('');
+  expect(recoveryPosts).toEqual([]);
+  expect(page.url()).toBe(recoveryUrl.href);
+
   const layout = await page.evaluate(() => ({
     viewportWidth: document.documentElement.clientWidth,
     pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),

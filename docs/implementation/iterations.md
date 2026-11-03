@@ -1873,6 +1873,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только one immediate checkout→cart browser Back traversal in the same pinned guest Chrome page/current Woo renderer.
 
+### I2-S69 — recovery-form local keyboard focus edge
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation I2-S53/I2-S60/I2-S64; `PBL-009/PBL-040`, `FR-AUTH-003` renderer-entry partial, `NFR-A11Y-002` technical partial; `DG-002/018` remain open; no auth/reset behavior change.
+
+Критерии среза:
+
+- programmatic submit focus seeds only the local two-control edge;
+- real Shift+Tab focuses exact identifier, then real Tab returns to exact submit with no intermediate stop;
+- both keyboard stops match `:focus-visible` and expose a changed non-transparent/non-zero shadow or outline versus an actually unfocused baseline;
+- URL, empty identifier and no exact-action POST remain unchanged.
+
+Выполнено и проверено:
+
+- existing guest recovery scenario extended with the hardened computed-style helper already used by login controls;
+- targeted public projects: `3 passed` on `1440/390/360`;
+- full serial regression: `49` = `47 passed / 2 intentional skipped`, `0 failed`;
+- 19 repository PNG unchanged; post-suite inventory `10/0/0/0`;
+- production theme/plugin source, credentials and recovery data unchanged.
+
+Вне scope: arrival focus after GET, entry/full-page order, wrap/trap, activation, contrast/occlusion/manual visual proof, SR/AT/browser/Woo matrix, validation/submission/neutral response/enumeration, email/token/password/session, nonce enforcement/CSRF/rate limiting and production IAM/security.
+
+Статус закрывает только local submit↔identifier keyboard edge after a programmatic seed in pinned Chrome/current Woo renderer.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
