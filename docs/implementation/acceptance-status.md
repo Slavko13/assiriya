@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S65 documentation sync:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. Runtime evidence остаётся прогоном I2-S64; I2-S65 production/test code не менял.
+**Текущий regression после I2-S66 documentation drift guard:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. Runtime evidence остаётся прогоном I2-S64; I2-S65 менял только документы, а I2-S66 — только config test/package wiring и документы.
 
 ## Технические критерии Итерации 2
 
@@ -793,6 +793,18 @@ I2-S64 closes only keyboard GET navigation and browser-visible DOM/effective-act
 
 I2-S65 is a handoff/documentation synchronization only. It adds no runtime, functional, business, security, WCAG, production or deployment evidence and does not prevent future README drift automatically.
 
+### I2-S66 — current regression documentation drift guard
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S66-ACC-001 | Current verified aggregate is deliberate | filesystem-only Node test requires exact locked tuple `49/47/2/0`, one canonical current acceptance summary and valid total arithmetic | `PASS / DOCUMENTATION` |
+| I2-S66-ACC-002 | Both README handoff locations stay aligned | line-anchored top-status and detailed Tests parsers each find exactly one summary and compare it with canonical total/passed/skipped | `PASS / DOCUMENTATION` |
+| I2-S66-ACC-003 | Current implementation handoff stays aligned | exact current progress-table row and deployment verification bullet each compare all four values with the canonical tuple | `PASS / DOCUMENTATION` |
+| I2-S66-ACC-004 | Guard is part of the standard preflight | targeted documentation test `1 passed`; combined explicit-file config/documentation preflight `11 passed`, `0 failed` | `PASS` |
+| I2-S66-ACC-005 | Scope remains truthful | no production, Playwright spec, browser, screenshot, inventory or server mutation; latest runtime evidence remains I2-S64 `47 passed / 2 skipped`, 19 PNG unchanged and inventory `10/0/0/0` | `PASS` |
+
+I2-S66 prevents silent disagreement among the selected current Markdown summaries and requires deliberate tuple updates. It does not derive results from a Playwright report, prove evidence freshness, validate historical counts or deployment chronology, auto-edit documents, or add functional/security/WCAG/production acceptance. Its anchored Markdown wording is intentionally a formatting contract.
+
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
 | ID | Критерий | Доказательство | Статус |
@@ -801,7 +813,7 @@ I2-S65 is a handoff/documentation synchronization only. It adds no runtime, func
 | OPS-QT-001-ACC-002 | Edge config валиден, запускается under hardening и не блокирует public admin | `caddy validate`; exact `read-only + cap_drop ALL + cap_add NET_BIND_SERVICE + no-new-privileges` runtime health `200`; admin deny отсутствует, HTTPS forwarding сохранён | `PASS` локально |
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
-| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot, forbidden global removal и WP-CLI `run -T` checks | `PASS` локально |
+| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config/documentation preflight `11 passed`: прежние 10 environment/deployment guards, включая no ports/host network, two-site/IP/snapshot, forbidden global removal и WP-CLI `run -T`, плюс current-summary drift guard | `PASS` локально |
 | OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до завершённого server run с сохранённым two-site evidence |
 | OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до завершённого server run |
 

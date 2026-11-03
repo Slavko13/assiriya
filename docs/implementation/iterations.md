@@ -1800,6 +1800,29 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только point-in-time root README handoff consistency.
 
+### I2-S66 — current regression documentation drift guard
+
+**Статус:** `DONE / DOCUMENTATION`
+
+**Связь:** continuation I2-S65; `PBL-040` documentation/verification partial; no FR/UI/business mapping and no production or Playwright behavior change.
+
+Критерии среза:
+
+- standard config preflight читает один canonical current regression aggregate из acceptance-status;
+- exact current README top/detail, progress and deployment summaries обязаны совпадать с deliberate `49/47/2/0` lock;
+- historical evidence остаётся нетронутым, production/runtime/server state не меняется.
+
+Выполнено и проверено:
+
+- добавлен dependency-free line-anchored `node:test` с арифметической проверкой total и exact unique current-summary parsers;
+- targeted documentation guard: `1 passed`; combined config/documentation preflight: `11 passed`, `0 failed`;
+- README и current implementation handoff описывают guard и его ограничения; historical `10 passed` evidence не переписывалось;
+- latest browser/runtime evidence остаётся I2-S64 full `49` = `47 passed / 2 skipped`, 19 PNG unchanged, inventory `10/0/0/0`; application и Playwright specs не менялись.
+
+Вне scope: чтение/валидация Playwright report, доказательство свежести browser run, historical/deployment chronology audit, auto-edit docs, functional/security/WCAG/production acceptance.
+
+Статус закрывает только selected current Markdown regression-summary disagreement; formatting intentionally acts as a contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
@@ -1815,7 +1838,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 - owner-approved public `/wp-login.php` отвечает `2xx`, unauthenticated `/wp-admin/` ведёт на same-origin WordPress login; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
 - remote proof требуется до статуса `DEPLOYED`.
 
-Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; deployment preflight вместе с Playwright env `10 passed`. Completed server run сознательно не заявлен: две partial attempts зафиксированы выше, но полного remote proof ещё нет.
+Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; config/documentation preflight `11 passed` (10 existing environment/deployment guards + current-summary drift guard). Completed server run сознательно не заявлен: две partial attempts зафиксированы выше, но полного remote proof ещё нет.
 
 ## Следующие итерации
 
