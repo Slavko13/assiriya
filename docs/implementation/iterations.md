@@ -1898,6 +1898,20 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только local submit↔identifier keyboard edge after a programmatic seed in pinned Chrome/current Woo renderer.
 
+### I2-S70 — cart-to-checkout browser Forward restoration
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation I2-S63/I2-S67/I2-S68; `UI-SCR002-007/015`, `PBL-019/PBL-040`, `FR-CART-001` guest renderer/session partial, `NFR-A11Y-002` computed-name partial; no business behavior change.
+
+Критерии: one Forward after verified Back restores exact checkout URL, header `2`/`Корзина 2`, demo notice and classic-disabled-or-Blocks renderer; Response/cache source is not required or attributed.
+
+Выполнено: existing cart journey extended; targeted `3 passed` on `1440/390/360`; full `49` = `47 passed / 2 skipped`; 19 PNG unchanged; inventory `10/0/0/0`; production source unchanged.
+
+Вне scope: repeated history, reload after history, cache/server attribution, new tab/restart/cookie/auth/cross-device, arbitrary cart mutations, AT/browser and production persistence/commerce.
+
+Статус закрывает только one immediate cart→checkout Forward after the exact S68 Back in the same pinned guest Chrome page/current Woo renderer.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S69 recovery local focus edge:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S69 расширяет существующий public account scenario и не меняет число tests.
+**Текущий regression после I2-S70 cart browser Forward restoration:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S70 расширяет существующий public cart scenario и не меняет число tests.
 
 ## Технические критерии Итерации 2
 
@@ -840,6 +840,18 @@ I2-S68 closes only one immediate checkout→cart browser Back traversal in the s
 | I2-S69-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S69 closes only the local submit↔identifier keyboard edge after a programmatic submit seed in pinned Chrome/current Woo renderer. It does not prove arrival focus after GET, entry/full-page order, wrap/trap, activation, ring contrast/occlusion/manual appearance, screen-reader/AT or browser matrix, identifier validation/submission/neutral response/enumeration, email/token/password/session, nonce enforcement/CSRF/rate limiting or production IAM/security.
+
+### I2-S70 — cart-to-checkout browser Forward restoration
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S70-ACC-001 | One Forward restores the exact checkout destination | after the verified checkout→cart Back, `page.goForward({ waitUntil: 'networkidle' })` returns to the prevalidated exact canonical checkout URL without requiring a Response | `PASS / TECHNICAL` |
+| I2-S70-ACC-002 | Header cart state survives Forward | visible exact relation/count/name remain `2`/`Корзина 2` on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S70-ACC-003 | Checkout safety renderer survives Forward | exact demo notice remains; classic button is disabled with `aria-disabled=true` and exact label, or the Woo Blocks checkout remains visible | `PASS / TECHNICAL` |
+| I2-S70-ACC-004 | Runtime remains clean | page-level accumulated console/page error collections remain empty through reload, checkout, Back and Forward | `PASS` |
+| I2-S70-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S70 closes only one immediate cart→checkout browser Forward after the exact S68 Back in the same page/context. It does not attribute restoration to BFCache/cache/server and does not prove repeated history, reload after history, new tab/restart/cookie TTL, auth merge, cross-device, arbitrary cart mutations, AT/browser matrix or production persistence/commerce.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

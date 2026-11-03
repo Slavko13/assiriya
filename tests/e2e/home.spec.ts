@@ -734,6 +734,22 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(historyProductLink).toHaveAttribute('href', sourceProductHref!);
     await expectExactDemoCheckoutNotice(page);
 
+    await page.goForward({ waitUntil: 'networkidle' });
+    expect(page.url(), 'Browser Forward must restore the exact canonical checkout URL').toBe(checkoutUrl.href);
+    await expectHeaderCartState(2, 'After browser Forward from the cart to checkout');
+    await expectExactDemoCheckoutNotice(page);
+    const forwardClassicDisabledButton = page.getByRole('button', {
+      name: demoCheckoutButtonLabel,
+      exact: true,
+    });
+    if (await forwardClassicDisabledButton.count()) {
+      await expect(forwardClassicDisabledButton).toBeDisabled();
+      await expect(forwardClassicDisabledButton).toHaveAttribute('aria-disabled', 'true');
+      await expect(forwardClassicDisabledButton).toHaveText(demoCheckoutButtonLabel);
+    } else {
+      await expect(page.locator('.wp-block-woocommerce-checkout')).toBeVisible();
+    }
+
     expectNoRuntimeErrors(runtimeErrors);
   });
 
