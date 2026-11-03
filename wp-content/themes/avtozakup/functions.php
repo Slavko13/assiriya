@@ -68,6 +68,20 @@ add_filter(
 
 add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
 
+function avtozakup_header_cart_count_fragment( array $fragments ): array {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $fragments;
+	}
+
+	$fragments['#az-cart-count'] = sprintf(
+		'<b id="az-cart-count">%s</b>',
+		esc_html( (string) WC()->cart->get_cart_contents_count() )
+	);
+
+	return $fragments;
+}
+add_filter( 'woocommerce_add_to_cart_fragments', 'avtozakup_header_cart_count_fragment' );
+
 function avtozakup_render_loop_demo_provenance(): void {
 	global $product;
 	if ( ! $product instanceof WC_Product ) {

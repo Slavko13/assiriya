@@ -474,7 +474,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     expectNoRuntimeErrors(runtimeErrors);
   });
 
-  test('adds an available WooCommerce product to the cart over AJAX', async ({ page }) => {
+  test('keeps repeated AJAX additions aligned with the cart', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -492,41 +492,54 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(sourceProductName).not.toBe('');
     expect(sourceProductHref).toBeTruthy();
 
-    const addResponsePromise = page.waitForResponse(
-      (response) => {
-        const responseUrl = new URL(response.url());
-        return response.request().method() === 'POST'
-          && responseUrl.searchParams.getAll('wc-ajax').length === 1
-          && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
-      },
-    );
-    await addToCart.click();
-    const addResponse = await addResponsePromise;
+    const addExactProductOnce = async () => {
+      const addResponsePromise = page.waitForResponse(
+        (response) => {
+          const responseUrl = new URL(response.url());
+          return response.request().method() === 'POST'
+            && responseUrl.searchParams.getAll('wc-ajax').length === 1
+            && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
+        },
+      );
+      await addToCart.click();
+      const addResponse = await addResponsePromise;
 
-    expect(addResponse.ok(), `Add-to-cart failed with HTTP ${addResponse.status()}`).toBeTruthy();
-    const addRequest = addResponse.request();
-    expect(addRequest.method()).toBe('POST');
-    expect(addRequest.headers()['content-type']).toMatch(
-      /^application\/x-www-form-urlencoded(?:;|$)/i,
-    );
-    const addUrl = new URL(addRequest.url());
-    expect(addUrl.origin).toBe(new URL(page.url()).origin);
-    expect(addUrl.pathname).toBe('/');
-    expect([...addUrl.searchParams.entries()]).toEqual([['wc-ajax', 'add_to_cart']]);
-    expect(addUrl.hash).toBe('');
-    const addPayload = new URLSearchParams(addRequest.postData() ?? '');
-    expect(addPayload.getAll('product_id')).toEqual([sourceProductId!]);
-    expect(addPayload.getAll('quantity')).toEqual(['1']);
-    const responsePayload = await addResponse.json();
-    expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
+      expect(addResponse.ok(), `Add-to-cart failed with HTTP ${addResponse.status()}`).toBeTruthy();
+      const addRequest = addResponse.request();
+      expect(addRequest.method()).toBe('POST');
+      expect(addRequest.headers()['content-type']).toMatch(
+        /^application\/x-www-form-urlencoded(?:;|$)/i,
+      );
+      const addUrl = new URL(addRequest.url());
+      expect(addUrl.origin).toBe(new URL(page.url()).origin);
+      expect(addUrl.pathname).toBe('/');
+      expect([...addUrl.searchParams.entries()]).toEqual([['wc-ajax', 'add_to_cart']]);
+      expect(addUrl.hash).toBe('');
+      const addPayload = new URLSearchParams(addRequest.postData() ?? '');
+      expect(addPayload.getAll('product_id')).toEqual([sourceProductId!]);
+      expect(addPayload.getAll('quantity')).toEqual(['1']);
+      const responsePayload = await addResponse.json();
+      expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
+    };
+
+    await addExactProductOnce();
     await expect(addToCart).toHaveClass(/\badded\b/);
     const cartLink = page.locator('a.az-cart-link');
+    const cartBadge = cartLink.locator('#az-cart-count');
     await expect(cartLink).toHaveCount(1);
-    await expect(page.locator('.az-cart-link b'), 'The header cart badge should reflect the AJAX addition').toHaveText('1');
+    await expect(cartBadge, 'The header cart badge should reflect the first AJAX addition').toHaveText('1');
     await expect(
       cartLink,
       'The cart link accessible name should include the AJAX-updated item count',
     ).toHaveAccessibleName('Корзина 1');
+
+    await addExactProductOnce();
+    await expect(cartBadge, 'The header cart badge should reflect both AJAX additions').toHaveText('2');
+    await expect(
+      cartLink,
+      'The cart link accessible name should include the repeated AJAX item count',
+    ).toHaveAccessibleName('Корзина 2');
+
     const cartHref = await cartLink.getAttribute('href');
     expect(cartHref).toBeTruthy();
     const cartUrl = new URL(cartHref!, page.url());

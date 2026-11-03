@@ -1597,6 +1597,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned guest Woo/Chrome one-add computed accessible-name state.
 
+### I2-S58 — repeated AJAX add cart-counter consistency
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S26/I2-S39/I2-S55/I2-S57`; `UI-SCR002-007/015`, `PBL-019/PBL-040`, `FR-CART-001` technical/demo partial и `NFR-A11Y-002` technical partial. Production cart semantics остаётся штатной WooCommerce; `TC-009/TC-040` не заявляются.
+
+Критерии среза:
+
+- один exact currently rendered AJAX-capable product дважды добавляется отдельными успешными `wc-ajax=add_to_cart` POST с `quantity=1`;
+- после первого add visible badge/computed cart name равны exact `1` / `Корзина 1`;
+- после второго add те же состояния равны exact `2` / `Корзина 2`;
+- cart сохраняет одну exact строку исходного товара; результат одинаков на `1440/390/360`.
+
+Вне scope: общее бизнес-решение units-vs-lines, arbitrary quantity, разные товары/offers, mixed cart, update/remove/reload/session persistence, auth/concurrency, price/stock/reservation, checkout/order/payment, live announcement/SR/AT, browser/Woo matrix и production commerce.
+
+Выполнено и проверено:
+
+- pre-fix targeted diagnostic: `3 failed`; оба POST успешны, но second-add badge остался exact `1` на `1440/390/360`;
+- production fix: custom header-badge fragment через standard Woo fragment API заменяет exact `#az-cart-count` escaped `get_cart_contents_count()`; custom mini-cart line-count JS удалён;
+- PHP/JS syntax `PASS`; post-fix targeted scenario `3 passed`;
+- full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users;
+- independent review: P3 wording mismatch исправлен; code/API/security findings отсутствуют.
+
+Статус закрывает только current pinned guest Woo/Chrome repeated same-product AJAX badge/name consistency with current Woo units count.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

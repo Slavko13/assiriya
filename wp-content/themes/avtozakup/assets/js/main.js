@@ -77,12 +77,5 @@
     });
   });
 
-  const updateCartCount = (_event, fragments) => {
-    const fragment = fragments?.['div.widget_shopping_cart_content'];
-    const count = fragment?.match(/mini_cart_item/g)?.length;
-    const badge = document.querySelector('.az-cart-link b');
-    if (badge && Number.isFinite(count)) badge.textContent = String(count);
-  };
-  if (window.jQuery) window.jQuery(document.body).on('added_to_cart', updateCartCount);
 })();
 

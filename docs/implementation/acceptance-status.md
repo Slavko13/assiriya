@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S57:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S58:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -696,6 +696,18 @@ I2-S56 closes only current pinned Chrome exact `max-width:900px` boundary DOM-no
 | I2-S57-ACC-005 | Regression/data gates preserved | targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review no findings | `PASS` |
 
 I2-S57 closes only the current pinned guest Woo/Chrome computed accessible-name state after one successful existing AJAX add. It does not prove that the changed name is announced by a real screen reader, any `aria-live` behavior, pluralization, whether the badge represents units or cart lines, multi-item/update/remove behavior, quantity/business correctness, persistence, concurrency, AT/browser matrix, full WCAG or production commerce acceptance. `DG-018` remains open; `TC-009/TC-040` are not claimed.
+
+### I2-S58 — repeated AJAX add cart-counter consistency
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S58-ACC-001 | Both add requests retain exact identity | two separate successful same-origin root `wc-ajax=add_to_cart` POSTs each carry the exact rendered product ID and `quantity=1`; neither response reports Woo error | `PASS` |
+| I2-S58-ACC-002 | Header count follows current Woo cart units | first add renders exact badge `1`; repeated same-product add renders exact `2` through `#az-cart-count` from `get_cart_contents_count()` | `PASS / TECHNICAL` |
+| I2-S58-ACC-003 | Computed name follows each replaced badge | the existing S55 relation computes exact `Корзина 1`, then exact `Корзина 2` after the second fragment replacement | `PASS / TECHNICAL` |
+| I2-S58-ACC-004 | Same-product cart identity remains exact | cart contains one row whose title and permalink exactly match the clicked source product on `1440/390/360` | `PASS` |
+| I2-S58-ACC-005 | Regression/data gates preserved | pre-fix targeted `3 failed` with second badge still `1`; post-fix targeted `3 passed`; PHP/JS syntax; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review P3 wording fixed and no code findings | `PASS` |
+
+I2-S58 closes only the current pinned guest Woo/Chrome repeated same-product AJAX renderer consistency with the already-used Woo cart-contents count. It does not choose a business meaning for units versus lines, or prove arbitrary quantity, different products/offers, mixed cart, update/remove/reload/session persistence, auth, concurrency, price/stock/reservation, checkout/order/payment, live announcement/SR/AT, browser/Woo matrix, full WCAG or production commerce acceptance. `TC-009/TC-040` are not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
