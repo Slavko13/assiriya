@@ -1650,6 +1650,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Chrome mobile outside-click, one exact target-activation and existing dialog event-order renderer contract.
 
+### I2-S60 — guest login local keyboard-focus style
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S51/I2-S53`; `PBL-009/PBL-040`, `FR-AUTH-002` renderer-only technical partial и `NFR-A11Y-002` technical partial. `DG-018` остаётся open; direct Paper control mapping и auth behavior отсутствуют.
+
+Критерии среза:
+
+- exact local keyboard traversal охватывает username, password, visibility button, remember checkbox, login submit и lost-password link;
+- на каждом focused stop computed style имеет non-none box-shadow либо non-none outline style с non-zero width;
+- после traversal URL exact `/my-account/`, credentials empty, password type `password`, remember unchecked на `1440/390/360`.
+
+Вне scope: focus-ring color/contrast/occlusion/manual visual proof, full-page/wrap order, mouse focus, activation/submit/POST, credentials/auth/session/recovery, OS/autofill/password manager, AT/SR/browser/Woo matrix, full WCAG и production IAM/security.
+
+Выполнено и проверено:
+
+- initial presence-only helper targeted `3 passed`, но independent review отклонил его как false-positive-prone для transparent/zero/permanent decoration;
+- hardening добавил `:focus-visible`, truly unfocused baseline, branch-specific delta, non-transparent color and non-zero shadow geometry/outline width;
+- first hardening run `3 failed` на test-only declaration-order `ReferenceError`; baseline объявление перенесено после locator creation;
+- repeat reviews нашли active-but-not-focus-visible checkbox baseline и global-delta loophole; password получает focus до baseline, а passing ring branch теперь сама обязана отличаться;
+- final targeted account scenario: `3 passed`; independent repeat reviews found no remaining findings;
+- production source не менялся; full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Chrome single-layer computed keyboard-focus signal for the six current guest-login controls.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

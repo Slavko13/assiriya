@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S59:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S60:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -720,6 +720,18 @@ I2-S58 closes only the current pinned guest Woo/Chrome repeated same-product AJA
 | I2-S59-ACC-005 | Regression/data gates preserved | pre-fix targeted desktop passed/mobile `2 failed`; unsafe `pointerdown` fix rejected by P1 review; final JS syntax and targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final independent review no findings | `PASS` |
 
 I2-S59 closes only current pinned Chrome outside-click state reconciliation on `390/360`, including one exact same-page activation and existing dialog event-order/focus-return contract. It does not prove explicit focus transfer after dismissal, focus trapping, arbitrary link destinations, scroll locking, real touch/swipe/multi-pointer behavior, shadow DOM/iframes, AT/browser/device matrix, approved mobile design, full WCAG or production navigation acceptance. `DG-017/018` remain open and `TC-040` is not claimed.
+
+### I2-S60 — guest login local keyboard-focus style
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S60-ACC-001 | Traversal is keyboard-derived and exact | password focus + Shift+Tab reaches username; five real Tabs then reach password, visibility button, remember checkbox, login submit and lost-password link in order | `PASS / TECHNICAL` |
+| I2-S60-ACC-002 | Every stop is in focus-visible state | all six exact controls are focused at assertion time and match Chrome `:focus-visible` on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S60-ACC-003 | Ring signal is focus-specific and non-transparent | the passing box-shadow or outline branch itself differs from a truly unfocused baseline, has non-transparent computed color and non-zero geometry/width | `PASS / TECHNICAL` |
+| I2-S60-ACC-004 | Form state remains inert | exact `/my-account/` URL, empty username/password, password type and unchecked remember state remain unchanged; no submit/POST occurs | `PASS` |
+| I2-S60-ACC-005 | Regression/data gates preserved | initial presence-only helper rejected by P2 review; first hardening run exposed and fixed a declaration-order test error; branch-specific delta and true-unfocused baseline review findings closed; final targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
+
+I2-S60 closes only the current pinned Chrome single-layer computed keyboard-focus signal for the six existing guest-login controls. It does not prove focus-ring color/contrast/occlusion or manual visibility, full-page/outside-form/wrap order, mouse-focus behavior, activation/submit/POST, credentials/auth/session/recovery, OS/autofill/password-manager behavior, AT/SR/browser/Woo matrix, full WCAG or production IAM/security. `DG-018` remains open and `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

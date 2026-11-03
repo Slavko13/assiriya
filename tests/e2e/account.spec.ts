@@ -1,9 +1,16 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 type RuntimeErrors = {
   console: string[];
   page: string[];
+};
+
+type ComputedFocusStyle = {
+  boxShadow: string;
+  outlineColor: string;
+  outlineStyle: string;
+  outlineWidth: string;
 };
 
 function watchRuntimeErrors(page: Page): RuntimeErrors {
@@ -15,6 +22,60 @@ function watchRuntimeErrors(page: Page): RuntimeErrors {
   });
   page.on('pageerror', (error) => errors.page.push(error.message));
   return errors;
+}
+
+async function readComputedFocusStyle(control: Locator): Promise<ComputedFocusStyle> {
+  return control.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+    return {
+      boxShadow: style.boxShadow,
+      outlineColor: style.outlineColor,
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+    };
+  });
+}
+
+function hasVisibleCssColor(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === '' || normalized === 'transparent') return false;
+  const rgba = normalized.match(/rgba\(([^)]+)\)/);
+  if (!rgba) return true;
+  const commaParts = rgba[1].split(',').map((part) => part.trim());
+  if (commaParts.length === 4) return Number.parseFloat(commaParts[3]) > 0;
+  const slashParts = rgba[1].split('/').map((part) => part.trim());
+  return slashParts.length !== 2 || Number.parseFloat(slashParts[1]) > 0;
+}
+
+async function expectComputedFocusStyle(
+  control: Locator,
+  unfocusedStyle: ComputedFocusStyle,
+): Promise<void> {
+  await expect(control).toBeFocused();
+  expect(await control.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+  const focusStyle = await readComputedFocusStyle(control);
+  const shadowColor = focusStyle.boxShadow.match(/rgba?\([^)]+\)/)?.[0] ?? focusStyle.boxShadow;
+  const shadowGeometry = [...focusStyle.boxShadow.matchAll(/(-?\d*\.?\d+)px/g)].map((match) =>
+    Math.abs(Number.parseFloat(match[1])),
+  );
+  const hasVisibleBoxShadow =
+    focusStyle.boxShadow !== unfocusedStyle.boxShadow &&
+    focusStyle.boxShadow !== 'none' &&
+    hasVisibleCssColor(shadowColor) &&
+    shadowGeometry.some((value) => value > 0);
+  const outlineChanged =
+    focusStyle.outlineStyle !== unfocusedStyle.outlineStyle ||
+    focusStyle.outlineWidth !== unfocusedStyle.outlineWidth ||
+    focusStyle.outlineColor !== unfocusedStyle.outlineColor;
+  const hasVisibleOutline =
+    outlineChanged &&
+    focusStyle.outlineStyle !== 'none' &&
+    Number.parseFloat(focusStyle.outlineWidth) > 0 &&
+    hasVisibleCssColor(focusStyle.outlineColor);
+  expect(
+    hasVisibleBoxShadow || hasVisibleOutline,
+    'Keyboard focus should expose a non-transparent ring with non-zero geometry',
+  ).toBe(true);
 }
 
 test('exposes the canonical guest My Account entrypoint without claiming authentication', async ({ page }, testInfo) => {
@@ -135,22 +196,12 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   await expect(rememberCheckbox).not.toBeChecked();
 
   await password.focus();
+  const rememberUnfocusedStyle = await readComputedFocusStyle(rememberCheckbox);
   await page.keyboard.press('Tab');
   await expect(passwordToggle).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(rememberCheckbox).toBeFocused();
-  const rememberFocusStyle = await rememberCheckbox.evaluate((element) => {
-    const style = window.getComputedStyle(element);
-    return {
-      boxShadow: style.boxShadow,
-      outlineStyle: style.outlineStyle,
-      outlineWidth: style.outlineWidth,
-    };
-  });
-  expect(
-    rememberFocusStyle.boxShadow !== 'none' ||
-      (rememberFocusStyle.outlineStyle !== 'none' && rememberFocusStyle.outlineWidth !== '0px'),
-  ).toBe(true);
+  await expectComputedFocusStyle(rememberCheckbox, rememberUnfocusedStyle);
   await page.keyboard.press('Space');
   await expect(rememberCheckbox).toBeChecked();
   await expect(rememberCheckbox).toBeFocused();
@@ -200,11 +251,14 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
     await expect(password).toHaveAttribute('type', 'password');
     await expect(rememberCheckbox).not.toBeChecked();
   };
-  await username.focus();
-  await expect(username).toBeFocused();
+  await password.focus();
+  const usernameUnfocusedStyle = await readComputedFocusStyle(username);
+  await page.keyboard.press('Shift+Tab');
+  await expectComputedFocusStyle(username, usernameUnfocusedStyle);
   for (let index = 1; index < loginTabStops.length; index += 1) {
+    const unfocusedStyle = await readComputedFocusStyle(loginTabStops[index]);
     await page.keyboard.press('Tab');
-    await expect(loginTabStops[index]).toBeFocused();
+    await expectComputedFocusStyle(loginTabStops[index], unfocusedStyle);
   }
   await expectLoginTraversalState();
   for (let index = loginTabStops.length - 2; index >= 0; index -= 1) {
