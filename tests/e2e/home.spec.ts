@@ -708,7 +708,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(checkoutUrl.hash).toBe('');
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
-    expect(new URL(page.url()).pathname, 'The checkout link must use the canonical WooCommerce slug').toBe('/checkout/');
+    expect(page.url(), 'The checkout link must open the exact canonical WooCommerce URL').toBe(checkoutUrl.href);
     await expectHeaderCartState(2, 'After full navigation to checkout');
     await expectExactDemoCheckoutNotice(page);
     const classicDisabledButton = page.getByRole('button', { name: demoCheckoutButtonLabel, exact: true });
@@ -719,6 +719,20 @@ test.describe('АВТОЗАКУП homepage', () => {
     } else {
       await expect(page.locator('.wp-block-woocommerce-checkout')).toBeVisible();
     }
+
+    await page.goBack({ waitUntil: 'networkidle' });
+    expect(page.url(), 'Browser Back must restore the exact canonical cart URL').toBe(canonicalCartUrl);
+    await expectHeaderCartState(2, 'After browser Back from checkout to the cart');
+    await expect(cartItems).toHaveCount(1);
+    const historyCartItem = cartItems.first();
+    await expect(historyCartItem).toContainText(sourceProductName);
+    const historyProductLink = historyCartItem.locator(
+      '.product-name a, a.wc-block-components-product-name',
+    );
+    await expect(historyProductLink).toHaveCount(1);
+    await expect(historyProductLink).toHaveText(sourceProductName);
+    await expect(historyProductLink).toHaveAttribute('href', sourceProductHref!);
+    await expectExactDemoCheckoutNotice(page);
 
     expectNoRuntimeErrors(runtimeErrors);
   });

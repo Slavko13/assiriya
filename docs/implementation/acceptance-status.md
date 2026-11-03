@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S67 cart reload continuity:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S67 расширяет существующий public cart scenario и не меняет число tests.
+**Текущий regression после I2-S68 checkout-to-cart browser Back:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S68 расширяет существующий public cart scenario и не меняет число tests.
 
 ## Технические критерии Итерации 2
 
@@ -816,6 +816,18 @@ I2-S66 prevents silent disagreement among the selected current Markdown summarie
 | I2-S67-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S67 closes only one immediate canonical `/cart/` reload in the same guest Chrome context after two exact same-product `quantity=1` AJAX additions. It does not prove server-only rendering, delayed/repeated reload, back/forward, new tab, browser restart, cookie TTL, authenticated merge, cross-device behavior, arbitrary/mixed products or quantities, update/remove/concurrency/reservation, live SR/AT, other browsers, production persistence or commerce correctness.
+
+### I2-S68 — checkout-to-cart browser Back continuity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S68-ACC-001 | History starts from exact canonical destinations | cart and checkout post-click URLs each equal their prevalidated exact canonical href, not pathname-only approximations | `PASS / TECHNICAL` |
+| I2-S68-ACC-002 | One browser Back restores the exact cart destination | `page.goBack({ waitUntil: 'networkidle' })` returns to the saved exact canonical cart URL without requiring a non-null Response | `PASS / TECHNICAL` |
+| I2-S68-ACC-003 | Header and exact cart identity survive history restoration | visible header relation/count/name remain `2`/`Корзина 2`; one row retains exact source product name/permalink on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S68-ACC-004 | Demo safety and runtime remain intact | exact cart demo notice is present after Back and runtime error collection remains empty | `PASS / TECHNICAL` |
+| I2-S68-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
+
+I2-S68 closes only one immediate checkout→cart browser Back traversal in the same page/context after the exact S67 journey. It deliberately does not attribute restoration to BFCache, browser cache or server response and does not prove Forward, repeated history, reload after Back, new tab/restart/cookie TTL, authenticated merge, cross-device behavior, arbitrary/mixed products or quantities, cart mutation/concurrency, AT/browser matrix or production persistence/commerce.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -1848,6 +1848,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только one immediate canonical cart reload in the same guest Chrome session/current Woo renderer.
 
+### I2-S68 — checkout-to-cart browser Back continuity
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation I2-S35/I2-S58/I2-S63/I2-S67; `UI-SCR002-007/015`, `PBL-019/PBL-040`, `FR-CART-001` guest renderer/session partial и `NFR-A11Y-002` computed-name partial; no new business rule or production behavior.
+
+Критерии среза:
+
+- cart and checkout entries use their prevalidated exact canonical hrefs;
+- one browser Back from guarded checkout restores the saved exact cart URL without requiring a non-null navigation Response;
+- live header relation/count/name remain exact `2`/`Корзина 2` and one row retains exact source product name/permalink;
+- exact cart demo notice remains and runtime error collection stays empty.
+
+Выполнено и проверено:
+
+- existing cart journey extended after checkout renderer assertions with one `goBack({ waitUntil: 'networkidle' })` and restored-state checks;
+- targeted public projects: `3 passed` on `1440/390/360`;
+- full serial regression: `49` = `47 passed / 2 intentional skipped`, `0 failed`;
+- 19 repository PNG unchanged; post-suite inventory `10/0/0/0`;
+- production theme/plugin source and business data contracts unchanged.
+
+Вне scope: BFCache/browser-cache/server attribution, Forward, repeated history, reload after Back, new tab/restart/cookie TTL, authenticated merge, cross-device, arbitrary/mixed products or quantities, cart update/remove/concurrency/reservation, live SR/AT, browser matrix and production persistence/commerce.
+
+Статус закрывает только one immediate checkout→cart browser Back traversal in the same pinned guest Chrome page/current Woo renderer.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
