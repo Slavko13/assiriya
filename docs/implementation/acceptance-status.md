@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S63:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S64:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -768,6 +768,18 @@ I2-S62 closes only current pinned Chrome homepage behavior for the exact interna
 | I2-S63-ACC-005 | Regression/data gates preserved | initial targeted `3 passed`; independent P3 review required explicit link/badge visibility and was closed; final targeted `3 passed`; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
 
 I2-S63 closes only current rendered header continuity through two canonical full navigations in one pinned Chrome guest browser context after two exact same-product unit adds. Network-idle evidence does not prove that the value came exclusively from server HTML rather than Woo post-load reconciliation. Manual reload, back/forward, new tab, browser restart, cookie TTL, authenticated merge, cross-device persistence, arbitrary/mixed quantities, update/remove/concurrency, price/stock/reservation, live announcement/SR/AT/browser/Woo matrix and production commerce remain outside scope. No units-vs-lines business rule or checkout `TC-040` completion is claimed.
+
+### I2-S64 — guest lost-password keyboard entry/wiring
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S64-ACC-001 | Recovery entry is keyboard reachable | from the focused visible login submit, one real Tab reaches the login form's sole lost-password anchor; it is visible, named, focused and matches `:focus-visible` on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S64-ACC-002 | Activation reaches the exact destination | Enter yields a successful document GET with the same origin, exact `/my-account/lost-password/` path and empty query/fragment | `PASS / TECHNICAL` |
+| I2-S64-ACC-003 | Current reset renderer wiring is exact | one visible Woo reset form has effective same-origin exact POST action; one empty required identifier input with exact name/type/autocomplete and non-empty accessible name, hidden `wc_reset_password=true`, non-empty nonce, exact referer and one visible/named submit | `PASS / TECHNICAL` |
+| I2-S64-ACC-004 | Scenario remains non-mutating and technically usable | identifier remains empty; no POST reaches the exact recovery action; no overflow/runtime errors; serious/critical automated axe violations empty on all three public projects | `PASS` |
+| I2-S64-ACC-005 | Regression/data gates preserved | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; two independent reviews found no findings | `PASS` |
+
+I2-S64 closes only keyboard GET navigation and browser-visible DOM/effective-action wiring for the current guest Woo reset renderer on pinned Chrome `1440/390/360`. It does not prove arrival focus/order/style, identifier validation or reset submission, neutral existing-vs-unknown response, enumeration resistance, email/token delivery/expiry/reuse, password change/login/session, nonce enforcement, CSRF/rate limiting, localization/copy approval, screen-reader/AT/browser/Woo matrix, full WCAG or production IAM/security. The nonce claim is presence-only, the axe gate is serious/critical automation only, and the no-POST claim applies only to the exact recovery action in this non-submit scenario. `DG-002/018` remain open; `FR-AUTH-003` is not claimed complete.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -285,3 +285,99 @@ test('exposes the canonical guest My Account entrypoint without claiming authent
   expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
+
+test('opens the guest lost-password entrypoint without submitting recovery', async ({ page }) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  const recoveryPosts: string[] = [];
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && new URL(request.url()).pathname === '/my-account/lost-password/') {
+      recoveryPosts.push(request.url());
+    }
+  });
+
+  const accountResponse = await page.goto('/my-account/', { waitUntil: 'networkidle' });
+  expect(accountResponse?.ok()).toBeTruthy();
+  const accountUrl = new URL(page.url());
+  const loginForm = page.locator('form.woocommerce-form-login');
+  const loginButton = loginForm.locator('button[name="login"][type="submit"]');
+  const lostPasswordLink = loginForm.locator('.lost_password a');
+  await expect(loginButton).toHaveCount(1);
+  await expect(loginButton).toBeVisible();
+  await expect(lostPasswordLink).toHaveCount(1);
+  await loginButton.focus();
+  await expect(loginButton).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(lostPasswordLink).toBeFocused();
+  await expect(lostPasswordLink).toBeVisible();
+  await expect(lostPasswordLink).toHaveAccessibleName(/\S/);
+  expect(await lostPasswordLink.evaluate((element) => element.matches(':focus-visible'))).toBe(true);
+
+  const navigationPromise = page.waitForNavigation({ waitUntil: 'networkidle' });
+  await page.keyboard.press('Enter');
+  const navigationResponse = await navigationPromise;
+  expect(navigationResponse?.ok()).toBeTruthy();
+  expect(navigationResponse?.request().method()).toBe('GET');
+  const recoveryUrl = new URL(page.url());
+  expect(recoveryUrl.origin).toBe(accountUrl.origin);
+  expect(recoveryUrl.pathname).toBe('/my-account/lost-password/');
+  expect(recoveryUrl.search).toBe('');
+  expect(recoveryUrl.hash).toBe('');
+
+  const recoveryForm = page.locator('form.woocommerce-ResetPassword.lost_reset_password');
+  await expect(recoveryForm).toHaveCount(1);
+  await expect(recoveryForm).toBeVisible();
+  await expect(recoveryForm).toHaveAttribute('method', 'post');
+  const recoveryAction = new URL(
+    await recoveryForm.evaluate((form: HTMLFormElement) => form.action),
+  );
+  expect(recoveryAction.origin).toBe(recoveryUrl.origin);
+  expect(recoveryAction.pathname).toBe('/my-account/lost-password/');
+  expect(recoveryAction.search).toBe('');
+  expect(recoveryAction.hash).toBe('');
+
+  const identifier = recoveryForm.locator(
+    'input#user_login[name="user_login"][type="text"][autocomplete="username"]',
+  );
+  await expect(identifier).toHaveCount(1);
+  await expect(identifier).toBeVisible();
+  await expect(identifier).toHaveAttribute('required', '');
+  await expect(identifier).toHaveAttribute('aria-required', 'true');
+  await expect(identifier).toHaveAccessibleName(/\S/);
+  await expect(identifier).toHaveValue('');
+
+  const resetMarker = recoveryForm.locator('input[name="wc_reset_password"][type="hidden"]');
+  await expect(resetMarker).toHaveCount(1);
+  await expect(resetMarker).toHaveValue('true');
+  const nonce = recoveryForm.locator(
+    'input#woocommerce-lost-password-nonce[name="woocommerce-lost-password-nonce"][type="hidden"]',
+  );
+  await expect(nonce).toHaveCount(1);
+  expect(await nonce.inputValue()).not.toBe('');
+  await expect(recoveryForm.locator('input[name="_wp_http_referer"][type="hidden"]')).toHaveValue(
+    '/my-account/lost-password/',
+  );
+  const submit = recoveryForm.locator('button[type="submit"]');
+  await expect(submit).toHaveCount(1);
+  await expect(submit).toBeVisible();
+  await expect(submit).toHaveAccessibleName(/\S/);
+
+  const layout = await page.evaluate(() => ({
+    viewportWidth: document.documentElement.clientWidth,
+    pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(layout.pageWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) =>
+    ['serious', 'critical'].includes(violation.impact ?? ''),
+  );
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  await expect(identifier).toHaveValue('');
+  expect(recoveryPosts).toEqual([]);
+  expect(page.url()).toBe(recoveryUrl.href);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});

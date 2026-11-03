@@ -1750,6 +1750,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned Chrome/current Woo rendered-header continuity within one exact guest browser session.
 
+### I2-S64 — guest lost-password keyboard entry/wiring
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S33/I2-S53/I2-S60`; `PBL-009/PBL-040`; `FR-AUTH-003` entrypoint/renderer-only technical partial; `NFR-A11Y-002` technical partial. `DG-002/018` остаются open; direct Paper recovery screen отсутствует.
+
+Критерии среза:
+
+- from focused login submit, one real Tab reaches the exact visible/named lost-password anchor in `:focus-visible` state;
+- Enter performs successful same-origin exact GET `/my-account/lost-password/` without query/hash;
+- one visible current Woo reset form exposes exact effective POST action, empty required identifier input with exact name/type/autocomplete/accessibility, hidden marker, non-empty nonce, exact referer and visible/named submit;
+- identifier stays empty, no POST reaches the exact recovery action, no-overflow/runtime and serious/critical axe gates pass on `1440/390/360`.
+
+Вне scope: reset-page arrival focus/order/style; identifier validation/submission and neutral existing-vs-unknown response; enumeration resistance; email/token delivery, expiry and reuse; password change/login/session; nonce enforcement, CSRF/rate limit; localization/copy approval; screen-reader/AT/browser/Woo matrix; full WCAG и production IAM/security.
+
+Выполнено и проверено:
+
+- separate non-mutating browser scenario activates the existing link by real Tab + Enter and distinguishes successful document GET from recovery POST;
+- current form action/controls/hidden wiring are asserted without logging nonce values or entering an identifier; exact-action POST listener remains empty;
+- targeted scenario: `3 passed`; two independent reviews found no findings and constrained nonce/no-POST/axe claims;
+- full regression: `49` tests, `47 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users;
+- production source не менялся.
+
+Статус закрывает только current guest Woo lost-password entrypoint GET и browser-visible reset-form wiring in pinned Chrome public projects.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
