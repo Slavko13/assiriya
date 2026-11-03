@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S64:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S65 documentation sync:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. Runtime evidence остаётся прогоном I2-S64; I2-S65 production/test code не менял.
 
 ## Технические критерии Итерации 2
 
@@ -781,6 +781,18 @@ I2-S63 closes only current rendered header continuity through two canonical full
 
 I2-S64 closes only keyboard GET navigation and browser-visible DOM/effective-action wiring for the current guest Woo reset renderer on pinned Chrome `1440/390/360`. It does not prove arrival focus/order/style, identifier validation or reset submission, neutral existing-vs-unknown response, enumeration resistance, email/token delivery/expiry/reuse, password change/login/session, nonce enforcement, CSRF/rate limiting, localization/copy approval, screen-reader/AT/browser/Woo matrix, full WCAG or production IAM/security. The nonce claim is presence-only, the axe gate is serious/critical automation only, and the no-POST claim applies only to the exact recovery action in this non-submit scenario. `DG-002/018` remain open; `FR-AUTH-003` is not claimed complete.
 
+### I2-S65 — root README verification handoff sync
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S65-ACC-001 | Summary count matches latest verified suite | README top status reports exact `49 tests: 47 passed, 2 intentionally skipped`, matching acceptance/progress S64 evidence | `PASS / DOCUMENTATION` |
+| I2-S65-ACC-002 | Detailed Tests handoff matches | README Tests section repeats exact `49/47/2` and retains the two viewport-independent Store API skip explanation | `PASS / DOCUMENTATION` |
+| I2-S65-ACC-003 | Current technical highlights are represented | README now names responsive nav/focus, repeated/cross-page cart-header continuity and guest reset-entry wiring/no-submit evidence | `PASS / DOCUMENTATION` |
+| I2-S65-ACC-004 | Safety/status boundaries remain truthful | server stays `NOT_DEPLOYED`; first-attempt Caddy file-capability failure, second-attempt healthy-Caddy/non-TTY boundary and the missing completed run/inventory/two-site before-after/public-admin smoke are explicit; DEC/demo/credential/admin-write warnings remain unchanged; no new deployment claim added | `PASS` |
+| I2-S65-ACC-005 | Document diff is structurally clean | exact-string comparison and `git diff --check` pass; source evidence remains S64 full `49`: `47 passed / 2 skipped`, 19 PNG unchanged, inventory `10/0/0/0` | `PASS` |
+
+I2-S65 is a handoff/documentation synchronization only. It adds no runtime, functional, business, security, WCAG, production or deployment evidence and does not prevent future README drift automatically.
+
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
 | ID | Критерий | Доказательство | Статус |
@@ -790,10 +802,10 @@ I2-S64 closes only keyboard GET navigation and browser-visible DOM/effective-act
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
 | OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config preflight `10 passed`, включая no ports/host network, two-site/IP/snapshot, forbidden global removal и WP-CLI `run -T` checks | `PASS` локально |
-| OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до server run с двумя реальными URL |
-| OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до server run |
+| OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до завершённого server run с сохранённым two-site evidence |
+| OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до завершённого server run |
 
-Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а server остаётся `NOT_DEPLOYED`. Случайный `trycloudflare.com` URL и WordPress login public; длинный credential остаётся только в mode-600 env. Это ephemeral preview без production SLA, stable DNS, rate-limit/MFA или production admin acceptance.
+Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а server остаётся `NOT_DEPLOYED`. Первая partial remote попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary. Ни одна не дала successful bootstrap, complete before/after inventory или public/admin smoke; подготовленный `run -T` fix требует повторного полного run. Случайный `trycloudflare.com` URL и WordPress login public; длинный credential остаётся только в mode-600 env. Это ephemeral preview без production SLA, stable DNS, rate-limit/MFA или production admin acceptance.
 
 ## Технические критерии Итерации 1
 
@@ -815,8 +827,8 @@ Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а serve
 | I1-ACC-014 | Production Compose/Caddy проходит config checks | prod config/build/up PASS; isolated drill: public 200, external admin 403, trusted admin 200, `nosniff` | `PASS` локально; remote preflight при доступе |
 | I1-ACC-015 | Backup создаётся и проверяется | парные `.sql.gz` + `.uploads.tar.gz`, integrity check | `PASS` |
 | I1-ACC-016 | Restore возвращает контрольную запись | isolated DB+uploads restore drill | `PASS` |
-| I1-ACC-017 | Git deployment проходит на staging/disposable host | origin/target и one-command mechanism подготовлены; remote log/URL отсутствуют до server run | `BLOCKED` только для remote execution |
-| I1-ACC-018 | Два существующих сайта не затронуты | mandatory before/after URL, foreign-container и listener guards реализованы | `BLOCKED` до server run с двумя фактическими URL |
+| I1-ACC-017 | Git deployment проходит на staging/disposable host | origin/target и one-command mechanism подготовлены; partial attempts recorded, но successful final log/URL отсутствуют до completed run | `BLOCKED` только для completed remote execution |
+| I1-ACC-018 | Два существующих сайта не затронуты | mandatory before/after URL, foreign-container и listener guards реализованы | `BLOCKED` до completed run с сохранённым two-site evidence |
 
 ## Связь с 42 аналитическими TC
 
@@ -849,5 +861,5 @@ Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а serve
 
 ## Условие финального статуса
 
-Локальная Итерация 1 выполнила применимые критерии и имеет разрешённый master prompt статус `READY_FOR_DEPLOYMENT`. Пункты I1-ACC-017/018 требуют фактического server run и before/after evidence, поэтому серверный статус остаётся `BLOCKED / NOT_DEPLOYED`; `DEPLOYED` не заявляется. Открытые `DEC-001…020` ограничивают будущий коммерческий scope, но не отменяют завершение независимого технического baseline.
+Локальная Итерация 1 выполнила применимые критерии и имеет разрешённый master prompt статус `READY_FOR_DEPLOYMENT`. Пункты I1-ACC-017/018 требуют successful completed server run и сохранённого before/after evidence; две partial attempts этого не закрывают, поэтому серверный статус остаётся `BLOCKED / NOT_DEPLOYED` и `DEPLOYED` не заявляется. Открытые `DEC-001…020` ограничивают будущий коммерческий scope, но не отменяют завершение независимого технического baseline.
 

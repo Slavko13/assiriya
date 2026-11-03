@@ -1,7 +1,7 @@
 # Развёртывание
 
 **Текущий серверный статус:** `NOT_DEPLOYED`.  
-Target `176.98.184.23` и Git `origin` подтверждены, но серверный запуск не выполнялся. Два существующих сайта, занятые порты, reverse proxy и ресурсы target фактически не проверялись. Локальные проверки не меняют статус на `DEPLOYED`.
+Target `176.98.184.23` и Git `origin` подтверждены. Первая partial installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый reconciled run, сохранённый полный inventory/two-site before-after и public preview/admin smoke отсутствуют. Локальные и partial remote проверки не меняют статус на `DEPLOYED`.
 
 ## Локальный запуск
 
@@ -142,7 +142,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 
 Только после этих фактов статус может стать `DEPLOYED`.
 
-## Подтверждённые локальные проверки 2026-11-01—2026-11-02
+## Подтверждённые локальные проверки 2026-11-01—2026-11-03
 
 - smoke `/` — `PASS`;
 - smoke `/wp-json/` — `PASS`;
@@ -152,7 +152,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
 - Playwright/deployment preflight: 10 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены.
-- Playwright: 39 tests, 37 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, demo guards и bounded visual comparator.
+- Playwright: 49 tests, 47 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, nav/dialog/skip-link focus contracts, guest login/reset entrypoints, cart continuity, demo guards и bounded visual comparator.
 
-Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Реального server deployment не было: `NOT_DEPLOYED`.
+Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Первая partial remote installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy project Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый reconciled run, полный inventory/two-site before-after и public preview/admin smoke не зафиксированы, поэтому server остаётся `NOT_DEPLOYED`.
 

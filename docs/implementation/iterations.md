@@ -60,7 +60,7 @@ Remote inventory и реальный deployment выполняются толь�
 
 - mobile имеет `DESIGN_REVIEW_REQUIRED`, а desktop не заявляется pixel-perfect до утверждения baseline/assets;
 - все `DEC-001…DEC-020` остаются `OPEN`;
-- Git remote и target теперь известны; server inventory/access и remote deployment отсутствуют, поэтому сервер `NOT_DEPLOYED`.
+- Git remote и target теперь известны; первая partial remote attempt выявила Caddy file-capability failure, после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary; завершённый run и сохранённое полное inventory/two-site/public-admin evidence отсутствуют, поэтому сервер `NOT_DEPLOYED`.
 
 ### История
 
@@ -1776,6 +1776,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current guest Woo lost-password entrypoint GET и browser-visible reset-form wiring in pinned Chrome public projects.
 
+### I2-S65 — root README verification handoff sync
+
+**Статус:** `DONE / DOCUMENTATION`
+
+**Связь:** `PBL-040` documentation/verification partial; no FR/UI/business mapping and no production/test behavior change.
+
+Критерии среза:
+
+- README top current-status and detailed Tests sections report the same latest verified `49 tests = 47 passed + 2 intentional skipped`;
+- implementation highlights mention current responsive nav/focus, repeated/cross-page cart header and guest recovery-entry evidence;
+- server handoff explicitly distinguishes first-attempt Caddy file-capability failure from second-attempt healthy-Caddy/non-TTY boundary and from missing completed run/inventory/two-site before-after/public-admin smoke; `NOT_DEPLOYED`, DEC/demo limitations, credential safety and admin-write opt-in remain explicit.
+
+Вне scope: new runtime/test/functional/business/security/WCAG/deployment evidence and automatic future documentation-drift prevention.
+
+Выполнено и проверено:
+
+- stale `37 passed / 2 skipped` and `39 tests / 37 passed / 2 skipped` README summaries replaced with exact S64 `49 / 47 / 2`;
+- current implementation and detailed test-summary bullets synchronized with the verified I2-S58—S64 evidence without copying secrets or changing deployment status;
+- cross-document audit corrected stale “no remote run ever” claims in README/progress/deployment/architecture/acceptance: first partial attempt exposed the Caddy file-capability failure; after the narrow fix, the second confirmed healthy Caddy and exposed the non-TTY WP-CLI boundary; successful bootstrap, complete inventory/two-site evidence and public/admin smoke remain pending;
+- exact-string/document comparison, stale-status search and `git diff --check` passed;
+- source evidence remains I2-S64 targeted `3 passed`, full `49` tests = `47 passed / 2 skipped`, 19 PNG unchanged and inventory `10/0/0/0`; production/test source did not change.
+
+Статус закрывает только point-in-time root README handoff consistency.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
@@ -1791,7 +1815,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 - owner-approved public `/wp-login.php` отвечает `2xx`, unauthenticated `/wp-admin/` ведёт на same-origin WordPress login; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
 - remote proof требуется до статуса `DEPLOYED`.
 
-Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; deployment preflight вместе с Playwright env `10 passed`. Server run сознательно не заявлен.
+Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; deployment preflight вместе с Playwright env `10 passed`. Completed server run сознательно не заявлен: две partial attempts зафиксированы выше, но полного remote proof ещё нет.
 
 ## Следующие итерации
 

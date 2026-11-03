@@ -64,7 +64,7 @@ Browser
 - Backup и restore обрабатывают согласованную пару DB + uploads; restore требует явный `--confirm` и предварительный safety backup.
 - Изолированное локальное restore drill выполнено со статусом `PASS`: восстановление не затрагивало другие Compose-проекты.
 - Smoke-проверки `/`, `/wp-json/` и WooCommerce Store API выполнены со статусом `PASS`.
-- Target и origin известны, а Quick Tunnel package локально проверен, но server run отсутствует: reverse proxy, порты, два существующих сайта и реальные resources не проверялись; статус остаётся `NOT_DEPLOYED`.
+- Target и origin известны, Quick Tunnel package локально проверен; первая partial remote installer-попытка выявила Caddy file-capability failure, после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый run, полный inventory, two-site before/after и public/admin smoke не зафиксированы; статус остаётся `NOT_DEPLOYED`.
 
 ## Архитектурные ограничения до DEC
 
