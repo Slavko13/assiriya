@@ -5,7 +5,7 @@
 
 | Компонент | Источник Paper / UI | Код | Данные | Состояния в Итерации 1 | Переиспользование / статус |
 |---|---|---|---|---|---|
-| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | nav click/Enter/Space/Escape/name; exact breakpoint DOM reset + mobile re-entry; contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48/S52/S56 nav `PASS / TECHNICAL`, overall `TESTING` |
+| Site header / topbar | SCR-002, UI-001—009 | `header.php`, `main.css`, `main.js` | Settings, WC URLs/cart | nav click/Enter/Space/Escape/name; exact breakpoint reset/re-entry; inside/outside click with preserved target activation and dialog ancestry; contact dialog; город/search targets частичны | общий для всех страниц; I2-S42/S46/S48/S49/S52/S56/S59 nav/dialog `PASS / TECHNICAL`, overall `TESTING` |
 | Skip link / primary landmark | direct Paper control mapping отсутствует | `header.php`, four theme main templates, `main.css` | none | first desktop Tab visible/focus-styled link; Enter fragment + exact main focus transfer on front/page/Woo renderer families | I2-S54 `PASS / TECHNICAL`; generic index runtime, mobile/AT/browser/full WCAG open |
 | Logo | SCR-002 | `header.php` | WP custom logo/fallback | link/fallback | общий; `TESTING` |
 | City selector | UI-SCR002-001 | `header.php`, status dialog | нет delivery source | честный blocked state | общий; `BLOCKED` |

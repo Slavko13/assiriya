@@ -25,6 +25,13 @@
     });
     navToggle.addEventListener('keydown', closeNavOnEscape);
     navPanel.addEventListener('keydown', closeNavOnEscape);
+    document.addEventListener('click', (event) => {
+      if (navToggle.getAttribute('aria-expanded') !== 'true') return;
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (navToggle.contains(target) || navPanel.contains(target) || target.closest('dialog')) return;
+      setNavOpen(false);
+    });
     const navBreakpoint = window.matchMedia('(max-width: 900px)');
     const resetNavAtBreakpoint = () => setNavOpen(false);
     if (navBreakpoint.addEventListener) navBreakpoint.addEventListener('change', resetNavAtBreakpoint);

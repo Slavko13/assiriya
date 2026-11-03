@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S58:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S59:** `43` tests = `41 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -708,6 +708,18 @@ I2-S57 closes only the current pinned guest Woo/Chrome computed accessible-name 
 | I2-S58-ACC-005 | Regression/data gates preserved | pre-fix targeted `3 failed` with second badge still `1`; post-fix targeted `3 passed`; PHP/JS syntax; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; independent review P3 wording fixed and no code findings | `PASS` |
 
 I2-S58 closes only the current pinned guest Woo/Chrome repeated same-product AJAX renderer consistency with the already-used Woo cart-contents count. It does not choose a business meaning for units versus lines, or prove arbitrary quantity, different products/offers, mixed cart, update/remove/reload/session persistence, auth, concurrency, price/stock/reservation, checkout/order/payment, live announcement/SR/AT, browser/Woo matrix, full WCAG or production commerce acceptance. `TC-009/TC-040` are not claimed.
+
+### I2-S59 — mobile-nav outside-click dismissal
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S59-ACC-001 | Inside-panel click does not dismiss | real click in the visible mobile nav padding leaves exact true/`is-open`/visible state on `390/360` | `PASS` |
+| I2-S59-ACC-002 | Non-interactive outside click closes truthfully | click on visible `main#primary h1` calls the shared state path and yields exact false/no `is-open`/hidden/`Открыть меню`; exact URL remains unchanged | `PASS` |
+| I2-S59-ACC-003 | Outside action is not swallowed by reflow | exact visible hero VIN link retains same-origin/path/search and applies `#vin-request` while the nav reaches false/no-class/hidden | `PASS / TECHNICAL` |
+| I2-S59-ACC-004 | Dialog event order preserves prior contract | clicks whose originating target belongs to a dialog do not dismiss nav even if the dialog removes `open` before document bubbling; existing close focus-return assertions pass | `PASS / TECHNICAL` |
+| I2-S59-ACC-005 | Regression/data gates preserved | pre-fix targeted desktop passed/mobile `2 failed`; unsafe `pointerdown` fix rejected by P1 review; final JS syntax and targeted `3 passed`; full `43`: `41 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final independent review no findings | `PASS` |
+
+I2-S59 closes only current pinned Chrome outside-click state reconciliation on `390/360`, including one exact same-page activation and existing dialog event-order/focus-return contract. It does not prove explicit focus transfer after dismissal, focus trapping, arbitrary link destinations, scroll locking, real touch/swipe/multi-pointer behavior, shadow DOM/iframes, AT/browser/device matrix, approved mobile design, full WCAG or production navigation acceptance. `DG-017/018` remain open and `TC-040` is not claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -1623,6 +1623,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только current pinned guest Woo/Chrome repeated same-product AJAX badge/name consistency with current Woo units count.
 
+### I2-S59 — mobile-nav outside-click dismissal
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S42/I2-S46/I2-S48/I2-S49/I2-S52/I2-S56`; `SCR-002` header, `PBL-010/PBL-040` и `NFR-A11Y-002` state-consistency technical partial. `DG-017/018` остаются open; navigation content/business scope не меняется.
+
+Критерии среза:
+
+- только на `390/360` open menu сохраняется после real pointer click внутри nav panel;
+- real pointer click по safe non-interactive main target вне toggle/panel переводит state в false/no-class/hidden/open-label без URL change;
+- safe same-page main link сохраняет собственную `#vin-request` activation одновременно с dismissal;
+- pointer interaction внутри open native dialog не закрывает nav, сохраняя I2-S49 dialog contract; desktop presentation остаётся без изменений.
+
+Вне scope: explicit focus transfer после click dismissal, focus trap/roving tabindex, другие link destinations, scroll lock, swipe/touch gesture semantics beyond click, multi-pointer/shadow DOM/iframe, screen-reader/AT/browser/device matrix, approved mobile design, full WCAG и production navigation acceptance.
+
+Выполнено и проверено:
+
+- pre-fix targeted diagnostic: desktop passed, both mobile projects failed with retained `aria-expanded=true` after outside main click;
+- first `pointerdown` implementation отклонён до commit: independent P1 probe доказал layout reflow между pointerdown/up и потерю exact hero-link activation;
+- bubble `click` сохраняет target activation; exact `#vin-request` regression добавлен;
+- intermediate `dialog[open]` guard exposed bubble-order nav dismissal after successful dialog close/focus return: `open` was already removed before document bubble, so the guard now uses originating `dialog` ancestry;
+- final JavaScript syntax and targeted homepage scenario: `3 passed`; independent repeat review found no remaining findings;
+- full regression: `43` tests, `41 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users.
+
+Статус закрывает только current pinned Chrome mobile outside-click, one exact target-activation and existing dialog event-order renderer contract.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

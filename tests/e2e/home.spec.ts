@@ -243,6 +243,42 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navToggle).toHaveAccessibleName('Открыть меню');
       await expect(navToggle).toBeFocused();
 
+      const outsidePointerUrl = page.url();
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      await navPanel.click({ position: { x: 2, y: 2 } });
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeVisible();
+      const outsideNavTarget = page.locator('main#primary h1').first();
+      await expect(outsideNavTarget).toBeVisible();
+      await outsideNavTarget.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      await expect(navLabel).toHaveText('Открыть меню');
+      await expect(navToggle).toHaveAccessibleName('Открыть меню');
+      expect(page.url()).toBe(outsidePointerUrl);
+
+      await navToggle.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(navPanel).toBeVisible();
+      const outsideNavLink = page.locator('main#primary a.az-hero__vin[href="#vin-request"]');
+      await expect(outsideNavLink).toHaveCount(1);
+      await expect(outsideNavLink).toBeVisible();
+      await outsideNavLink.click();
+      await expect(navToggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+      await expect(navPanel).toBeHidden();
+      const outsideLinkUrl = new URL(page.url());
+      const beforeOutsideLinkUrl = new URL(outsidePointerUrl);
+      expect(outsideLinkUrl.origin).toBe(beforeOutsideLinkUrl.origin);
+      expect(outsideLinkUrl.pathname).toBe(beforeOutsideLinkUrl.pathname);
+      expect(outsideLinkUrl.search).toBe(beforeOutsideLinkUrl.search);
+      expect(outsideLinkUrl.hash).toBe('#vin-request');
+
       const mobileViewport = page.viewportSize();
       expect(mobileViewport).toBeTruthy();
       const breakpointUrl = page.url();
