@@ -639,19 +639,25 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(addToCart).toHaveClass(/\badded\b/);
     const cartLink = page.locator('a.az-cart-link');
     const cartBadge = cartLink.locator('#az-cart-count');
-    await expect(cartLink).toHaveCount(1);
-    await expect(cartBadge, 'The header cart badge should reflect the first AJAX addition').toHaveText('1');
-    await expect(
-      cartLink,
-      'The cart link accessible name should include the AJAX-updated item count',
-    ).toHaveAccessibleName('Корзина 1');
+    const expectHeaderCartState = async (count: number, context: string) => {
+      await expect(cartLink, `${context}: one header cart link is required`).toHaveCount(1);
+      await expect(cartLink, `${context}: the header cart link must remain visible`).toBeVisible();
+      await expect(cartLink, `${context}: the label and badge relation must remain exact`).toHaveAttribute(
+        'aria-labelledby',
+        'az-cart-action-label az-cart-count',
+      );
+      await expect(cartBadge, `${context}: the badge must remain visible`).toBeVisible();
+      await expect(cartBadge, `${context}: the visible badge must match the session cart`).toHaveText(
+        String(count),
+      );
+      await expect(cartLink, `${context}: the computed name must include the rendered count`).toHaveAccessibleName(
+        `Корзина ${count}`,
+      );
+    };
+    await expectHeaderCartState(1, 'After the first AJAX addition');
 
     await addExactProductOnce();
-    await expect(cartBadge, 'The header cart badge should reflect both AJAX additions').toHaveText('2');
-    await expect(
-      cartLink,
-      'The cart link accessible name should include the repeated AJAX item count',
-    ).toHaveAccessibleName('Корзина 2');
+    await expectHeaderCartState(2, 'After the repeated AJAX addition');
 
     const cartHref = await cartLink.getAttribute('href');
     expect(cartHref).toBeTruthy();
@@ -663,6 +669,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     await cartLink.click();
     await page.waitForLoadState('networkidle');
     expect(new URL(page.url()).pathname, 'The cart link must use the canonical WooCommerce slug').toBe('/cart/');
+    await expectHeaderCartState(2, 'After full navigation to the cart');
     const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
     await expect(cartItems).toHaveCount(1);
     const cartItem = cartItems.first();
@@ -686,6 +693,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
     expect(new URL(page.url()).pathname, 'The checkout link must use the canonical WooCommerce slug').toBe('/checkout/');
+    await expectHeaderCartState(2, 'After full navigation to checkout');
     await expectExactDemoCheckoutNotice(page);
     const classicDisabledButton = page.getByRole('button', { name: demoCheckoutButtonLabel, exact: true });
     if (await classicDisabledButton.count()) {

@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S62:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
+**Текущий regression после I2-S63:** `46` tests = `44 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard.
 
 ## Технические критерии Итерации 2
 
@@ -756,6 +756,18 @@ I2-S61 closes only the current homepage skip-link transfer in pinned Chrome publ
 | I2-S62-ACC-005 | Regression/data gates preserved | pre-fix desktop passed/mobile `2 failed` at retained expanded state; first fix targeted `3 passed`, then P2 hidden-focus finding was closed; final targeted `3 passed`; JS/PHP syntax; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
 
 I2-S62 closes only current pinned Chrome homepage behavior for the exact internal VIN anchor on `390/360`. It does not prove VIN validation/submit/contact/consent/CRM, destination business correctness, arbitrary panel anchors/routes/fragments or encoded IDs, pointer/outside-click focus outcome, scroll landing/in-viewport focus, focus-ring/announcement, modified clicks, touch/swipe/multi-pointer, screen-reader/AT/browser/device matrix, approved mobile design, full WCAG or production navigation/VIN acceptance. `DG-017/018` remain open; `FR-VIN-001` and `TC-040` are not claimed complete.
+
+### I2-S63 — cross-page cart-header continuity
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S63-ACC-001 | Repeated AJAX state is exact before navigation | after two exact same-product `quantity=1` AJAX requests, the sole visible header link has visible badge `2`, exact label+badge `aria-labelledby` and computed name `Корзина 2` on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S63-ACC-002 | Cart full navigation retains the header state | after canonical `/cart/` document navigation/network idle in the same guest context, the re-resolved visible header link/badge retain exact relation/count/name `2`/`Корзина 2` | `PASS / TECHNICAL` |
+| I2-S63-ACC-003 | Checkout full navigation retains the header state | after canonical `/checkout/` document navigation/network idle in the same guest context, the re-resolved visible header link/badge retain exact relation/count/name `2`/`Корзина 2` | `PASS / TECHNICAL` |
+| I2-S63-ACC-004 | Existing cart and demo-safety identity remain intact | one exact source-product cart row, canonical links, exact demo notices and disabled/blocked checkout renderer assertions remain passing | `PASS` |
+| I2-S63-ACC-005 | Regression/data gates preserved | initial targeted `3 passed`; independent P3 review required explicit link/badge visibility and was closed; final targeted `3 passed`; full `46`: `44 passed / 2 skipped`; 19 PNG hashes unchanged; inventory `10/0/0/0`; final reviews no findings | `PASS` |
+
+I2-S63 closes only current rendered header continuity through two canonical full navigations in one pinned Chrome guest browser context after two exact same-product unit adds. Network-idle evidence does not prove that the value came exclusively from server HTML rather than Woo post-load reconciliation. Manual reload, back/forward, new tab, browser restart, cookie TTL, authenticated merge, cross-device persistence, arbitrary/mixed quantities, update/remove/concurrency, price/stock/reservation, live announcement/SR/AT/browser/Woo matrix and production commerce remain outside scope. No units-vs-lines business rule or checkout `TC-040` completion is claimed.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

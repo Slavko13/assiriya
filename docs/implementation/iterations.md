@@ -1725,6 +1725,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только exact homepage internal VIN-link dismissal и итоговый Enter focus outcome в pinned Chrome на `390/360`.
 
+### I2-S63 — cross-page cart-header continuity
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S35/I2-S55/I2-S57/I2-S58`; `UI-SCR002-007`; `PBL-019/PBL-040`; `FR-CART-001` renderer/session technical partial; `NFR-A11Y-002` computed-name partial. Production behavior и cart business rules не меняются.
+
+Критерии среза:
+
+- after two exact same-product `quantity=1` AJAX adds, visible header link/badge expose exact relation/count/name `2`/`Корзина 2`;
+- тот же exact visible header contract сохраняется после canonical full navigation к `/cart/` и затем `/checkout/` в одной guest browser session на `1440/390/360`;
+- existing exact cart-row identity, canonical links и demo checkout guards остаются passing.
+
+Вне scope: exclusive server-render proof, manual reload, back/forward, new tab, browser restart, cookie TTL, authenticated cart merge, cross-device persistence, arbitrary quantity/different products/mixed cart, update/remove/concurrency, price/stock/reservation, live announcement/SR/AT/browser/Woo matrix и production commerce.
+
+Выполнено и проверено:
+
+- initial targeted scenario `3 passed`: exact `2`/`Корзина 2` сохранились на homepage, cart и checkout;
+- independent P3 review указал, что text/name assertions пропускают hidden badge; helper hardened exact `toBeVisible()` для link и badge, final targeted scenario `3 passed`;
+- live Playwright locators re-resolve each new document; network-idle evidence не объявляется доказательством exclusively server-rendered HTML;
+- full regression: `46` tests, `44 passed`, `2 intentional skipped`, `0 failed`; 19 PNG hashes неизменны;
+- post-full inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary `shop_manager` users;
+- production source не менялся; final independent reviews found no remaining findings.
+
+Статус закрывает только current pinned Chrome/current Woo rendered-header continuity within one exact guest browser session.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
