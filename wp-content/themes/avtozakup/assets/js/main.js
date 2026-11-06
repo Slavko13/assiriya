@@ -113,5 +113,53 @@
     });
   });
 
+  const cartRoot = document.querySelector('.wp-block-woocommerce-cart');
+  if (cartRoot && document.body.classList.contains('woocommerce-cart')) {
+    const cartLabels = [
+      ['.wc-block-cart-items caption h2', 'Products in cart', 'Товары в корзине'],
+      ['.wc-block-cart-items__header-image > span', 'Product', 'Товар'],
+      ['.wc-block-cart-items__header-product .screen-reader-text', 'Details', 'О товаре'],
+      ['.wc-block-cart-items__header-total > span', 'Total', 'Сумма'],
+      ['.wc-block-cart__totals-title', 'Cart totals', 'Итого'],
+      ['.wc-block-components-totals-coupon .wc-block-components-panel__button', 'Add coupons', 'Добавить промокод'],
+      ['.wc-block-components-totals-footer-item .wc-block-components-totals-item__label', 'Estimated total', 'Итого к оплате'],
+      ['.wc-block-cart__submit-button .wc-block-components-button__text', 'Proceed to Checkout', 'Перейти к оформлению'],
+    ];
+    const localizeCart = () => {
+      cartLabels.forEach(([selector, source, translated]) => {
+        cartRoot.querySelectorAll(selector).forEach((element) => {
+          element.childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim() === source) {
+              node.textContent = translated;
+            }
+          });
+        });
+      });
+
+      cartRoot.querySelectorAll([
+        '.wc-block-components-quantity-selector__input[aria-label]',
+        '.wc-block-components-quantity-selector__button[aria-label]',
+        '.wc-block-cart-item__remove-link[aria-label]',
+      ].join(',')).forEach((element) => {
+        const label = element.getAttribute('aria-label') ?? '';
+        const replacements = [
+          [/^Quantity of (.+) in your cart\.$/, 'Количество товара «$1» в корзине'],
+          [/^Reduce quantity of (.+)$/, 'Уменьшить количество товара «$1»'],
+          [/^Increase quantity of (.+)$/, 'Увеличить количество товара «$1»'],
+          [/^Remove (.+) from cart$/, 'Удалить товар «$1» из корзины'],
+        ];
+        for (const [pattern, replacement] of replacements) {
+          if (!pattern.test(label)) continue;
+          element.setAttribute('aria-label', label.replace(pattern, replacement));
+          break;
+        }
+      });
+    };
+    localizeCart();
+    const cartObserver = new MutationObserver(localizeCart);
+    cartObserver.observe(cartRoot, { childList: true, subtree: true });
+    window.addEventListener('pagehide', () => cartObserver.disconnect(), { once: true });
+  }
+
 })();
 

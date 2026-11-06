@@ -13,6 +13,7 @@
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
+- `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts I2-S71; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -38,6 +39,9 @@ product-search-empty-mobile-chrome-360.png
 product-search-results-desktop-chrome-1440.png
 product-search-results-mobile-chrome-390.png
 product-search-results-mobile-chrome-360.png
+cart-desktop-chrome-1440.png
+cart-mobile-chrome-390.png
+cart-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -136,6 +140,14 @@ report-home-YYYYMMDD.md
 - два обычных targeted run: `19 passed` каждый = comparator + 18 capture scenarios; baseline→run1 и run1→run2 hashes всех 19 repository PNG (18 actual + Paper reference) остались неизменны;
 - serial full regression: `35` tests = `33 passed`, `2 intentional skipped`, `0 failed`; hashes снова неизменны, inventory published/temp product/temp category = `10/0/0`;
 - baseline остаётся `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; tolerance не является visual approval или pixel-perfect claim.
+
+## Responsive demo cart I2-S71
+
+- current Woo Cart Block remains the data/control source; theme presentation adds the order-review intro, responsive product/totals cards, localized labels and prominent demo notice; classic fallback CSS is not visual acceptance evidence;
+- actual screenshots captured deterministically for `1440/390/360`; mobile keeps a single-column summary with the CTA in document flow so it does not cover quantity or totals;
+- targeted scenario: `3 passed`; full regression: `52` tests = `50 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow and runtime gates pass;
+- 19 pre-existing repository PNG remained byte-identical; 3 new cart artifacts bring the repository total to 22 PNG;
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: it does not close SCR-010 mixed-offer rules, `DG-018`, `DEC-008—014/018—020` or production commerce.
 
 ## Отчёт
 

@@ -142,7 +142,7 @@ Restore согласованно возвращает DB и uploads, поэто�
 
 Только после этих фактов статус может стать `DEPLOYED`.
 
-## Подтверждённые локальные проверки 2026-11-01—2026-11-03
+## Подтверждённые локальные проверки 2026-11-01—2026-11-06
 
 - smoke `/` — `PASS`;
 - smoke `/wp-json/` — `PASS`;
@@ -151,8 +151,8 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены, current regression summaries line-compared against the deliberate `49/47/2/0` lock.
-- Playwright: 49 tests, 47 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, nav/dialog/skip-link focus contracts, guest login/reset entrypoints, cart continuity, demo guards и bounded visual comparator.
+- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены, current regression summaries line-compared against the deliberate `52/50/2/0` lock.
+- Playwright: 52 tests, 50 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, nav/dialog/skip-link focus contracts, guest login/reset entrypoints, cart continuity, responsive cart presentation, demo guards и bounded visual comparator.
 
 Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Первая partial remote installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy project Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый reconciled run, полный inventory/two-site before-after и public preview/admin smoke не зафиксированы, поэтому server остаётся `NOT_DEPLOYED`.
 

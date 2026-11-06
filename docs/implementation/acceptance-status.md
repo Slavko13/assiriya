@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S70 cart browser Forward restoration:** `49` tests = `47 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S70 расширяет существующий public cart scenario и не меняет число tests.
+**Текущий regression после I2-S71 responsive demo cart presentation:** `52` tests = `50 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S71 добавляет один public cart presentation scenario в каждый из трёх public projects.
 
 ## Технические критерии Итерации 2
 
@@ -852,6 +852,18 @@ I2-S69 closes only the local submit↔identifier keyboard edge after a programma
 | I2-S70-ACC-005 | Regression/data/visual gates remain clean | targeted `3 passed`; full `49`: `47 passed / 2 skipped`; 19 repository PNG unchanged; inventory `10/0/0/0` | `PASS` |
 
 I2-S70 closes only one immediate cart→checkout browser Forward after the exact S68 Back in the same page/context. It does not attribute restoration to BFCache/cache/server and does not prove repeated history, reload after history, new tab/restart/cookie TTL, auth merge, cross-device, arbitrary cart mutations, AT/browser matrix or production persistence/commerce.
+
+### I2-S71 — Paper-aligned responsive demo cart presentation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S71-ACC-001 | Cart has a distinct order-review composition | Russian H1/eyebrow/copy and two-step indicator render before the untouched Woo Cart Block; current step exposes `aria-current=step` | `PASS / PROVISIONAL` |
+| I2-S71-ACC-002 | Current Woo product remains the source of truth | after one real AJAX add, the sole row retains the exact source-card name, a visible decodable cart image, quantity `1`, header count `1` and canonical checkout href | `PASS / TECHNICAL` |
+| I2-S71-ACC-003 | Controls and summary are localized and usable | exact Woo-chrome selectors localize desktop semantic headers, quantity/plus/remove accessible names, totals labels and checkout CTA without touching product copy; product rowheader remains exposed at every viewport and totals/CTA do not overlap | `PASS / PROVISIONAL` |
+| I2-S71-ACC-004 | Responsive/a11y/runtime gates pass | targeted `3 passed` on `1440/390/360`; no horizontal overflow, serious/critical axe findings, console errors or page errors | `PASS` |
+| I2-S71-ACC-005 | Visual/regression/data evidence is retained | 3 new deterministic cart screenshots; full `52`: `50 passed / 2 skipped`; 19 pre-existing repository PNG unchanged; inventory `10/0/0/0`; PHP/JS syntax checks pass | `PASS` |
+
+I2-S71 changes the current Cart Block presentation only and remains `DESIGN_REVIEW_REQUIRED`: the classic CSS fallback is not separately accepted, and the slice does not claim Paper pixel-perfect acceptance or implement mixed warehouse/supplier grouping, offer source/ETA/freshness, selection/favorites, city/delivery, commercial validation, update/remove business rules, production checkout/order/payment or closure of any DEC.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

@@ -1912,6 +1912,28 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Статус закрывает только one immediate cart→checkout Forward after the exact S68 Back in the same pinned guest Chrome page/current Woo renderer.
 
+### I2-S71 — Paper-aligned responsive demo cart presentation
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S26/I2-S29/I2-S35/I2-S58/I2-S63/I2-S67/I2-S68/I2-S70`; `SCR-010`; `UI-SCR010-004/005/009/010/011`; `FR-CART-001/002` renderer-only technical/demo partial; `PBL-010/PBL-019/PBL-040`; `ISSUE-PAP-018`; `DG-018`. `DEC-008—014/018—020` остаются open.
+
+Критерии среза:
+
+- current Woo cart получает отдельную Paper-aligned композицию: page intro, visually distinct product area, quantity/removal controls, totals card и prominent demo-safety notice without changing Woo cart data or checkout guard;
+- existing exact source-product identity, canonical cart/checkout URLs, header badge/name and disabled demo checkout stay intact after real AJAX add and cart navigation;
+- current Woo Cart Block remains keyboard-usable, without horizontal viewport overflow, serious/critical axe findings or runtime errors on `1440/390/360`; classic cart receives a CSS fallback but is not accepted by this slice;
+- deterministic cart screenshots are saved for the same three pinned viewports and documented as provisional visual evidence.
+
+Выполнено и проверено:
+
+- cart page получил отдельный Russian order-review intro, two-step indicator, responsive product/totals cards, prominent demo notice и selector-scoped localization current Woo Blocks labels/accessible names; classic fallback получает scoped CSS without template replacement, но отдельно не проверен;
+- targeted cart scenario: `3 passed` на `1440/390/360`; no-overflow, serious/critical axe, console/page-error, exact source row/header/checkout-link and localized control contracts pass;
+- full regression: `52` tests = `50 passed / 2 intentional skipped`, `0 failed`; 19 pre-existing repository PNG retained byte-for-byte and 3 new deterministic cart screenshots added;
+- PHP/JS syntax and diff checks pass; post-suite inventory `10` published products / `0` temporary products / `0` temporary categories / `0` temporary shop managers.
+
+Вне scope: Paper pixel-perfect acceptance; mixed stock/supplier grouping, offer source/ETA/freshness, city/delivery, selection semantics, favorites, price/availability revalidation, minimum/multiple/limits, update/remove business acceptance, production order/checkout and any closure of open DEC.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
