@@ -18,7 +18,6 @@ if ( $az_is_cart_page ) {
 			<?php if ( $az_is_cart_page ) : ?>
 				<header class="az-cart-intro">
 					<div class="az-cart-intro__copy">
-						<p class="az-cart-intro__eyebrow"><?php esc_html_e( 'Ваш заказ', 'avtozakup' ); ?></p>
 						<h1><?php esc_html_e( 'Корзина', 'avtozakup' ); ?></h1>
 						<p
 							data-cart-intro-copy

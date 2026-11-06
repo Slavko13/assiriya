@@ -13,8 +13,8 @@
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
-- `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts I2-S71; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
-- `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts I2-S73 after one real last-row removal; Paper has no approved empty-state design, so they remain provisional.
+- `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts from I2-S71, visually refreshed in I2-S75 to remove the decorative cart eyebrow; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
+- `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts from I2-S73, visually refreshed in I2-S75 with the owner-approved no-eyebrow rule and a deterministic cart illustration; Paper has no approved empty-state design, so they remain provisional.
 - `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
@@ -174,6 +174,14 @@ report-home-YYYYMMDD.md
 - pre-fix targeted `3 failed`; post-fix targeted `3 passed`; account file `9 passed`; full regression: `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow, runtime and empty/no-POST gates pass on `1440/390/360`;
 - 25 pre-existing repository PNG remained unchanged; 3 new login artifacts bring the repository total to 28 PNG (`27` actual + Paper reference); independent code and visual reviews found no findings;
 - result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no approved login design, and the artifacts do not accept successful/failed authentication, registration, recovery submission, session/security/authenticated states, cross-Woo compatibility, AT/browser/full WCAG or production IAM.
+
+## Polished cart heading and empty icon I2-S75
+
+- decorative «Ваш заказ» was removed from the shared cart hero; the meaningful `Корзина` H1 and filled/empty explanatory copy remain on `1440/390/360`;
+- the inherited Woo empty-title mask that rendered as a broken blue block was explicitly reset and replaced with one self-authored decorative blue cart SVG; no DOM control, accessible-name contribution or new focus stop was added;
+- pre-fix targeted `3 failed`; post-fix targeted `3 passed`; cart file `9 passed`; full regression remains `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`;
+- all 6 existing cart artifacts were deterministically refreshed and independently reviewed; repository total stays 28 PNG (`27` actual + Paper reference), and no clipping/overflow/hierarchy issue was found;
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no approved empty-state icon, and the artifacts do not accept other legacy mini-headings, cart behavior/commercial rules, classic renderer, AT/browser/full WCAG or production commerce.
 
 ## Отчёт
 

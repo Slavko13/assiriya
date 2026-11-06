@@ -333,7 +333,27 @@ test('turns last-item removal into a localized empty-cart path', async ({ page }
   const emptyCart = page.locator('.wp-block-woocommerce-empty-cart-block');
   await expect(emptyCart).toHaveCount(1);
   await expect(emptyCart).toBeVisible();
-  await expect(emptyCart.getByRole('heading', { level: 2, name: 'Корзина пока пуста' })).toBeVisible();
+  await expect(page.locator('.az-cart-intro__eyebrow')).toHaveCount(0);
+  const emptyHeading = emptyCart.getByRole('heading', { level: 2, name: 'Корзина пока пуста' });
+  await expect(emptyHeading).toBeVisible();
+  await expect(emptyHeading).toHaveClass(/\bwith-empty-cart-icon\b/);
+  const iconPresentation = await emptyHeading.evaluate((element) => {
+    const icon = getComputedStyle(element, '::before');
+    return {
+      content: icon.content,
+      width: Number.parseFloat(icon.width),
+      height: Number.parseFloat(icon.height),
+      backgroundImage: icon.backgroundImage,
+      maskImage: icon.maskImage,
+      webkitMaskImage: icon.getPropertyValue('-webkit-mask-image'),
+    };
+  });
+  expect(iconPresentation.content).not.toBe('none');
+  expect(iconPresentation.width).toBeGreaterThanOrEqual(84);
+  expect(iconPresentation.height).toBeGreaterThanOrEqual(84);
+  expect(iconPresentation.backgroundImage).toContain('empty-cart.svg');
+  expect(iconPresentation.maskImage).toBe('none');
+  expect(iconPresentation.webkitMaskImage).toBe('none');
   await expect(page.locator('[data-cart-intro-copy]')).toHaveText(
     'Добавьте нужные запчасти — выбранные позиции появятся здесь.',
   );

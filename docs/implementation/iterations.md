@@ -2002,6 +2002,29 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: successful/failed login, logout, registration, recovery submission/neutral response, validation/error/loading/lockout/session-expiry states, remember-cookie behavior, nonce/CSRF enforcement, enumeration/rate limit, MFA/RBAC/IDOR, profile/orders, authenticated renderer, privacy/legal policy, OS autofill/password managers, localization/cross-Woo compatibility, screen-reader/AT/browser matrix, zoom/full WCAG and production IAM/security.
 
+### I2-S75 — polished empty-cart icon and cart heading cleanup
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S71/I2-S73` and owner visual rule `TECH-088`; `SCR-010`, `UI-SCR010-005/011/012`, `FR-CART-002` current-renderer presentation partial, `PBL-010/PBL-019/PBL-040`, `ISSUE-PAP-018`, `DG-017/018`; `DEC-008/011/012/019/020` remain open.
+
+Критерии среза:
+
+- decorative cart eyebrow «Ваш заказ» is absent; the meaningful `Корзина` H1 and explanatory copy remain;
+- current Woo empty title receives one deterministic decorative navy/blue shopping-cart illustration with no DOM control, accessible-name contribution or new focus stop;
+- icon is crisp and proportionate on `1440/390/360`; heading, exact catalog CTA, native remove flow, Store/header zero state and existing focus/accessibility contracts remain unchanged;
+- targeted cart scenario, no-overflow, serious/critical axe, runtime and deterministic screenshot gates pass on all three public viewports.
+
+Выполнено и проверено:
+
+- pre-fix targeted `3 failed`: the decorative «Ваш заказ» node remained and the inherited Woo mask produced a broken blue shape instead of a recognizable cart;
+- the eyebrow markup/CSS is removed while the meaningful `Корзина` H1 and copy remain; `TECH-088` now has an executable cart assertion;
+- one self-authored SVG is painted only through the existing empty-title pseudo-element; inherited masks are reset, no DOM/focus/accessibility-name or Woo behavior is added, and theme version `0.9.1` invalidates cached CSS;
+- post-fix targeted `3 passed`; whole cart file `9 passed`; all six existing cart screenshots were deterministically refreshed, with no new PNG count; independent code and visual reviews report no findings;
+- full regression remains `61` tests = `59 passed / 2 intentional skipped`, `0 failed`; inventory remains `10/0/0/0`; preflight remains `11/11`.
+
+Вне scope: filled-cart data/control changes, remove/undo/minus/multi-row behavior, catalog navigation policy, recommendations, price/stock/reserve/offer rules, auth/persistence/concurrency, live announcement/focus transfer/AT/browser matrix, classic renderer, full WCAG, Paper approval and production commerce.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

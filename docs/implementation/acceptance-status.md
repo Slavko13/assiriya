@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S74 branded guest login presentation:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S74 добавляет один public guest-login presentation scenario в каждый из трёх public projects.
+**Текущий regression после I2-S75 polished empty-cart icon and cart heading cleanup:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S75 strengthens the existing public empty-cart scenario without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -898,6 +898,17 @@ I2-S73 accepts only one native removal of the final exact demo row in the curren
 | I2-S74-ACC-004 | Responsive/regression/data gates remain clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, account file `9 passed`, full `61`: `59 passed / 2 skipped`; 3 new screenshots, no overflow/serious-critical axe/runtime errors; inventory `10/0/0/0`; code/visual reviews no findings | `PASS` |
 
 I2-S74 accepts presentation only for the current logged-out base-account renderer. Paper has no approved login screen, so the slice remains `DESIGN_REVIEW_REQUIRED`; successful/failed login, registration, logout, recovery submission, validation/error/loading/lockout/session states, remember-cookie behavior, CSRF/enumeration/rate-limit/MFA/RBAC/IDOR, authenticated pages, privacy, autofill/password managers, cross-Woo localization, AT/browser matrix, zoom/full WCAG and production IAM remain open.
+
+### I2-S75 — polished empty-cart icon and cart heading cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S75-ACC-001 | Decorative cart eyebrow is removed | `.az-cart-intro__eyebrow` and «Ваш заказ» are absent while one meaningful `Корзина` H1 and the filled/empty explanatory copy remain | `PASS / PROVISIONAL` |
+| I2-S75-ACC-002 | Empty icon is recognizable and decorative | existing Woo empty-title pseudo-element loads the self-authored `empty-cart.svg`, resets both masks, stays at least `84×84`, adds no DOM control/name/focus stop and preserves the sole H2 | `PASS / PROVISIONAL` |
+| I2-S75-ACC-003 | Existing cart behavior and accessibility remain intact | exact native remove and Store/header zero state, sole catalog CTA/focus ring, Woo ownership, no recommendations, axe/no-overflow/runtime gates remain passing on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S75-ACC-004 | Regression and evidence stay clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, cart file `9 passed`, full `61`: `59 passed / 2 skipped`; 6 existing cart PNG refreshed, total stays 28; inventory `10/0/0/0`; code/visual reviews no findings | `PASS` |
+
+I2-S75 accepts only the current Blocks cart presentation cleanup. Paper has no approved empty-state icon, so the slice remains `DESIGN_REVIEW_REQUIRED`; other legacy mini-headings are tracked separately, and undo/minus/multi-row/mixed carts, behavioral navigation changes, commercial rules, live announcements/focus transfer, AT/browser matrix, classic renderer, full WCAG and production commerce remain open.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
