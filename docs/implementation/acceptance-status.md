@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S71 responsive demo cart presentation:** `52` tests = `50 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S71 добавляет один public cart presentation scenario в каждый из трёх public projects.
+**Текущий regression после I2-S72 Cart Block quantity/header synchronization:** `55` tests = `53 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S72 добавляет один public quantity-synchronization scenario в каждый из трёх public projects.
 
 ## Технические критерии Итерации 2
 
@@ -864,6 +864,17 @@ I2-S70 closes only one immediate cart→checkout browser Forward after the exact
 | I2-S71-ACC-005 | Visual/regression/data evidence is retained | 3 new deterministic cart screenshots; full `52`: `50 passed / 2 skipped`; 19 pre-existing repository PNG unchanged; inventory `10/0/0/0`; PHP/JS syntax checks pass | `PASS` |
 
 I2-S71 changes the current Cart Block presentation only and remains `DESIGN_REVIEW_REQUIRED`: the classic CSS fallback is not separately accepted, and the slice does not claim Paper pixel-perfect acceptance or implement mixed warehouse/supplier grouping, offer source/ETA/freshness, selection/favorites, city/delivery, commercial validation, update/remove business rules, production checkout/order/payment or closure of any DEC.
+
+### I2-S72 — Cart Block quantity/header synchronization
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S72-ACC-001 | Native plus uses the current Woo cart mutation path | from one exact row, plus completes same-origin Store API `/cart/update-item` directly or inside `/batch`; exact row key and `quantity=2` are asserted | `PASS / TECHNICAL` |
+| I2-S72-ACC-002 | Header follows official Woo cart state | cart-only script depends on registered `wc-blocks-data-store`, reads `getCartData().itemsCount` and updates the existing badge; count/name become exact `2` / `Корзина 2` | `PASS / TECHNICAL` |
+| I2-S72-ACC-003 | Row identity and reload continuity remain exact | the sole row retains the clicked source-product name; quantity/header state persists through one successful immediate exact-URL reload on `1440/390/360` | `PASS / TECHNICAL` |
+| I2-S72-ACC-004 | Regression and residue gates remain clean | pre-fix header remained `1`; post-fix targeted `3 passed`, cart file `6 passed`, full `55`: `53 passed / 2 skipped`; no overflow/runtime errors; inventory `10/0/0/0` | `PASS` |
+
+I2-S72 closes only one current Cart Block plus mutation from `1` to `2` in the same guest session. Minus/remove/empty, arbitrary/mixed carts, commercial quantity rules, price/stock/reservation/freshness/concurrency, auth merge/cross-device, live announcement/AT/browser matrix and production commerce remain open.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

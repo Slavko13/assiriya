@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.8.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.8.1' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -39,7 +39,16 @@ add_action(
 	'wp_enqueue_scripts',
 	static function (): void {
 		wp_enqueue_style( 'avtozakup-main', AVTOZAKUP_THEME_URI . '/assets/css/main.css', array(), AVTOZAKUP_THEME_VERSION );
-		wp_enqueue_script( 'avtozakup-main', AVTOZAKUP_THEME_URI . '/assets/js/main.js', array(), AVTOZAKUP_THEME_VERSION, true );
+		$script_dependencies = array();
+		if (
+			class_exists( 'WooCommerce' )
+			&& function_exists( 'is_cart' )
+			&& is_cart()
+			&& wp_script_is( 'wc-blocks-data-store', 'registered' )
+		) {
+			$script_dependencies[] = 'wc-blocks-data-store';
+		}
+		wp_enqueue_script( 'avtozakup-main', AVTOZAKUP_THEME_URI . '/assets/js/main.js', $script_dependencies, AVTOZAKUP_THEME_VERSION, true );
 		if ( class_exists( 'WooCommerce' ) ) {
 			wp_enqueue_script( 'wc-add-to-cart' );
 		}

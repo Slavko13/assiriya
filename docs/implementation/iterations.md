@@ -1934,6 +1934,28 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: Paper pixel-perfect acceptance; mixed stock/supplier grouping, offer source/ETA/freshness, city/delivery, selection semantics, favorites, price/availability revalidation, minimum/multiple/limits, update/remove business acceptance, production order/checkout and any closure of open DEC.
 
+### I2-S72 — Cart Block quantity/header synchronization
+
+**Статус:** `DONE / TECHNICAL`
+
+**Связь:** continuation `I2-S58/I2-S63/I2-S67/I2-S71`; `SCR-010`; `UI-SCR010-004`; `FR-CART-002` renderer/session technical partial; `PBL-019/PBL-040`. `DEC-005/006/008—012/018—020` остаются open.
+
+Критерии среза:
+
+- from one exact demo cart row, one native current Cart Block plus activation completes the exact same-origin Store API quantity update and changes the input from `1` to `2`;
+- theme header badge and computed accessible name synchronize to exact `2` / `Корзина 2` from the official Woo cart data store without copying product/price/business state;
+- the sole exact source-product row remains, and one immediate canonical cart reload preserves quantity/header state on `1440/390/360`;
+- no horizontal overflow, serious/critical axe findings, console/page errors or temporary fixture residue is introduced.
+
+Выполнено и проверено:
+
+- cart-only theme script declares the registered official `wc-blocks-data-store` dependency and subscribes to Woo Cart Store `getCartData().itemsCount`; persisted BFCache pagehide keeps the observer/subscription alive, persisted pageshow resynchronizes the count, final unload cleans both; the existing visible badge remains the single header-name source and no product, price or stock state is copied;
+- pre-fix regression reproduced the real mismatch: native plus changed Cart Block quantity/totals to `2`, while the header remained `Корзина 1`; after the fix, targeted synchronization passes on `1440/390/360`, and the whole cart file passes `6/6`;
+- exact Store API update-item request, row key, `quantity=2`, sole source-product row, immediate reload continuity, header `2` / `Корзина 2`, no-overflow and runtime-error gates pass;
+- full regression: `55` tests = `53 passed / 2 intentional skipped`, `0 failed`; post-suite inventory remains `10` published products / `0` temporary products / `0` temporary categories / `0` temporary shop managers.
+
+Вне scope: minus/remove/empty-cart flows; arbitrary/mixed items and quantities; min/max/multiple semantics; price, stock, reservation, offer freshness, concurrency, auth merge/cross-device; live-region announcement, AT/browser matrix and production commerce.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

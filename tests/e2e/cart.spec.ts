@@ -148,3 +148,96 @@ test('presents the demo cart as a responsive Paper-aligned order review', async 
   expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
+
+test('keeps the header count aligned with a Cart Block quantity update', async ({ page }) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const addToCart = page.locator('.az-product-card a.add_to_cart_button[data-product_id]').first();
+  await expect(addToCart).toBeVisible();
+  const sourceCard = addToCart.locator('xpath=ancestor::article[@data-product-id][1]');
+  const sourceName = (await sourceCard.locator('.az-product-card__title').innerText()).trim();
+  const sourceHref = await sourceCard.locator('.az-product-card__title').getAttribute('href');
+  expect(sourceName).not.toBe('');
+  expect(sourceHref).toBeTruthy();
+
+  const addResponsePromise = page.waitForResponse((response) => {
+    const responseUrl = new URL(response.url());
+    return response.request().method() === 'POST' && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
+  });
+  await addToCart.click();
+  expect((await addResponsePromise).ok()).toBe(true);
+
+  const headerCart = page.locator('a.az-cart-link');
+  const headerCount = headerCart.locator('#az-cart-count');
+  await expect(headerCount).toHaveText('1');
+  await headerCart.click();
+  await page.waitForLoadState('networkidle');
+  const cartOrigin = new URL(page.url()).origin;
+
+  const productRow = page.locator('.wc-block-cart-items__row');
+  await expect(productRow).toHaveCount(1);
+  const rowKey = await productRow.getAttribute('data-cart-item-key');
+  expect(rowKey).toMatch(/^[a-f0-9]+$/);
+  await expect(productRow.locator('a.wc-block-components-product-name')).toHaveText(sourceName);
+  await expect(productRow.locator('a.wc-block-components-product-name')).toHaveAttribute('href', sourceHref!);
+  const quantity = productRow.locator('.wc-block-components-quantity-selector__input');
+  const plus = productRow.locator('.wc-block-components-quantity-selector__button--plus');
+  await expect(quantity).toHaveValue('1');
+  await expect(plus).toBeEnabled();
+
+  const updateResponsePromise = page.waitForResponse((response) => {
+    const responseUrl = new URL(response.url());
+    return response.request().method() === 'POST'
+      && responseUrl.origin === cartOrigin
+      && [
+        '/wp-json/wc/store/v1/batch',
+        '/wp-json/wc/store/v1/cart/update-item',
+      ].includes(responseUrl.pathname);
+  });
+  await plus.click();
+  const updateResponse = await updateResponsePromise;
+  expect(updateResponse.ok(), `Cart quantity update failed with HTTP ${updateResponse.status()}`).toBe(true);
+  const updateUrl = new URL(updateResponse.url());
+  expect(updateUrl.origin).toBe(cartOrigin);
+  expect(updateUrl.hash).toBe('');
+  const responsePayload = JSON.parse(updateResponse.request().postData() ?? '{}');
+  const updateRequest = updateUrl.pathname.endsWith('/batch')
+    ? responsePayload.requests?.find(
+      (request: { path?: string }) => request.path === '/wc/store/v1/cart/update-item',
+    )
+    : {
+      path: '/wc/store/v1/cart/update-item',
+      method: updateResponse.request().method(),
+      body: responsePayload,
+    };
+  expect(updateRequest).toBeTruthy();
+  expect(updateRequest.path).toBe('/wc/store/v1/cart/update-item');
+  expect(updateRequest.method).toBe('POST');
+  expect(updateRequest.body?.key).toBe(rowKey);
+  expect(updateRequest.body?.quantity).toBe(2);
+
+  await expect(quantity).toHaveValue('2');
+  await expect(headerCount).toHaveText('2');
+  await expect(headerCart).toHaveAccessibleName('Корзина 2');
+  await expect(productRow).toHaveCount(1);
+  await expect(productRow.locator('a.wc-block-components-product-name')).toHaveText(sourceName);
+
+  const cartUrl = page.url();
+  const reloadResponse = await page.reload({ waitUntil: 'networkidle' });
+  expect(reloadResponse?.ok()).toBe(true);
+  expect(page.url()).toBe(cartUrl);
+  await expect(quantity).toHaveValue('2');
+  await expect(headerCount).toHaveText('2');
+  await expect(headerCart).toHaveAccessibleName('Корзина 2');
+  await expect(productRow).toHaveCount(1);
+  await expect(productRow.locator('a.wc-block-components-product-name')).toHaveText(sourceName);
+
+  const pageWidth = await page.evaluate(() => ({
+    client: document.documentElement.clientWidth,
+    scroll: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(pageWidth.scroll).toBeLessThanOrEqual(pageWidth.client + 1);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});

@@ -34,7 +34,7 @@ test('published current regression summaries stay in sync', async () => {
   );
   const [total, passed, skipped, failed] = canonical;
 
-  assert.deepEqual(canonical, [52, 50, 2, 0], 'current verified regression lock changed without review');
+  assert.deepEqual(canonical, [55, 53, 2, 0], 'current verified regression lock changed without review');
   assert.equal(total, passed + skipped + failed, 'canonical regression total must add up');
   assert.equal(failed, 0, 'README summary format is valid only for a zero-failure current regression');
 

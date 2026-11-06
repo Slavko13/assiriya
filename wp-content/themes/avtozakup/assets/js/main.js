@@ -158,7 +158,29 @@
     localizeCart();
     const cartObserver = new MutationObserver(localizeCart);
     cartObserver.observe(cartRoot, { childList: true, subtree: true });
-    window.addEventListener('pagehide', () => cartObserver.disconnect(), { once: true });
+    window.addEventListener('pagehide', (event) => {
+      if (!event.persisted) cartObserver.disconnect();
+    });
+
+    const cartStore = window.wc?.wcBlocksData?.cartStore;
+    const dataRegistry = window.wp?.data;
+    const headerCartCount = document.querySelector('#az-cart-count');
+    if (cartStore && dataRegistry?.select && dataRegistry?.subscribe && headerCartCount) {
+      const syncHeaderCartCount = () => {
+        const count = dataRegistry.select(cartStore)?.getCartData?.()?.itemsCount;
+        if (!Number.isSafeInteger(count) || count < 0) return;
+        const nextCount = String(count);
+        if (headerCartCount.textContent !== nextCount) headerCartCount.textContent = nextCount;
+      };
+      syncHeaderCartCount();
+      const unsubscribeCartStore = dataRegistry.subscribe(syncHeaderCartCount);
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) syncHeaderCartCount();
+      });
+      window.addEventListener('pagehide', (event) => {
+        if (!event.persisted) unsubscribeCartStore();
+      });
+    }
   }
 
 })();
