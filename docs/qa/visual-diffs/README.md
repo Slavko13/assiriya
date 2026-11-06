@@ -14,6 +14,7 @@
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts I2-S71; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
+- `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts I2-S73 after one real last-row removal; Paper has no approved empty-state design, so they remain provisional.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -42,6 +43,9 @@ product-search-results-mobile-chrome-360.png
 cart-desktop-chrome-1440.png
 cart-mobile-chrome-390.png
 cart-mobile-chrome-360.png
+cart-empty-desktop-chrome-1440.png
+cart-empty-mobile-chrome-390.png
+cart-empty-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -148,6 +152,15 @@ report-home-YYYYMMDD.md
 - targeted scenario: `3 passed`; full regression: `52` tests = `50 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow and runtime gates pass;
 - 19 pre-existing repository PNG remained byte-identical; 3 new cart artifacts bring the repository total to 22 PNG;
 - result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: it does not close SCR-010 mixed-offer rules, `DG-018`, `DEC-008—014/018—020` or production commerce.
+
+## Branded empty cart I2-S73
+
+- one native final-row remove is verified against the exact same-origin Store API request key, a successful direct response or matched batch inner `200/items_count=0`, and settled official Cart Store state;
+- current Woo empty renderer remains in place but receives exact Russian title/CTA, honest empty-specific intro copy and a compact branded card; unapproved default `New in store` recommendations are hidden through narrow current-sibling selectors;
+- configured catalog CTA has an opaque visible keyboard focus ring, prevalidates exact same-origin `/shop/` and loads the configured shop while header remains `0` / `Корзина 0`;
+- targeted scenario: `3 passed`; cart file: `9 passed`; full regression: `58` tests = `56 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow and runtime gates pass on `1440/390/360`;
+- 22 pre-existing repository PNG remained unchanged; 3 new empty-cart artifacts bring the repository total to 25 PNG (`24` actual + Paper reference); independent visual review found no customer-demo blockers;
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no empty/last-row design, and the artifacts do not accept undo/minus/multi-row/mixed cart, arbitrary navigation, classic renderer or production commerce.
 
 ## Отчёт
 

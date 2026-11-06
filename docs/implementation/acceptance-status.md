@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S72 Cart Block quantity/header synchronization:** `55` tests = `53 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S72 добавляет один public quantity-synchronization scenario в каждый из трёх public projects.
+**Текущий regression после I2-S73 branded last-item removal and empty cart:** `58` tests = `56 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S73 добавляет один public last-item/empty-cart scenario в каждый из трёх public projects.
 
 ## Технические критерии Итерации 2
 
@@ -875,6 +875,18 @@ I2-S71 changes the current Cart Block presentation only and remains `DESIGN_REVI
 | I2-S72-ACC-004 | Regression and residue gates remain clean | pre-fix header remained `1`; post-fix targeted `3 passed`, cart file `6 passed`, full `55`: `53 passed / 2 skipped`; no overflow/runtime errors; inventory `10/0/0/0` | `PASS` |
 
 I2-S72 closes only one current Cart Block plus mutation from `1` to `2` in the same guest session. Minus/remove/empty, arbitrary/mixed carts, commercial quantity rules, price/stock/reservation/freshness/concurrency, auth merge/cross-device, live announcement/AT/browser matrix and production commerce remain open.
+
+### I2-S73 — branded last-item removal and empty cart
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S73-ACC-001 | Native last-row remove is exact and successful | one current row key matches same-origin Store API remove-item request; direct response or the matched batch inner response has `status=200` and `body.items_count=0` | `PASS / TECHNICAL` |
+| I2-S73-ACC-002 | Woo state is settled at zero | official Cart Store reports `itemsCount=0`, zero items, no pending operations and removed key no longer pending; header badge/name are exact `0` / `Корзина 0` | `PASS / TECHNICAL` |
+| I2-S73-ACC-003 | Empty state is localized and focused | exactly one visible current empty block has honest Russian intro/title, one visible configured-shop CTA and opaque keyboard focus ring; unapproved default recommendations/product cards are not visible | `PASS / PROVISIONAL` |
+| I2-S73-ACC-004 | Catalog transition is exact | CTA prevalidates same-origin exact `/shop/` without query/hash, real click loads the exact configured shop route and keeps header `0` / `Корзина 0` | `PASS / TECHNICAL` |
+| I2-S73-ACC-005 | Responsive/regression/data gates remain clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, cart file `9 passed`, full `58`: `56 passed / 2 skipped`; 3 new screenshots, no overflow/serious-critical axe/runtime errors; inventory `10/0/0/0`; reviews no findings | `PASS` |
+
+I2-S73 accepts only one native removal of the final exact demo row in the current Woo Cart Block and a provisional empty-state transition. Paper has no approved empty/last-row design, so the slice remains `DESIGN_REVIEW_REQUIRED`; undo/restore, minus-to-zero, partial/mixed carts, source-PDP/history return, arbitrary redirects, persistence/auth/concurrency/errors, reserve/price/stock/offer rules, live announcements/focus transfer/AT/browser matrix, classic renderer, full WCAG and production commerce remain open.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

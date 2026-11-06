@@ -124,6 +124,8 @@
       ['.wc-block-components-totals-coupon .wc-block-components-panel__button', 'Add coupons', 'Добавить промокод'],
       ['.wc-block-components-totals-footer-item .wc-block-components-totals-item__label', 'Estimated total', 'Итого к оплате'],
       ['.wc-block-cart__submit-button .wc-block-components-button__text', 'Proceed to Checkout', 'Перейти к оформлению'],
+      ['.wc-block-cart__empty-cart__title', 'Your cart is currently empty!', 'Корзина пока пуста'],
+      ['.wp-block-woocommerce-empty-cart-block > p > a', 'Browse store', 'Перейти в каталог'],
     ];
     const localizeCart = () => {
       cartLabels.forEach(([selector, source, translated]) => {
@@ -165,12 +167,20 @@
     const cartStore = window.wc?.wcBlocksData?.cartStore;
     const dataRegistry = window.wp?.data;
     const headerCartCount = document.querySelector('#az-cart-count');
+    const cartIntroCopy = document.querySelector('[data-cart-intro-copy]');
     if (cartStore && dataRegistry?.select && dataRegistry?.subscribe && headerCartCount) {
       const syncHeaderCartCount = () => {
-        const count = dataRegistry.select(cartStore)?.getCartData?.()?.itemsCount;
+        const cartSelectors = dataRegistry.select(cartStore);
+        const hasFinishedCartResolution = cartSelectors?.hasFinishedResolution?.('getCartData', []);
+        if (hasFinishedCartResolution === false) return;
+        const count = cartSelectors?.getCartData?.()?.itemsCount;
         if (!Number.isSafeInteger(count) || count < 0) return;
         const nextCount = String(count);
         if (headerCartCount.textContent !== nextCount) headerCartCount.textContent = nextCount;
+        if (cartIntroCopy) {
+          const nextCopy = count === 0 ? cartIntroCopy.dataset.emptyCopy : cartIntroCopy.dataset.filledCopy;
+          if (nextCopy && cartIntroCopy.textContent !== nextCopy) cartIntroCopy.textContent = nextCopy;
+        }
       };
       syncHeaderCartCount();
       const unsubscribeCartStore = dataRegistry.subscribe(syncHeaderCartCount);

@@ -1956,6 +1956,29 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: minus/remove/empty-cart flows; arbitrary/mixed items and quantities; min/max/multiple semantics; price, stock, reservation, offer freshness, concurrency, auth merge/cross-device; live-region announcement, AT/browser matrix and production commerce.
 
+### I2-S73 — branded last-item removal and empty cart
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S55/I2-S57/I2-S58/I2-S63/I2-S71/I2-S72` и configured-catalog wiring `I2-S1/I2-S40`; `SCR-010` с header `SCR-002` и provisional transition `SCR-010 → SCR-005`; `UI-SCR002-007`, `UI-SCR010-005/011/012`; `FR-CART-002` renderer/session technical partial, `FR-CAT-001` navigation-entry technical partial only; `PBL-010/PBL-019/PBL-040`, supporting `PBL-011`; `ISSUE-PAP-006/018`, `DG-017/018`, `NFR-UX-002/003` and `NFR-A11Y-002` technical partial. `DEC-008/011/012/019/020` остаются open; ни один DEC не закрывается.
+
+Критерии среза:
+
+- from one exact current Cart Block row, the native remove action completes the exact same-origin Store API remove-item request for that row key and leaves zero cart rows;
+- official Woo cart state synchronizes the existing header badge/name to exact `0` / `Корзина 0`, while the current renderer exposes exactly one Russian, named, responsive empty state;
+- empty state has honest empty-specific hero copy and one visible same-origin CTA to the configured `/shop/`; the unapproved default `New in store` recommendations are visually absent without copying cart/catalog data;
+- exact CTA navigation, no horizontal overflow, serious/critical axe findings, runtime errors or temporary fixture residue pass on `1440/390/360`; three provisional deterministic screenshots are retained.
+
+Выполнено и проверено:
+
+- pre-fix targeted `3 failed`: current Woo empty state exposed English `Your cart is currently empty!` / `Browse store`, raw `New in store` recommendations and filled-cart intro copy;
+- native remove is tied to the exact row key and same-origin Store API request; the direct response or matched batch inner response must be `200` / `items_count=0`, while official Cart Store settles at `itemsCount=0`, empty items and no pending/delete operation;
+- current empty renderer now shows Russian empty-specific intro, one branded localized card and canonical catalog CTA; the unapproved recommendations are hidden through exact current sibling selectors, Cart Block markup/data remain Woo-owned, and the CTA has an opaque brand focus ring after keyboard modality;
+- targeted empty path `3 passed`; whole cart file `9 passed`; exact `/shop/` navigation, no-overflow, axe serious/critical, runtime and deterministic screenshot gates pass on `1440/390/360`;
+- full regression: `58` tests = `56 passed / 2 intentional skipped`, `0 failed`; 22 pre-existing repository PNG retained and 3 new empty-cart artifacts added; post-suite inventory remains `10` published products / `0` temporary products / `0` temporary categories / `0` temporary shop managers; independent code and visual reviews report no remaining findings.
+
+Вне scope: undo/restore, minus-to-zero, multi-row/partial/mixed carts, selection/favorites, return to the source PDP/history, arbitrary permalink/redirect/canonical policy, persistence beyond the tested leg, auth merge/cross-device, concurrency/network errors, reserve release, price/stock/offer/ETA rules, live announcement/focus transfer/AT/browser matrix, classic renderer, full WCAG and production commerce.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

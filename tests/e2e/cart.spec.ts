@@ -241,3 +241,152 @@ test('keeps the header count aligned with a Cart Block quantity update', async (
   expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
+
+test('turns last-item removal into a localized empty-cart path', async ({ page }, testInfo) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const addToCart = page.locator('.az-product-card a.add_to_cart_button[data-product_id]').first();
+  await expect(addToCart).toBeVisible();
+  const addResponsePromise = page.waitForResponse((response) => {
+    const responseUrl = new URL(response.url());
+    return response.request().method() === 'POST' && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
+  });
+  await addToCart.click();
+  expect((await addResponsePromise).ok()).toBe(true);
+
+  const headerCart = page.locator('a.az-cart-link');
+  const headerCount = headerCart.locator('#az-cart-count');
+  await expect(headerCount).toHaveText('1');
+  await headerCart.click();
+  await page.waitForLoadState('networkidle');
+  const cartOrigin = new URL(page.url()).origin;
+
+  const productRow = page.locator('.wc-block-cart-items__row');
+  await expect(productRow).toHaveCount(1);
+  const rowKey = await productRow.getAttribute('data-cart-item-key');
+  expect(rowKey).toMatch(/^[a-f0-9]+$/);
+  const remove = productRow.locator('.wc-block-cart-item__remove-link');
+  await expect(remove).toBeVisible();
+
+  const removeResponsePromise = page.waitForResponse((response) => {
+    const responseUrl = new URL(response.url());
+    return response.request().method() === 'POST'
+      && responseUrl.origin === cartOrigin
+      && [
+        '/wp-json/wc/store/v1/batch',
+        '/wp-json/wc/store/v1/cart/remove-item',
+      ].includes(responseUrl.pathname);
+  });
+  await remove.click();
+  const removeResponse = await removeResponsePromise;
+  expect(removeResponse.ok(), `Cart removal failed with HTTP ${removeResponse.status()}`).toBe(true);
+  const removeUrl = new URL(removeResponse.url());
+  expect(removeUrl.origin).toBe(cartOrigin);
+  expect(removeUrl.hash).toBe('');
+  const responsePayload = JSON.parse(removeResponse.request().postData() ?? '{}');
+  const isBatchRequest = removeUrl.pathname.endsWith('/batch');
+  const removeRequestIndex = isBatchRequest && Array.isArray(responsePayload.requests)
+    ? responsePayload.requests.findIndex(
+      (request: { path?: string }) => request.path === '/wc/store/v1/cart/remove-item',
+    )
+    : -1;
+  if (isBatchRequest) expect(removeRequestIndex).toBeGreaterThanOrEqual(0);
+  const removeRequest = isBatchRequest
+    ? responsePayload.requests[removeRequestIndex]
+    : {
+      path: '/wc/store/v1/cart/remove-item',
+      method: removeResponse.request().method(),
+      body: responsePayload,
+    };
+  expect(removeRequest).toBeTruthy();
+  expect(removeRequest.path).toBe('/wc/store/v1/cart/remove-item');
+  expect(removeRequest.method).toBe('POST');
+  expect((removeRequest.body ?? removeRequest.data)?.key).toBe(rowKey);
+  const removeResponsePayload = await removeResponse.json();
+  const removeResult = isBatchRequest
+    ? removeResponsePayload.responses?.[removeRequestIndex]
+    : { status: removeResponse.status(), body: removeResponsePayload };
+  expect(removeResult?.status).toBe(200);
+  expect(removeResult?.body?.items_count).toBe(0);
+
+  await expect(productRow).toHaveCount(0);
+  await expect(headerCount).toHaveText('0');
+  await expect(headerCart).toHaveAccessibleName('Корзина 0');
+  await expect.poll(async () => page.evaluate((removedRowKey) => {
+    const browserWindow = window as any;
+    const cartStore = browserWindow.wc?.wcBlocksData?.cartStore;
+    const selectors = cartStore ? browserWindow.wp?.data?.select(cartStore) : null;
+    const cartData = selectors?.getCartData?.();
+    return {
+      itemsCount: cartData?.itemsCount,
+      itemsLength: cartData?.items?.length,
+      hasPendingOperations: selectors?.hasPendingItemsOperations?.(),
+      removedItemPending: selectors?.isItemPendingDelete?.(removedRowKey),
+    };
+  }, rowKey)).toEqual({
+    itemsCount: 0,
+    itemsLength: 0,
+    hasPendingOperations: false,
+    removedItemPending: false,
+  });
+  const emptyCart = page.locator('.wp-block-woocommerce-empty-cart-block');
+  await expect(emptyCart).toHaveCount(1);
+  await expect(emptyCart).toBeVisible();
+  await expect(emptyCart.getByRole('heading', { level: 2, name: 'Корзина пока пуста' })).toBeVisible();
+  await expect(page.locator('[data-cart-intro-copy]')).toHaveText(
+    'Добавьте нужные запчасти — выбранные позиции появятся здесь.',
+  );
+
+  const continueShopping = emptyCart.getByRole('link', { name: 'Перейти в каталог', exact: true });
+  await expect(continueShopping).toBeVisible();
+  const unfocusedCtaShadow = await continueShopping.evaluate((element) => getComputedStyle(element).boxShadow);
+  await page.keyboard.press('Tab');
+  await continueShopping.focus();
+  await expect(continueShopping).toBeFocused();
+  await expect.poll(async () => continueShopping.evaluate((element) => getComputedStyle(element).boxShadow)).toContain(
+    'rgb(18, 98, 232) 0px 0px 0px 6px',
+  );
+  const focusedCta = await continueShopping.evaluate((element) => ({
+    focusVisible: element.matches(':focus-visible'),
+    shadow: getComputedStyle(element).boxShadow,
+  }));
+  expect(focusedCta.focusVisible).toBe(true);
+  expect(focusedCta.shadow).not.toBe(unfocusedCtaShadow);
+  const shopHref = await continueShopping.getAttribute('href');
+  expect(shopHref).toBeTruthy();
+  const shopUrl = new URL(shopHref!, page.url());
+  expect(shopUrl.origin).toBe(cartOrigin);
+  expect(shopUrl.pathname).toBe('/shop/');
+  expect(shopUrl.search).toBe('');
+  expect(shopUrl.hash).toBe('');
+
+  await expect(emptyCart.getByRole('heading')).toHaveCount(1);
+  await expect(emptyCart.locator('.wp-block-woocommerce-product-new:visible')).toHaveCount(0);
+  await expect(emptyCart.locator('.wc-block-grid__product:visible')).toHaveCount(0);
+
+  const viewportWidth = await page.evaluate(() => ({
+    client: document.documentElement.clientWidth,
+    scroll: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  }));
+  expect(viewportWidth.scroll).toBeLessThanOrEqual(viewportWidth.client + 1);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) =>
+    ['serious', 'critical'].includes(violation.impact ?? ''),
+  );
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  await captureStableVisual(page, testInfo, `cart-empty-${testInfo.project.name}.png`);
+  await continueShopping.click();
+  await page.waitForLoadState('networkidle');
+  expect(page.url()).toBe(shopUrl.href);
+  await expect(page.locator('body')).toHaveClass(/\bwoocommerce-shop\b/);
+  await expect(headerCount).toHaveText('0');
+  await expect(headerCart).toHaveAccessibleName('Корзина 0');
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});
