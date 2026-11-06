@@ -15,6 +15,7 @@
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts I2-S71; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts I2-S73 after one real last-row removal; Paper has no approved empty-state design, so they remain provisional.
+- `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -46,6 +47,9 @@ cart-mobile-chrome-360.png
 cart-empty-desktop-chrome-1440.png
 cart-empty-mobile-chrome-390.png
 cart-empty-mobile-chrome-360.png
+account-login-desktop-chrome-1440.png
+account-login-mobile-chrome-390.png
+account-login-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -161,6 +165,15 @@ report-home-YYYYMMDD.md
 - targeted scenario: `3 passed`; cart file: `9 passed`; full regression: `58` tests = `56 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow and runtime gates pass on `1440/390/360`;
 - 22 pre-existing repository PNG remained unchanged; 3 new empty-cart artifacts bring the repository total to 25 PNG (`24` actual + Paper reference); independent visual review found no customer-demo blockers;
 - result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no empty/last-row design, and the artifacts do not accept undo/minus/multi-row/mixed cart, arbitrary navigation, classic renderer or production commerce.
+
+## Branded guest login I2-S74
+
+- only the logged-out base `/my-account/` receives the branded shell; the current Woo form, password toggle, remember control, nonce/referer, submit and lost-password route remain authoritative;
+- desktop `1440` uses a navy intro beside a white form card; `390/360` stack the same shell and retain at least `48px` input/toggle/submit targets without overflow;
+- exact current Woo guest-login copy is localized server-side for this route, while lost-password and authenticated endpoints remain outside the presentation scope;
+- pre-fix targeted `3 failed`; post-fix targeted `3 passed`; account file `9 passed`; full regression: `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow, runtime and empty/no-POST gates pass on `1440/390/360`;
+- 25 pre-existing repository PNG remained unchanged; 3 new login artifacts bring the repository total to 28 PNG (`27` actual + Paper reference); independent code and visual reviews found no findings;
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no approved login design, and the artifacts do not accept successful/failed authentication, registration, recovery submission, session/security/authenticated states, cross-Woo compatibility, AT/browser/full WCAG or production IAM.
 
 ## Отчёт
 

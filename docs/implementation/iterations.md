@@ -1979,6 +1979,29 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: undo/restore, minus-to-zero, multi-row/partial/mixed carts, selection/favorites, return to the source PDP/history, arbitrary permalink/redirect/canonical policy, persistence beyond the tested leg, auth merge/cross-device, concurrency/network errors, reserve release, price/stock/offer/ETA rules, live announcement/focus transfer/AT/browser matrix, classic renderer, full WCAG and production commerce.
 
+### I2-S74 — branded guest login presentation
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S30/I2-S33/I2-S41/I2-S44/I2-S50/I2-S51/I2-S53/I2-S60/I2-S64` и existing header entrypoint `I2-S55`; direct Paper login screen/control mapping отсутствует, `SCR-002/UI-SCR002-006` относятся только к entrypoint «Войти»; `FR-AUTH-002` current-renderer presentation technical partial и `FR-AUTH-003` lost-password-entry presentation partial only; `PBL-009/PBL-040`, responsive support `PBL-010`; `ISSUE-PAP-002/005/026`, `DG-002/017/018`; `NFR-UX-002` и `NFR-A11Y-002` technical partial. `DEC-011/018/019/020` остаются open; ни один DEC не закрывается.
+
+Критерии среза:
+
+- canonical logged-out `/my-account/` exposes one branded Russian guest-login shell: navy intro plus white form card on `1440`, stacked responsive card on `390/360`;
+- exact current Woo labels/accessibility copy are localized, while the existing form action/method, username/password names, required/autocomplete semantics, password toggle, remember checkbox, nonce, referer, submit and lost-password href remain authoritative and unchanged;
+- inputs, password toggle and submit are visible touch-size controls; existing six-stop keyboard order, password/remember round trips and visible focus contracts remain passing without login/recovery POST;
+- no horizontal overflow, serious/critical axe findings or runtime errors on `1440/390/360`; three deterministic provisional screenshots are retained.
+
+Выполнено и проверено:
+
+- narrow base-account predicate limits the shell and exact Woo string localization to logged-out `/my-account/`; lost-password and authenticated endpoints retain their current renderers;
+- WooCommerce still owns the sole POST form, credentials, required/autocomplete attributes, password toggle, remember checkbox, nonce, referer, submit and lost-password href; no template override, added focus stop or authentication request was introduced;
+- desktop presents a navy intro and white form card; `390/360` use one stacked card with `52px` fields/toggle/CTA and no horizontal overflow;
+- pre-fix targeted visual contract failed `3/3`; post-fix targeted `3 passed`, whole account file `9 passed`; three deterministic screenshots, axe serious/critical, runtime and empty-input/no-POST gates pass on `1440/390/360`;
+- full regression: `61` tests = `59 passed / 2 intentional skipped`, `0 failed`; post-suite inventory remains `10` published products / `0` temporary products / `0` temporary categories / `0` temporary shop managers; independent code and visual reviews report no findings.
+
+Вне scope: successful/failed login, logout, registration, recovery submission/neutral response, validation/error/loading/lockout/session-expiry states, remember-cookie behavior, nonce/CSRF enforcement, enumeration/rate limit, MFA/RBAC/IDOR, profile/orders, authenticated renderer, privacy/legal policy, OS autofill/password managers, localization/cross-Woo compatibility, screen-reader/AT/browser matrix, zoom/full WCAG and production IAM/security.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

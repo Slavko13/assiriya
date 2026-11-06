@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S73 branded last-item removal and empty cart:** `58` tests = `56 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S73 добавляет один public last-item/empty-cart scenario в каждый из трёх public projects.
+**Текущий regression после I2-S74 branded guest login presentation:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S74 добавляет один public guest-login presentation scenario в каждый из трёх public projects.
 
 ## Технические критерии Итерации 2
 
@@ -887,6 +887,17 @@ I2-S72 closes only one current Cart Block plus mutation from `1` to `2` in the s
 | I2-S73-ACC-005 | Responsive/regression/data gates remain clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, cart file `9 passed`, full `58`: `56 passed / 2 skipped`; 3 new screenshots, no overflow/serious-critical axe/runtime errors; inventory `10/0/0/0`; reviews no findings | `PASS` |
 
 I2-S73 accepts only one native removal of the final exact demo row in the current Woo Cart Block and a provisional empty-state transition. Paper has no approved empty/last-row design, so the slice remains `DESIGN_REVIEW_REQUIRED`; undo/restore, minus-to-zero, partial/mixed carts, source-PDP/history return, arbitrary redirects, persistence/auth/concurrency/errors, reserve/price/stock/offer rules, live announcements/focus transfer/AT/browser matrix, classic renderer, full WCAG and production commerce remain open.
+
+### I2-S74 — branded guest login presentation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S74-ACC-001 | Branded shell is narrow and responsive | only the logged-out base `/my-account/` receives one navy intro plus white form card on `1440` and a stacked card on `390/360`; lost-password endpoint remains outside the shell | `PASS / PROVISIONAL` |
+| I2-S74-ACC-002 | Woo form ownership is preserved | one existing POST form retains action/method, credential names, required/autocomplete semantics, native password toggle, remember checkbox, nonce, referer, submit and exact lost-password href; no template override or auth POST | `PASS / TECHNICAL` |
+| I2-S74-ACC-003 | Russian presentation and usable controls | current exact Woo guest-login strings are localized server-side only on the base route; username/password/toggle/submit are at least `48px`, CTA matches field width and existing pointer/keyboard/focus contracts remain passing | `PASS / PROVISIONAL` |
+| I2-S74-ACC-004 | Responsive/regression/data gates remain clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, account file `9 passed`, full `61`: `59 passed / 2 skipped`; 3 new screenshots, no overflow/serious-critical axe/runtime errors; inventory `10/0/0/0`; code/visual reviews no findings | `PASS` |
+
+I2-S74 accepts presentation only for the current logged-out base-account renderer. Paper has no approved login screen, so the slice remains `DESIGN_REVIEW_REQUIRED`; successful/failed login, registration, logout, recovery submission, validation/error/loading/lockout/session states, remember-cookie behavior, CSRF/enumeration/rate-limit/MFA/RBAC/IDOR, authenticated pages, privacy, autofill/password managers, cross-Woo localization, AT/browser matrix, zoom/full WCAG and production IAM remain open.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

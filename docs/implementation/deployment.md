@@ -151,8 +151,8 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены, current regression summaries line-compared against the deliberate `58/56/2/0` lock.
-- Playwright: 58 tests, 56 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, nav/dialog/skip-link focus contracts, guest login/reset entrypoints, cart continuity, responsive filled/empty cart presentation, native quantity/final-row removal synchronization, demo guards и bounded visual comparator.
+- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены, current regression summaries line-compared against the deliberate `61/59/2/0` lock.
+- Playwright: 61 tests, 59 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/PDP, nav/dialog/skip-link focus contracts, branded guest login/reset entrypoints, cart continuity, responsive filled/empty cart presentation, native quantity/final-row removal synchronization, demo guards и bounded visual comparator.
 
 Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Первая partial remote installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy project Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый reconciled run, полный inventory/two-site before-after и public preview/admin smoke не зафиксированы, поэтому server остаётся `NOT_DEPLOYED`.
 

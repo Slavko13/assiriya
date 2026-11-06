@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { captureStableVisual } from './visual';
+
 type RuntimeErrors = {
   console: string[];
   page: string[];
@@ -390,6 +392,124 @@ test('opens the guest lost-password entrypoint without submitting recovery', asy
   await expect(identifier).toHaveValue('');
   expect(recoveryPosts).toEqual([]);
   expect(page.url()).toBe(recoveryUrl.href);
+  expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
+  expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
+});
+
+test('presents the guest login as a branded responsive form', async ({ page }, testInfo) => {
+  const runtimeErrors = watchRuntimeErrors(page);
+  const loginPosts: string[] = [];
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && new URL(request.url()).pathname === '/my-account/') {
+      loginPosts.push(request.url());
+    }
+  });
+
+  const response = await page.goto('/my-account/', { waitUntil: 'networkidle' });
+  expect(response?.ok()).toBe(true);
+  const accountUrl = new URL(page.url());
+  expect(accountUrl.pathname).toBe('/my-account/');
+  expect(accountUrl.search).toBe('');
+  expect(accountUrl.hash).toBe('');
+
+  const main = page.locator('main.az-account-login-main');
+  const shell = main.locator('article.az-account-login-page');
+  const intro = shell.locator('.az-account-login-intro');
+  const formPanel = shell.locator(':scope > .woocommerce');
+  await expect(main).toHaveCount(1);
+  await expect(shell).toBeVisible();
+  await expect(intro.locator('.az-account-login-intro__eyebrow')).toHaveCount(0);
+  await expect(intro.getByRole('heading', { level: 1, name: 'Личный кабинет' })).toBeVisible();
+  await expect(intro).toContainText('Введите email или логин и пароль, чтобы продолжить.');
+  await expect(formPanel.getByRole('heading', { level: 2, name: 'Вход' })).toBeVisible();
+
+  const loginForm = formPanel.locator('form.woocommerce-form-login');
+  await expect(loginForm).toHaveCount(1);
+  await expect(loginForm).toBeVisible();
+  await expect(loginForm).toHaveAttribute('method', 'post');
+  const formAction = new URL(await loginForm.evaluate((form: HTMLFormElement) => form.action));
+  expect(formAction.href).toBe(accountUrl.href);
+
+  const username = loginForm.locator('#username[name="username"]');
+  const password = loginForm.locator('#password[name="password"]');
+  const passwordToggle = loginForm.locator('.password-input > button.show-password-input');
+  const remember = loginForm.locator('#rememberme[name="rememberme"]');
+  const loginButton = loginForm.locator('button[name="login"][type="submit"]');
+  const lostPassword = loginForm.locator('.lost_password a');
+  await expect(username).toHaveAccessibleName(/Email или логин/);
+  await expect(password).toHaveAccessibleName(/Пароль/);
+  await expect(username).toHaveAttribute('autocomplete', 'username');
+  await expect(password).toHaveAttribute('autocomplete', 'current-password');
+  await expect(username).toHaveAttribute('aria-required', 'true');
+  await expect(password).toHaveAttribute('aria-required', 'true');
+  await expect(passwordToggle).toHaveAccessibleName('Показать пароль');
+  await expect(remember).toHaveAccessibleName('Запомнить меня');
+  await expect(loginButton).toHaveText('Войти');
+  await expect(lostPassword).toHaveText('Забыли пароль?');
+
+  await passwordToggle.click();
+  await expect(password).toHaveAttribute('type', 'text');
+  await expect(passwordToggle).toHaveAccessibleName('Скрыть пароль');
+  await passwordToggle.click();
+  await expect(password).toHaveAttribute('type', 'password');
+  await expect(passwordToggle).toHaveAccessibleName('Показать пароль');
+
+  const nonce = loginForm.locator('input[name="woocommerce-login-nonce"][type="hidden"]');
+  const referer = loginForm.locator('input[name="_wp_http_referer"][type="hidden"]');
+  await expect(nonce).toHaveCount(1);
+  expect(await nonce.inputValue()).not.toBe('');
+  await expect(referer).toHaveValue('/my-account/');
+  expect(await lostPassword.getAttribute('href')).toBe(`${accountUrl.origin}/my-account/lost-password/`);
+  expect(await username.inputValue()).toBe('');
+  expect(await password.inputValue()).toBe('');
+  expect(loginPosts).toEqual([]);
+
+  const controls = await page.evaluate(() => {
+    const rect = (selector: string) => {
+      const bounds = document.querySelector<HTMLElement>(selector)?.getBoundingClientRect();
+      return bounds ? { left: bounds.left, right: bounds.right, top: bounds.top, bottom: bounds.bottom, width: bounds.width, height: bounds.height } : null;
+    };
+    return {
+      intro: rect('.az-account-login-intro'),
+      panel: rect('.az-account-login-page > .woocommerce'),
+      username: rect('form.woocommerce-form-login #username'),
+      password: rect('form.woocommerce-form-login #password'),
+      toggle: rect('form.woocommerce-form-login .show-password-input'),
+      submit: rect('form.woocommerce-form-login button[name="login"]'),
+      clientWidth: document.documentElement.clientWidth,
+      pageWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+    };
+  });
+  expect(controls.intro).not.toBeNull();
+  expect(controls.panel).not.toBeNull();
+  expect(controls.username?.height).toBeGreaterThanOrEqual(48);
+  expect(controls.password?.height).toBeGreaterThanOrEqual(48);
+  expect(controls.toggle?.width).toBeGreaterThanOrEqual(48);
+  expect(controls.toggle?.height).toBeGreaterThanOrEqual(48);
+  expect(controls.submit?.height).toBeGreaterThanOrEqual(48);
+  expect(Math.abs((controls.submit?.width ?? 0) - (controls.username?.width ?? 0))).toBeLessThanOrEqual(2);
+  if (testInfo.project.name === 'desktop-chrome-1440') {
+    expect(controls.intro!.right).toBeLessThanOrEqual(controls.panel!.left + 1);
+    expect(Math.abs(controls.intro!.top - controls.panel!.top)).toBeLessThanOrEqual(1);
+  } else {
+    expect(controls.panel!.top).toBeGreaterThanOrEqual(controls.intro!.bottom - 1);
+  }
+  expect(controls.pageWidth).toBeLessThanOrEqual(controls.clientWidth + 1);
+
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  const blockingViolations = accessibility.violations.filter((violation) =>
+    ['serious', 'critical'].includes(violation.impact ?? ''),
+  );
+  expect(
+    blockingViolations,
+    `Serious/critical axe violations:\n${JSON.stringify(blockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  await captureStableVisual(page, testInfo, `account-login-${testInfo.project.name}.png`);
+  expect(await username.inputValue()).toBe('');
+  expect(await password.inputValue()).toBe('');
+  expect(loginPosts).toEqual([]);
+  expect(page.url()).toBe(accountUrl.href);
   expect(runtimeErrors.console, `Browser console errors:\n${runtimeErrors.console.join('\n')}`).toEqual([]);
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });

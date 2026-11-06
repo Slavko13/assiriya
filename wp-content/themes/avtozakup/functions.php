@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.8.2' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.9.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -76,6 +76,34 @@ add_filter(
 );
 
 add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
+
+function avtozakup_is_guest_login_page(): bool {
+	return function_exists( 'is_account_page' )
+		&& is_account_page()
+		&& ! is_user_logged_in()
+		&& ( ! function_exists( 'is_wc_endpoint_url' ) || ! is_wc_endpoint_url() );
+}
+
+function avtozakup_guest_login_woocommerce_text( string $translation, string $text ): string {
+	if ( ! avtozakup_is_guest_login_page() ) {
+		return $translation;
+	}
+
+	$translations = array(
+		'Login'                     => 'Вход',
+		'Username or email address' => 'Email или логин',
+		'Password'                  => 'Пароль',
+		'Required'                  => 'Обязательное поле',
+		'Remember me'               => 'Запомнить меня',
+		'Log in'                    => 'Войти',
+		'Lost your password?'       => 'Забыли пароль?',
+		'Show password'             => 'Показать пароль',
+		'Hide password'             => 'Скрыть пароль',
+	);
+
+	return $translations[ $text ] ?? $translation;
+}
+add_filter( 'gettext_woocommerce', 'avtozakup_guest_login_woocommerce_text', 10, 2 );
 
 function avtozakup_header_cart_count_fragment( array $fragments ): array {
 	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {

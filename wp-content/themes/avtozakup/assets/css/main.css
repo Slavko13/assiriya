@@ -299,6 +299,60 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .woocommerce-message, .woocommerce-info, .woocommerce-error { padding: 16px 20px; border-top: 3px solid var(--az-blue); background: var(--az-soft); }
 .woocommerce-error { border-color: #b83232; }
 
+/* Provisional guest login presentation; WooCommerce retains the form and authentication behavior. */
+.woocommerce-account .az-account-login-main { width: min(1120px, calc(100% - 48px)); padding-top: 44px; }
+.az-account-login-page {
+  max-width: none; min-height: 610px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr); overflow: hidden;
+  border: 1px solid #dce6f2; border-radius: 20px; background: white; box-shadow: 0 28px 70px rgb(21 48 84 / 13%);
+}
+.az-account-login-intro {
+  position: relative; min-width: 0; padding: 62px 58px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; color: white;
+  background: radial-gradient(circle at 86% 12%, rgb(63 145 255 / 44%), transparent 32%), linear-gradient(145deg, #0f2038 0%, #173f75 100%);
+}
+.az-account-login-intro::before,
+.az-account-login-intro::after { content: ''; position: absolute; border: 52px solid rgb(255 255 255 / 6%); border-radius: 50%; pointer-events: none; }
+.az-account-login-intro::before { width: 360px; height: 360px; right: -210px; bottom: -230px; }
+.az-account-login-intro::after { width: 170px; height: 170px; left: -120px; top: -115px; border-width: 34px; }
+.az-account-login-intro h1 { position: relative; z-index: 1; max-width: 470px; margin: 0; color: white; font-size: clamp(42px, 5vw, 66px); line-height: .98; letter-spacing: -.045em; }
+.az-account-login-intro > p:last-child { position: relative; z-index: 1; max-width: 440px; margin: 22px 0 0; color: #dbe8fb; font-size: 15px; line-height: 1.7; }
+.az-account-login-page > .woocommerce { min-width: 0; padding: 56px 52px; display: flex; flex-direction: column; justify-content: center; }
+.az-account-login-page > .woocommerce > .woocommerce-notices-wrapper:empty { display: none; }
+.az-account-login-page > .woocommerce > h2 { margin: 0 0 30px; color: var(--az-ink); font-size: 32px; line-height: 1.15; font-weight: 900; letter-spacing: -.025em; }
+.az-account-login-page form.woocommerce-form-login { margin: 0; padding: 0; border: 0; }
+.az-account-login-page form.woocommerce-form-login .form-row { margin: 0 0 21px; padding: 0; }
+.az-account-login-page form.woocommerce-form-login label { margin: 0 0 8px; display: block; color: #334963; font-size: 12px; line-height: 1.45; font-weight: 750; }
+.az-account-login-page form.woocommerce-form-login .required { color: #c44040; }
+.az-account-login-page form.woocommerce-form-login input.input-text {
+  width: 100%; height: 52px; padding: 0 15px; border: 1px solid #cbd7e5; border-radius: 10px; color: var(--az-ink); background: #f9fbfd; box-shadow: none;
+  font-size: 15px; transition: border-color .18s ease, background .18s ease;
+}
+.az-account-login-page form.woocommerce-form-login input.input-text:hover { border-color: #9fb3ca; background: white; }
+.az-account-login-page form.woocommerce-form-login input.input-text:focus-visible { border-color: var(--az-blue); background: white; box-shadow: 0 0 0 3px rgb(18 98 232 / 24%); }
+.az-account-login-page form.woocommerce-form-login .password-input { position: relative; display: block; }
+.az-account-login-page form.woocommerce-form-login .password-input input { padding-right: 58px; }
+.az-account-login-page form.woocommerce-form-login .show-password-input {
+  position: absolute; z-index: 2; top: 0; right: 0; width: 52px; height: 52px; margin: 0; padding: 0; display: grid; place-items: center;
+  border: 0; border-left: 1px solid #d9e2ed; border-radius: 0 10px 10px 0; color: #536a85; background: transparent; cursor: pointer;
+}
+.az-account-login-page form.woocommerce-form-login .show-password-input::before {
+  content: ''; width: 21px; height: 21px; display: block; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='3' fill='black'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='3' fill='black'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.az-account-login-page form.woocommerce-form-login .show-password-input:hover { color: var(--az-blue); background: #eff5ff; }
+.az-account-login-page form.woocommerce-form-login .show-password-input:focus-visible { color: var(--az-blue); box-shadow: inset 0 0 0 3px var(--az-blue); }
+.az-account-login-page form.woocommerce-form-login > .form-row:not(.form-row-wide) { display: flex; flex-direction: column; gap: 17px; }
+.az-account-login-page form.woocommerce-form-login .woocommerce-form-login__rememberme { margin: 0; display: inline-flex; align-items: center; gap: 9px; align-self: flex-start; cursor: pointer; }
+.az-account-login-page form.woocommerce-form-login #rememberme { width: 18px; height: 18px; margin: 0; accent-color: var(--az-blue); }
+.az-account-login-page form.woocommerce-form-login button[name="login"] {
+  width: 100%; min-height: 52px; margin: 0; border: 0; border-radius: 10px; color: white; background: var(--az-blue); box-shadow: 0 12px 25px rgb(18 98 232 / 22%);
+  font-size: 13px; font-weight: 850; cursor: pointer; transition: background .18s ease, transform .18s ease;
+}
+.az-account-login-page form.woocommerce-form-login button[name="login"]:hover { color: white; background: var(--az-blue-dark); transform: translateY(-1px); }
+.az-account-login-page form.woocommerce-form-login button[name="login"]:focus-visible { box-shadow: 0 0 0 3px white, 0 0 0 6px var(--az-blue), 0 12px 25px rgb(18 98 232 / 22%); }
+.az-account-login-page form.woocommerce-form-login .lost_password { margin: 2px 0 0; text-align: center; }
+.az-account-login-page form.woocommerce-form-login .lost_password a { display: inline-block; padding: 6px; font-size: 12px; font-weight: 750; text-decoration: underline; text-decoration-color: rgb(18 98 232 / 32%); text-underline-offset: 4px; }
+
 /* Paper SCR-010: demo cart presentation */
 .woocommerce-cart { background: linear-gradient(180deg, #f5f8fc 0 580px, #fff 580px); }
 .woocommerce-cart .az-content { padding-top: 32px; }
@@ -480,6 +534,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .az-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
   .az-footer__grid > nav:last-child { grid-column: 2; }
   .woocommerce ul.products { grid-template-columns: repeat(3, 1fr); }
+  .woocommerce-account .az-account-login-main { padding-top: 24px; }
+  .az-account-login-page { min-height: 0; grid-template-columns: 1fr; }
+  .az-account-login-intro { min-height: 255px; padding: 42px 40px; }
+  .az-account-login-intro h1 { font-size: 48px; }
+  .az-account-login-page > .woocommerce { padding: 42px 40px; }
   .az-cart-intro { min-height: 176px; padding: 30px; }
   .az-cart-steps { min-width: 260px; }
   .woocommerce-cart .wc-block-components-sidebar-layout,
@@ -532,6 +591,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .az-footer__bottom { padding-block: 16px; align-items: flex-start; flex-direction: column; }
   .az-footer__bottom div { gap: 16px; }
   .woocommerce ul.products { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .woocommerce-account .az-account-login-main { width: 100%; padding: 12px 12px 56px; }
+  .az-account-login-page { border-radius: 14px; }
+  .az-account-login-intro { min-height: 220px; padding: 31px 22px; }
+  .az-account-login-intro h1 { font-size: 38px; }
+  .az-account-login-intro > p:last-child { margin-top: 15px; font-size: 12px; line-height: 1.6; }
+  .az-account-login-page > .woocommerce { padding: 30px 20px 32px; }
+  .az-account-login-page > .woocommerce > h2 { margin-bottom: 24px; font-size: 28px; }
   .woocommerce-cart { background: linear-gradient(180deg, #f5f8fc 0 720px, #fff 720px); }
   .woocommerce-cart .az-content { width: 100%; padding: 12px 12px 56px; }
   .az-cart-intro { min-height: 0; margin-bottom: 16px; padding: 24px 20px; display: block; border-radius: 14px; }
