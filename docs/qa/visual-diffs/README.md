@@ -6,17 +6,17 @@
 
 - `paper-home-desktop-1440.png` — reference текущего Paper SCR-002.
 - Размер макета: 1440 × 3376.
-- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3347, visually refreshed in I2-S76 after the public-theme decorative pre-heading cleanup.
+- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3347; presentation was cleaned up in I2-S76 and the artifact was recaptured/reviewed in the I2-S77 full regression.
 - `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация, visually refreshed in I2-S76.
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual artifacts среза I2-S1; отдельного утверждённого SCR-005 baseline в проекте реализации пока нет.
-- `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP artifacts среза I2-S3; это функциональное доказательство явной demo provenance, а не утверждённый PDP baseline.
-- `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
+- `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP provenance artifacts from I2-S3, visually refreshed in I2-S77 inside the Paper-informed product shell; they do not approve demo commercial data or a full PDP baseline.
+- `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual PDP technical/presentation artifacts from I2-S4, visually refreshed in I2-S77; desktop follows the safe SCR-009 title/gallery/purchase subset, while mobile remains a provisional reflow because Paper has no mobile PDP frame.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts I2-S5; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts I2-S6; порядок/ранжирование не утверждаются.
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts from I2-S71, visually refreshed in I2-S75 to remove the decorative cart eyebrow; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts from I2-S73, visually refreshed in I2-S75 with the owner-approved no-eyebrow rule and a deterministic cart illustration; Paper has no approved empty-state design, so they remain provisional.
 - `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
-- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76; they verify the meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
+- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76; desktop was recaptured/reviewed in the I2-S77 full regression, and the set verifies the meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -194,6 +194,15 @@ report-home-YYYYMMDD.md
 - valid pre-fix targeted run: `3 failed` with exactly 4 nodes; post-fix targeted run: `3 passed`; homepage file: `13 passed / 2 intentional skipped`; full regression: `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`;
 - repository total is `31` PNG (`30` actual + Paper reference); axe serious/critical, no-overflow and runtime gates pass, inventory is `10/0/0/0`, and independent code/visual reviews found no findings or title/close collision;
 - result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: stored-settings cleanup, VIN/B2B integrations, typography redesign, Paper approval, AT/browser/full WCAG and production behavior remain outside this visual slice.
+
+## Paper-informed responsive product detail I2-S77
+
+- exact SCR-009 node inspection supplies the `1280px` content width, `29px` H1, public brand/article language, bordered gallery, light-blue purchase surface, `37px` price and control rhythm; unsupported characteristics, variants, offers, stock counts and city modules are deliberately absent;
+- desktop shows one title/identity header with gallery and purchase columns; `390/360` keep the same source order in one column because Paper contains no mobile PDP artboard;
+- all 6 existing product screenshots were deterministically refreshed, so the repository total remains `31` PNG (`30` actual + Paper reference); gallery image, purchase card, quantity/CTA and description remain readable without clipping or overlap;
+- the mandatory full regression also refreshed the desktop homepage and open status-dialog guard artifacts; follow-up review found no header/cart, mini-heading or dialog title/close regression;
+- valid pre-fix targeted `3 failed`; post-fix targeted `3 passed`; catalog file `9 passed`; full regression remains `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; axe serious/critical, no-overflow and runtime gates pass, inventory is `10/0/0/0`;
+- independent visual review found no hierarchy, crop, control or mobile defects; the functional Woo «Описание» tab is not treated as a decorative mini-heading. Result remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not Paper mobile/pixel-perfect, full WCAG/AT/browser or production commerce acceptance.
 
 ## Отчёт
 

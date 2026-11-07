@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.9.2' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.10.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -151,6 +151,44 @@ function avtozakup_render_single_demo_provenance(): void {
 		<?php endif; ?>
 	</div>
 	<?php
+}
+
+function avtozakup_render_single_demo_identity(): void {
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+
+	$identity = avtozakup_demo_product_identity( $product );
+	if ( null === $identity ) {
+		return;
+	}
+	?>
+	<dl class="az-product-identity" data-product-identity="demo" aria-label="<?php esc_attr_e( 'Идентификация товара', 'avtozakup' ); ?>">
+		<?php if ( '' !== $identity['brand'] ) : ?>
+			<div class="az-product-identity__item az-product-identity__item--brand">
+				<dt class="screen-reader-text"><?php esc_html_e( 'Бренд', 'avtozakup' ); ?></dt>
+				<dd data-product-brand><?php echo esc_html( $identity['brand'] ); ?></dd>
+			</div>
+		<?php endif; ?>
+		<?php if ( '' !== $identity['article'] ) : ?>
+			<div class="az-product-identity__item az-product-identity__item--article">
+				<dt><?php esc_html_e( 'Артикул', 'avtozakup' ); ?></dt>
+				<dd data-product-article><?php echo esc_html( $identity['article'] ); ?></dd>
+			</div>
+		<?php endif; ?>
+	</dl>
+	<?php
+}
+
+function avtozakup_configure_product_detail_layout(): void {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
+	add_action( 'woocommerce_before_single_product_summary', 'woocommerce_template_single_title', 4 );
+	add_action( 'woocommerce_before_single_product_summary', 'avtozakup_render_single_demo_identity', 5 );
 }
 
 function avtozakup_is_current_demo_product_page( WC_Product $product ): bool {
@@ -395,6 +433,7 @@ function avtozakup_configure_catalog_shop_page(): void {
 
 add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
 add_action( 'woocommerce_single_product_summary', 'avtozakup_render_single_demo_provenance', 11 );
+add_action( 'wp', 'avtozakup_configure_product_detail_layout' );
 add_action( 'wp', 'avtozakup_configure_demo_product_page' );
 add_action( 'wp', 'avtozakup_configure_product_search_page' );
 add_action( 'wp', 'avtozakup_configure_catalog_shop_page' );

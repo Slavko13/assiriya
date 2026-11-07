@@ -746,7 +746,10 @@ test.describe('WordPress administration', () => {
       ]);
       await page.waitForLoadState('networkidle');
       await expect(page.locator('body')).toHaveClass(/single-product/);
-      await expect(page.locator('h1.product_title')).toHaveText(productName);
+      const productShell = page.locator('.single-product div.product').first();
+      await expect(productShell).toHaveCSS('display', 'grid');
+      await expect(productShell.locator(':scope > h1.product_title')).toHaveText(productName);
+      await expect(productShell.locator(':scope > .az-product-identity')).toHaveCount(0);
       await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);
       await expect(page.locator('[data-demo-product-meta="product"]')).toHaveCount(0);
       await expect(page.locator('.product_meta .sku')).toHaveText(sku);

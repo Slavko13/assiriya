@@ -174,6 +174,31 @@ function avtozakup_demo_product_provenance( WC_Product $product ): ?array {
 }
 
 /**
+ * Return the public brand/article pair owned by an explicitly marked demo.
+ *
+ * Synthetic WooCommerce SKUs are deliberately excluded: they identify the
+ * seeded record, not the product represented by the demo content.
+ *
+ * @return array{brand:string,article:string}|null
+ */
+function avtozakup_demo_product_identity( WC_Product $product ): ?array {
+	if ( null === avtozakup_demo_product_provenance( $product ) ) {
+		return null;
+	}
+
+	$brand   = trim( sanitize_text_field( (string) $product->get_meta( '_avtozakup_demo_brand', true ) ) );
+	$article = trim( sanitize_text_field( (string) $product->get_meta( '_avtozakup_demo_article', true ) ) );
+	if ( '' === $brand && '' === $article ) {
+		return null;
+	}
+
+	return array(
+		'brand'   => $brand,
+		'article' => $article,
+	);
+}
+
+/**
  * Return the synthetic SKU owned by the demo seeder.
  * A marked product with any other SKU keeps the standard WooCommerce meta UI.
  */
@@ -193,8 +218,9 @@ function avtozakup_product_card( WC_Product $product ): void {
 	$brand = (string) $product->get_attribute( 'pa_brand' );
 	$article = $product->get_sku();
 	if ( $demo ) {
-		$brand = (string) $product->get_meta( '_avtozakup_demo_brand', true ) ?: $brand;
-		$article = (string) $product->get_meta( '_avtozakup_demo_article', true ) ?: $article;
+		$identity = avtozakup_demo_product_identity( $product );
+		$brand = null !== $identity ? $identity['brand'] : '';
+		$article = null !== $identity ? $identity['article'] : '';
 	}
 	?>
 	<article class="az-product-card" data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
@@ -203,7 +229,7 @@ function avtozakup_product_card( WC_Product $product ): void {
 			<span class="az-product-card__favorite" aria-hidden="true"><?php echo avtozakup_icon( 'heart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</a>
 		<div class="az-product-card__body">
-			<div class="az-product-card__brand"><?php echo esc_html( $brand ?: 'АВТОЗАКУП' ); ?></div>
+			<div class="az-product-card__brand"><?php echo esc_html( $brand ?: ( $demo ? 'Бренд не указан' : 'АВТОЗАКУП' ) ); ?></div>
 			<a class="az-product-card__title" href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
 			<div class="az-product-card__sku"><?php echo esc_html( sprintf( 'Арт. %s', $article ?: '—' ) ); ?></div>
 			<div class="az-product-card__stock <?php echo $available ? 'is-in-stock' : 'is-out-of-stock'; ?>"><span aria-hidden="true"></span><?php echo esc_html( $demo ? ( $available ? 'Демо: есть в наличии' : 'Демо: под заказ' ) : ( $available ? 'Есть в наличии' : 'Нет в наличии' ) ); ?></div>

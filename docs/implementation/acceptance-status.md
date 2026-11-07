@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S76 remaining frontend mini-heading cleanup:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S76 strengthens the existing public homepage scenario without adding a new test case.
+**Текущий regression после I2-S77 Paper-aligned responsive Woo PDP:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S77 strengthens existing catalog/admin scenarios without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -920,6 +920,17 @@ I2-S75 accepts only the current Blocks cart presentation cleanup. Paper has no a
 | I2-S76-ACC-004 | Regression, evidence and data stay clean | full `61`: `59 passed / 2 skipped`; 3 homepage PNG refreshed + 3 status-dialog PNG added, total `31` (`30` actual + Paper); inventory `10/0/0/0`; independent code/visual reviews no findings | `PASS` |
 
 I2-S76 accepts only removal of current public-theme decorative pre-headings. Functional demo/status badges, product brands, field/navigation labels and semantic H1–H3 remain valid; stored-settings schema cleanup, VIN/B2B integrations, typography redesign, Paper approval, AT/browser matrix, full WCAG and production domain behavior remain outside the slice.
+
+### I2-S77 — Paper-aligned responsive Woo product detail shell
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S77-ACC-001 | Woo remains authoritative | named hooks move the native H1 but do not replace a Woo template; gallery, price, short/long description, stock renderer, exact quantity and POST form remain Woo-owned | `PASS / TECHNICAL` |
+| I2-S77-ACC-002 | Public identity fails closed | marked demo exposes sanitized seed brand/article; public identity never contains synthetic `AZ-DEMO-*`; temporary unmarked admin-owned product receives no demo identity/provenance and keeps exact title/SKU/price/stock/form | `PASS / TECHNICAL` |
+| I2-S77-ACC-003 | Responsive SCR-009 subset is usable | exact Paper desktop measurements inform title, gallery and purchase card; mobile has no Paper frame and therefore uses a provisional one-column reflow; quantity is `52px`, CTA is `52px`, controls do not overlap and gallery/summary order passes on `1440/390/360` | `PASS / PROVISIONAL` |
+| I2-S77-ACC-004 | Regression, evidence and data stay clean | valid pre-fix `3 failed`; post-fix targeted `3 passed`, catalog file `9 passed`, admin target/dependencies `53 passed / 2 skipped`, full `61`: `59 passed / 2 skipped`; six PDP plus two desktop guard PNG refreshed, total stays `31`; axe/no-overflow/runtime; inventory `10/0/0/0`; code finding fixed/rechecked and visual reviews clean | `PASS` |
+
+I2-S77 accepts only the current simple-product presentation and safe existing metadata. Offers, variants, fitment, analogs, favorites, reviews, real price/stock/ETA, quantity business rules, stale/revalidation, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

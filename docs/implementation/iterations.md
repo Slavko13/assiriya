@@ -2049,6 +2049,31 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: VIN/B2B submission or integrations, stored-settings schema cleanup, dialog behavior, product/card brand labels, demo/status badges, full typography redesign, Paper approval, AT/browser matrix, full WCAG and production domain behavior.
 
+### I2-S77 — Paper-aligned responsive Woo product detail shell
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S3/I2-S4/I2-S7/I2-S8/I2-S12/I2-S13/I2-S25/I2-S36/I2-S38`; `SCR-009`, `UI-SCR009-001/002/008/009/010`; `FR-CAT-002` and `FR-CART-001` renderer/demo partials; `PBL-010/PBL-011/PBL-040`, `DG-017/018`, `ISSUE-PAP-011/012/014/028`; `DEC-002/005/006/008/011/012/019/020` remain open.
+
+Критерии среза:
+
+- current Woo title, image, price, short/long description, stock renderer, quantity and add-to-cart form remain the authoritative server-rendered product data and controls; no template override or copied commerce state is introduced;
+- marked demo PDP exposes only the existing public-safe brand/article metadata and never promotes synthetic `AZ-DEMO-*` to a public article; unmarked user-owned products receive no demo identity/provenance;
+- desktop `1440` receives a Paper-informed title/identity header plus gallery and purchase-summary columns; `390/360` use one stacked column with non-overlapping quantity/CTA and usable touch targets;
+- existing exact form action/method/product ID/label, provenance/source, technical-SKU disclaimer, category relation, descriptions and related-product safety contracts remain passing;
+- PDP screenshots, no-overflow, serious/critical axe and runtime gates pass on `1440/390/360`; temporary Woo admin fixture still flows to the public PDP and is fully cleaned up.
+
+Выполнено и проверено:
+
+- exact SCR-009 inspection established the safe presentation subset: centered `1280px` content, `29px` product title, public brand/article identity, bordered gallery, light-blue purchase surface, `37px` price and one-row quantity/CTA; unsupported characteristics, pack variants, offers and stock claims were not copied;
+- named Woo hooks move the native title above the gallery and render fail-closed demo brand/article metadata; Woo still owns image, price, descriptions, stock renderer, quantity and POST form, while synthetic `AZ-DEMO-*` remains only in the labelled technical block;
+- desktop uses title/identity plus gallery/purchase columns; `390/360` use the same source order in one column with `52px` simple-product controls; form-grid styling is deliberately scoped to `product-type-simple`, leaving variable/grouped/external forms in their native flow;
+- valid pre-fix targeted baseline: `3 failed` on missing grid presentation; post-fix targeted: `3 passed`; whole catalog file: `9 passed`; admin-owned unmarked fixture plus its mandatory public dependencies: `53 passed / 2 intentional skipped`, including exact PDP title/form/data and complete cleanup;
+- six existing PDP screenshots were deterministically refreshed; the mandatory full suite also refreshed the desktop homepage and status-dialog guards, and both were rechecked clean; the repository total stays `31` PNG (`30` actual + Paper); axe serious/critical, no-overflow and runtime gates pass on `1440/390/360`; independent PDP visual review found no defects and independent code review's one product-type scoping finding was fixed and rechecked;
+- full regression remains `61` tests = `59 passed / 2 intentional skipped`, `0 failed`; inventory remains `10/0/0/0`; theme version `0.10.0` invalidates presentation assets; PHP lint, `node --check`, `git diff --check` and config/documentation preflight `11/11` pass.
+
+Вне scope: offer table/source selection, variants/fasovka rules, favorites, fitment/«подходит», analogs, reviews, real price/stock/ETA, min/max/multiple semantics, stale/revalidation, Paper pixel-perfect approval, AT/browser matrix, full WCAG and production commerce.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

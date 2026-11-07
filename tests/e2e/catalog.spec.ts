@@ -230,9 +230,19 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   await page.waitForLoadState('networkidle');
 
   await expect(page.locator('body')).toHaveClass(/single-product/);
-  const title = page.locator('h1.product_title');
+  const productShell = page.locator('.single-product div.product').first();
+  await expect(productShell).toHaveCSS('display', 'grid');
+  const title = productShell.locator(':scope > h1.product_title');
   await expect(title).toHaveCount(1);
   await expect(title).toHaveText(expectedName);
+  const publicIdentity = productShell.locator(':scope > .az-product-identity[data-product-identity="demo"]');
+  await expect(publicIdentity).toHaveCount(1);
+  await expect(publicIdentity.locator('dt')).toHaveText(['Бренд', 'Артикул']);
+  const publicBrand = publicIdentity.locator('[data-product-brand]');
+  const publicArticle = publicIdentity.locator('[data-product-article]');
+  await expect(publicBrand).toContainText(/\S/);
+  await expect(publicArticle).toContainText(/\S/);
+  await expect(publicIdentity).not.toContainText(/AZ-DEMO-/);
   const productBreadcrumb = page.locator('.woocommerce-breadcrumb');
   await expect(productBreadcrumb).toContainText('Главная');
   await expect(productBreadcrumb).toContainText(expectedName);
@@ -276,6 +286,32 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   await expect(addToCartSubmit).toHaveAttribute('type', 'submit');
   await expect(addToCartSubmit).toHaveAttribute('value', productId!);
   await expect(addToCartSubmit).toHaveText('Добавить в демо-корзину');
+  const quantityInput = cartForm.locator('.quantity input.qty');
+  await expect(quantityInput).toHaveCount(1);
+  const [galleryBox, summaryBox, quantityBox, submitBox] = await Promise.all([
+    productShell.locator(':scope > .woocommerce-product-gallery').boundingBox(),
+    productShell.locator(':scope > .summary').boundingBox(),
+    quantityInput.boundingBox(),
+    addToCartSubmit.boundingBox(),
+  ]);
+  expect(galleryBox).toBeTruthy();
+  expect(summaryBox).toBeTruthy();
+  expect(quantityBox).toBeTruthy();
+  expect(submitBox).toBeTruthy();
+  expect(quantityBox!.height).toBeGreaterThanOrEqual(44);
+  expect(submitBox!.height).toBeGreaterThanOrEqual(48);
+  const controlsOverlap = !(
+    quantityBox!.x + quantityBox!.width <= submitBox!.x
+    || submitBox!.x + submitBox!.width <= quantityBox!.x
+    || quantityBox!.y + quantityBox!.height <= submitBox!.y
+    || submitBox!.y + submitBox!.height <= quantityBox!.y
+  );
+  expect(controlsOverlap, 'Quantity and add-to-cart controls must not overlap').toBe(false);
+  if ((page.viewportSize()?.width ?? 0) > 900) {
+    expect(summaryBox!.x).toBeGreaterThan(galleryBox!.x + galleryBox!.width - 1);
+  } else {
+    expect(summaryBox!.y).toBeGreaterThanOrEqual(galleryBox!.y + galleryBox!.height - 1);
+  }
   await expect(page.locator('section.related.products')).toHaveCount(0);
 
   const accessibility = await new AxeBuilder({ page }).analyze();
