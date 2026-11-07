@@ -1,5 +1,7 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
+import { expectLoopCardPresentation } from './product-card';
+
 type RuntimeErrors = {
   console: string[];
   page: string[];
@@ -710,6 +712,7 @@ test.describe('WordPress administration', () => {
       await page.goto('/shop/?orderby=date', { waitUntil: 'networkidle' });
       const loopProduct = page.locator(`li.product.post-${productId}`);
       await expect(loopProduct).toBeVisible();
+      await expectLoopCardPresentation(loopProduct, { kind: 'standard', expectedReference: sku });
       await expect(loopProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
       const loopAction = loopProduct.locator('a.add_to_cart_button[data-product_id]');
       await expect(loopAction).toHaveCount(1);
@@ -730,6 +733,7 @@ test.describe('WordPress administration', () => {
       const searchProduct = page.locator(`ul.products li.product.post-${productId}`);
       await expect(searchProduct).toHaveCount(1);
       await expect(searchProduct).toBeVisible();
+      await expectLoopCardPresentation(searchProduct, { kind: 'standard', expectedReference: sku });
       await expect(searchProduct.locator('.woocommerce-loop-product__title')).toHaveText(productName);
       await expect(searchProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
       const searchAction = searchProduct.locator('.add_to_cart_button');
@@ -800,6 +804,7 @@ test.describe('WordPress administration', () => {
       const categoryProduct = page.locator(`ul.products li.product.post-${productId}`);
       await expect(categoryProduct).toHaveCount(1);
       await expect(categoryProduct).toBeVisible();
+      await expectLoopCardPresentation(categoryProduct, { kind: 'standard', expectedReference: sku });
       await expect(categoryProduct.locator('.woocommerce-loop-product__title')).toHaveText(productName);
       await expect(categoryProduct.locator('.woocommerce-loop-product__link')).toHaveAttribute(
         'href',

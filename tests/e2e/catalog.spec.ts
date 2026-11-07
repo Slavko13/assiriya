@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { expectLoopCardPresentation, expectLoopGridPresentation } from './product-card';
 import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
@@ -98,6 +99,10 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   const visibleProducts = page.locator('ul.products li.product');
   const visibleProductCount = await visibleProducts.count();
   expect(visibleProductCount, 'The canonical catalog should render published products').toBeGreaterThan(0);
+  await expectLoopGridPresentation(page.locator('ul.products'), page.viewportSize()?.width ?? 0);
+  for (let index = 0; index < visibleProductCount; index += 1) {
+    await expectLoopCardPresentation(visibleProducts.nth(index), { kind: 'demo' });
+  }
   const totalProductCount = Number((await resultCount.innerText()).match(/\d+$/)?.[0] ?? 0);
   expect(totalProductCount, 'The catalog total should cover every product visible on the current page').toBeGreaterThanOrEqual(visibleProductCount);
   const productHrefs = await visibleProducts.locator('.woocommerce-loop-product__link').evaluateAll((links) =>
@@ -150,9 +155,29 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   await expect(categoryBreadcrumb).not.toContainText(/\bHome\b/);
   await expect(page.getByRole('heading', { level: 1, name: 'Тормозная система' })).toBeVisible();
   await expect(page.locator('[data-shop-product-count]')).toHaveCount(0);
-  await expect(page.locator('.woocommerce-result-count')).toHaveCount(1);
-  await expect(page.locator('.woocommerce-ordering')).toHaveCount(1);
-  expect(await page.locator('ul.products li.product').count(), 'The published category should contain demo products').toBeGreaterThan(0);
+  const categoryResultCount = page.locator('[data-category-product-count]');
+  await expect(categoryResultCount).toHaveCount(1);
+  await expect(categoryResultCount).toHaveText(/^Товаров в категории: \d+$/);
+  await expect(page.locator('.woocommerce-ordering')).toHaveCount(0);
+  const categoryProductList = page.locator('ul.products');
+  const categoryProducts = categoryProductList.locator('li.product');
+  const categoryProductCount = await categoryProducts.count();
+  expect(categoryProductCount, 'The published category should contain demo products').toBeGreaterThan(0);
+  await expectLoopGridPresentation(categoryProductList, page.viewportSize()?.width ?? 0);
+  for (let index = 0; index < categoryProductCount; index += 1) {
+    await expectLoopCardPresentation(categoryProducts.nth(index), { kind: 'demo' });
+  }
+
+  const categoryAccessibility = await new AxeBuilder({ page }).analyze();
+  const categoryBlockingViolations = categoryAccessibility.violations.filter((violation) => (
+    ['serious', 'critical'].includes(violation.impact ?? '')
+  ));
+  expect(
+    categoryBlockingViolations,
+    `Category serious/critical axe violations:\n${JSON.stringify(categoryBlockingViolations, null, 2)}`,
+  ).toEqual([]);
+
+  await captureStableVisual(page, testInfo, `product-category-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

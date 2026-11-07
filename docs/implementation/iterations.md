@@ -2074,6 +2074,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: offer table/source selection, variants/fasovka rules, favorites, fitment/«подходит», analogs, reviews, real price/stock/ETA, min/max/multiple semantics, stale/revalidation, Paper pixel-perfect approval, AT/browser matrix, full WCAG and production commerce.
 
+### I2-S78 — unified Paper-informed Woo listing cards
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S1/I2-S3/I2-S5/I2-S6/I2-S7/I2-S8/I2-S9/I2-S13/I2-S22/I2-S23/I2-S25/I2-S28/I2-S37/I2-S38/I2-S77`; `SCR-002/SCR-006/SCR-007`, `UI-SCR002-013/014/015`, `UI-SCR006-005/006/007`, `UI-SCR007-003/004`; `FR-CAT-002`, `FR-CART-001`, renderer-only partials of `FR-OFR-002`; `PBL-010/PBL-011/PBL-040`, `DG-017/018`, `ISSUE-PAP-012/014/030`; `DEC-002/003/005/006/008/009/019/020` remain open.
+
+Критерии среза:
+
+- current Woo loop keeps native thumbnail, title, permalink, price and product-type-specific action; no `content-product.php` override, copied price, stock or add-to-cart state is introduced;
+- shop, product category and strict product search use one shared card marker/presentation, while PDP related/upsells and generic/mixed search remain outside the slice;
+- marked demo cards expose only sanitized public brand/article and never synthetic `AZ-DEMO-*`; an unmarked admin-owned product may expose optional `pa_brand` and its native SKU labelled exactly as SKU, without invented brand or demo provenance;
+- desktop card language follows exact Paper: approximately `316px` card, `180px` media, blue 10px brand, 14/19 title, 21px price and compact blue CTA; mobile uses a provisional one-column reflow with CTA at least `48px`, no clipping or overlap;
+- existing catalog and search-result screenshots plus three category screenshots, no-overflow, serious/critical axe and runtime gates pass on `1440/390/360`; current temporary admin fixture remains exact and fully cleaned up.
+
+Вне scope: homepage custom-card redesign; filter/sort/grid preference behavior; favorite; verified OEM/analogs/fitment; real stock/ETA/price freshness; supplier offer/source/count; unit/pack/min/multiple rules; add-to-cart error/recheck; Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce.
+
+Выполнено:
+
+- theme `0.11.0` добавляет fail-closed identity helper, narrow shop/category/strict-search predicate и named Woo hooks; native thumbnail/title/permalink/price/type-specific action не копируются и не переопределяются шаблоном;
+- единая Paper-informed карточка использует `4/3/2/1` reflow, `180px` desktop media и CTA `>=48px`; category count локализован, а Woo ordering скрыт до утверждения правил; related/upsell и mixed search не затронуты;
+- marked demo выводит только curated brand/article/provenance без `AZ-DEMO-*`; временный unmarked admin product сохраняет exact native SKU без demo leakage на shop/search/category и полностью удаляется после проверки;
+- valid pre-fix target: `6 failed`; post-fix target: `6 passed`; localized category refresh: `3 passed`; admin target/dependencies: `53 passed / 2 intentional skipped`; final regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
+- девять listing artifacts обновлены/добавлены, empty-search artifacts получили ту же listing surface, а desktop homepage/status-dialog guards повторно просмотрены после full suite; repository total `34` PNG (`33` actual + Paper); axe serious/critical, no-overflow, runtime, PHP lint и `git diff --check` проходят; post-suite inventory `10/0/0/0`, config/documentation preflight `11/11`.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

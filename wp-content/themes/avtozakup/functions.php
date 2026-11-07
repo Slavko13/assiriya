@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.10.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.11.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -288,6 +288,78 @@ function avtozakup_is_catalog_shop_request(): bool {
 	return function_exists( 'is_shop' ) && is_shop() && ! is_search();
 }
 
+/**
+ * Limit the shared listing-card presentation to supported public loops.
+ * Product-page related/upsell loops and mixed WordPress search stay native.
+ */
+function avtozakup_is_product_loop_presentation_request(): bool {
+	return avtozakup_is_catalog_shop_request()
+		|| ( function_exists( 'is_product_category' ) && is_product_category() )
+		|| avtozakup_is_product_search_request();
+}
+
+function avtozakup_product_loop_body_class( array $classes ): array {
+	if ( avtozakup_is_product_loop_presentation_request() ) {
+		$classes[] = 'az-product-loop-page';
+	}
+	return array_values( array_unique( $classes ) );
+}
+
+function avtozakup_product_loop_post_classes( array $classes, WC_Product $product ): array {
+	if ( ! avtozakup_is_product_loop_presentation_request() ) {
+		return $classes;
+	}
+
+	$identity  = avtozakup_loop_product_identity( $product );
+	$classes[] = 'az-loop-product-card';
+	$classes[] = 'az-loop-product-card--' . $identity['kind'];
+	return array_values( array_unique( $classes ) );
+}
+
+function avtozakup_render_loop_product_brand(): void {
+	if ( ! avtozakup_is_product_loop_presentation_request() ) {
+		return;
+	}
+
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+
+	$identity = avtozakup_loop_product_identity( $product );
+	if ( '' === $identity['brand'] ) {
+		return;
+	}
+
+	printf(
+		'<span class="az-loop-product-brand" data-loop-product-brand>%s</span>',
+		esc_html( $identity['brand'] )
+	);
+}
+
+function avtozakup_render_loop_product_reference(): void {
+	if ( ! avtozakup_is_product_loop_presentation_request() ) {
+		return;
+	}
+
+	global $product;
+	if ( ! $product instanceof WC_Product ) {
+		return;
+	}
+
+	$identity = avtozakup_loop_product_identity( $product );
+	if ( '' === $identity['reference'] ) {
+		return;
+	}
+
+	printf(
+		'<span class="az-loop-product-reference" data-loop-product-reference data-reference-kind="%s">%s: %s</span>',
+		esc_attr( $identity['reference_kind'] ),
+		esc_html( $identity['reference_label'] ),
+		esc_html( $identity['reference'] )
+	);
+}
+
 function avtozakup_product_search_label(): string {
 	$query = sanitize_text_field( get_search_query( false ) );
 	return sprintf( 'Поиск товаров: «%s»', $query );
@@ -390,6 +462,13 @@ function avtozakup_render_shop_result_count(): void {
 	<?php
 }
 
+function avtozakup_render_category_result_count(): void {
+	$count = function_exists( 'wc_get_loop_prop' ) ? (int) wc_get_loop_prop( 'total' ) : 0;
+	?>
+	<p class="woocommerce-result-count" data-category-product-count><?php echo esc_html( sprintf( 'Товаров в категории: %d', $count ) ); ?></p>
+	<?php
+}
+
 function avtozakup_product_description_label( string $label ): string {
 	return 'Описание';
 }
@@ -431,12 +510,25 @@ function avtozakup_configure_catalog_shop_page(): void {
 	remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 }
 
+function avtozakup_configure_product_category_page(): void {
+	if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+	add_action( 'woocommerce_before_shop_loop', 'avtozakup_render_category_result_count', 20 );
+	remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
+}
+
 add_action( 'woocommerce_after_shop_loop_item', 'avtozakup_render_loop_demo_provenance', 7 );
+add_action( 'woocommerce_shop_loop_item_title', 'avtozakup_render_loop_product_brand', 5 );
+add_action( 'woocommerce_shop_loop_item_title', 'avtozakup_render_loop_product_reference', 15 );
 add_action( 'woocommerce_single_product_summary', 'avtozakup_render_single_demo_provenance', 11 );
 add_action( 'wp', 'avtozakup_configure_product_detail_layout' );
 add_action( 'wp', 'avtozakup_configure_demo_product_page' );
 add_action( 'wp', 'avtozakup_configure_product_search_page' );
 add_action( 'wp', 'avtozakup_configure_catalog_shop_page' );
+add_action( 'wp', 'avtozakup_configure_product_category_page' );
 add_filter( 'woocommerce_get_availability_text', 'avtozakup_demo_product_availability_text', 10, 2 );
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'avtozakup_demo_single_add_to_cart_text', 10, 2 );
 add_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_demo_loop_add_to_cart_text', 10, 2 );
@@ -446,6 +538,8 @@ add_filter( 'woocommerce_page_title', 'avtozakup_woocommerce_page_title' );
 add_filter( 'woocommerce_breadcrumb_defaults', 'avtozakup_woocommerce_breadcrumb_defaults' );
 add_filter( 'woocommerce_get_breadcrumb', 'avtozakup_woocommerce_breadcrumb_trail' );
 add_filter( 'woocommerce_redirect_single_search_result', 'avtozakup_keep_product_search_results_page' );
+add_filter( 'body_class', 'avtozakup_product_loop_body_class' );
+add_filter( 'woocommerce_post_class', 'avtozakup_product_loop_post_classes', 10, 2 );
 
 add_action(
 	'woocommerce_before_shop_loop',

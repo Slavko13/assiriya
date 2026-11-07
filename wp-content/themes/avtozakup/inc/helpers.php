@@ -199,6 +199,37 @@ function avtozakup_demo_product_identity( WC_Product $product ): ?array {
 }
 
 /**
+ * Return public identity fields that may be shown in a native product loop.
+ *
+ * Marked demo records expose only their curated brand/article pair. Products
+ * created by an administrator keep their native brand attribute and SKU.
+ * Synthetic demo SKUs never cross this boundary.
+ *
+ * @return array{kind:string,brand:string,reference:string,reference_kind:string,reference_label:string}
+ */
+function avtozakup_loop_product_identity( WC_Product $product ): array {
+	$provenance = avtozakup_demo_product_provenance( $product );
+	if ( null !== $provenance ) {
+		$identity = avtozakup_demo_product_identity( $product );
+		return array(
+			'kind'            => 'demo',
+			'brand'           => null !== $identity ? $identity['brand'] : '',
+			'reference'       => null !== $identity ? $identity['article'] : '',
+			'reference_kind'  => 'article',
+			'reference_label' => 'Артикул',
+		);
+	}
+
+	return array(
+		'kind'            => 'standard',
+		'brand'           => trim( sanitize_text_field( (string) $product->get_attribute( 'pa_brand' ) ) ),
+		'reference'       => trim( sanitize_text_field( (string) $product->get_sku() ) ),
+		'reference_kind'  => 'sku',
+		'reference_label' => 'SKU',
+	);
+}
+
+/**
  * Return the synthetic SKU owned by the demo seeder.
  * A marked product with any other SKU keeps the standard WooCommerce meta UI.
  */

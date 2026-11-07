@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S77 Paper-aligned responsive Woo PDP:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S77 strengthens existing catalog/admin scenarios without adding a new test case.
+**Текущий regression после I2-S78 Paper-informed Woo listing cards:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S78 strengthens existing catalog/search/admin scenarios without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -932,6 +932,17 @@ I2-S76 accepts only removal of current public-theme decorative pre-headings. Fun
 
 I2-S77 accepts only the current simple-product presentation and safe existing metadata. Offers, variants, fitment, analogs, favorites, reviews, real price/stock/ETA, quantity business rules, stale/revalidation, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
 
+### I2-S78 — Paper-informed shared Woo listing cards
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S78-ACC-001 | Woo remains authoritative across supported listings | shop, product category and strict product search use named loop hooks plus scoped CSS; native thumbnail, title/permalink, price and product-type action remain Woo-owned, with no `content-product.php` override | `PASS / TECHNICAL` |
+| I2-S78-ACC-002 | Public identity fails closed | marked demo cards expose only sanitized seed brand/article and never `AZ-DEMO-*`; temporary unmarked admin product keeps its optional `pa_brand`/exact native SKU and has no demo provenance across shop/search/category | `PASS / TECHNICAL` |
+| I2-S78-ACC-003 | Shared responsive presentation is usable and narrow | Paper SCR-006/007 informs the desktop card; shared `4/3/2/1` grid, non-clipped content and `>=48px` CTA pass on `1440/390/360`; category uses Russian exact count and omits unsupported ordering; PDP related/upsell and mixed search are excluded | `PASS / PROVISIONAL` |
+| I2-S78-ACC-004 | Targeted evidence and visual inventory stay bounded | valid pre-fix `6 failed`; post-fix listing target `6 passed`; localized category refresh `3 passed`; admin target plus dependencies `55`: `53 passed / 2 intentional skipped`; final full regression `61`: `59 passed / 2 intentional skipped / 0 failed`; six catalog/search PNG refreshed and three category PNG added, total `34` (`33` actual + Paper) | `PASS` |
+
+I2-S78 accepts presentation and existing Woo data only. Sorting semantics, filters, ranking, offers, fitment, OEM/analogs, favorites, reviews, real stock/price/ETA, business add-to-cart success, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
+
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
 | ID | Критерий | Доказательство | Статус |
@@ -996,6 +1007,7 @@ Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а serve
 - Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
 - Product search empty state: `docs/qa/visual-diffs/product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png`.
 - Product search results: `docs/qa/visual-diffs/product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png`.
+- Product category listing: `docs/qa/visual-diffs/product-category-desktop-chrome-1440.png`, `product-category-mobile-chrome-390.png`, `product-category-mobile-chrome-360.png`.
 - Open status dialog: `docs/qa/visual-diffs/status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 

@@ -278,6 +278,64 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .woocommerce ul.products li.product .woocommerce-loop-product__title { min-height: 44px; color: var(--az-ink); font-size: 14px; }
 .woocommerce ul.products li.product .price { display: block; margin: 8px 0; color: var(--az-ink); font-size: 18px; font-weight: 800; }
 
+/* Paper SCR-006/SCR-007: native WooCommerce data and actions in one shared listing card. */
+.az-product-loop-page { background: #f7f9fc; }
+.az-product-loop-page.woocommerce ul.products {
+  grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; margin-top: 24px;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card {
+  position: relative; min-width: 0; min-height: 391px; padding: 0; display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid #e2e8f0; border-radius: 4px; background: white;
+  box-shadow: 0 8px 24px rgb(20 36 61 / 0%);
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card:hover,
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card:focus-within {
+  border-color: #b9c8d9; box-shadow: 0 14px 32px rgb(20 36 61 / 9%); transform: translateY(-2px);
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > .woocommerce-loop-product__link {
+  min-width: 0; min-height: 0; padding: 0 14px; display: flex; flex: 1 1 auto; flex-direction: column;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > .woocommerce-loop-product__link > img {
+  width: calc(100% + 28px); max-width: none; height: 180px; margin: 0 -14px 13px; padding: 12px 14px;
+  flex: 0 0 180px; object-fit: contain; background: #f5f7fa; border-bottom: 1px solid #edf1f6;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .onsale {
+  position: absolute; z-index: 2; top: 10px; left: 10px; min-width: 48px; margin: 0; padding: 6px 9px;
+  border-radius: 4px; color: white; background: var(--az-blue); font-size: 10px; line-height: 15px; font-weight: 800; text-align: center;
+}
+.az-product-loop-page .az-loop-product-brand {
+  display: block; margin-bottom: 4px; overflow-wrap: anywhere; color: #1262e8;
+  font-size: 10px; line-height: 15px; font-weight: 700; letter-spacing: .45px; text-transform: uppercase;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .woocommerce-loop-product__title {
+  min-height: 38px; margin: 0; padding: 0; overflow-wrap: anywhere; color: #14243d;
+  font-size: 14px; line-height: 19px; font-weight: 700;
+}
+.az-product-loop-page .az-loop-product-reference {
+  display: block; margin-top: 4px; overflow-wrap: anywhere; color: #63748b; font-size: 11px; line-height: 16px;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .price {
+  margin: auto 0 0; padding-top: 8px; color: #14243d; font-size: 21px; line-height: 26px; font-weight: 800;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .price del,
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .price ins { display: inline; }
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card .price ins { text-decoration: none; }
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > .az-demo-provenance--loop {
+  min-height: 0; margin: 10px 14px 0; padding: 7px 9px; border-radius: 0 3px 3px 0; overflow-wrap: anywhere;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > a.button {
+  width: calc(100% - 28px); min-height: 48px; height: auto; margin: 10px 14px 14px; padding: 10px 12px;
+  display: flex; align-items: center; justify-content: center; flex: 0 0 auto; border: 1px solid var(--az-blue); border-radius: 4px;
+  color: white; background: var(--az-blue); font-size: 12px; line-height: 16px; font-weight: 750; text-align: center;
+  white-space: normal; overflow-wrap: anywhere;
+}
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > a.button:hover { background: var(--az-blue-dark); border-color: var(--az-blue-dark); }
+.az-product-loop-page.woocommerce ul.products li.az-loop-product-card > a.added_to_cart {
+  min-height: 44px; margin: -8px 14px 14px; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--az-blue); font-size: 12px; font-weight: 700;
+}
+
 /* Paper SCR-009: WooCommerce keeps the product data and controls; the theme owns presentation only. */
 .single-product { background: linear-gradient(180deg, #f7f9fc 0 620px, #fff 620px); }
 .single-product .az-content { padding-top: 32px; }
@@ -609,6 +667,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .woocommerce-cart .cart-collaterals .cart_totals { float: none; width: 100%; }
 
 @media (max-width: 1180px) {
+	.az-product-loop-page.woocommerce ul.products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .az-container { width: min(var(--az-container), calc(100% - 32px)); }
   .az-logo { min-width: auto; }
   .az-catalog-button span { display: none; }
@@ -657,6 +716,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .az-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
   .az-footer__grid > nav:last-child { grid-column: 2; }
   .woocommerce ul.products { grid-template-columns: repeat(3, 1fr); }
+  .az-product-loop-page.woocommerce ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .single-product div.product { grid-template-columns: minmax(0, 1fr); justify-content: stretch; }
   .single-product div.product > .product_title,
   .single-product div.product > .woocommerce-product-gallery,
@@ -725,6 +785,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .az-footer__bottom { padding-block: 16px; align-items: flex-start; flex-direction: column; }
   .az-footer__bottom div { gap: 16px; }
   .woocommerce ul.products { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .az-product-loop-page.woocommerce ul.products { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .az-product-loop-page.woocommerce ul.products li.az-loop-product-card > .woocommerce-loop-product__link > img {
+    height: 220px; flex-basis: 220px;
+  }
+  .az-product-loop-page.woocommerce ul.products li.az-loop-product-card .woocommerce-loop-product__title {
+    min-height: 0; font-size: 15px; line-height: 20px;
+  }
   .single-product { background: linear-gradient(180deg, #f7f9fc 0 720px, #fff 720px); }
   .single-product .az-content { width: 100%; padding: 18px 12px 56px; }
   .single-product .woocommerce-breadcrumb { margin-bottom: 16px; font-size: 10px; line-height: 1.5; }

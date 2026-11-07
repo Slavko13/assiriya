@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
+import { expectLoopCardPresentation, expectLoopGridPresentation } from './product-card';
 import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
@@ -121,8 +122,10 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
 
   const products = page.locator('ul.products li.product');
   await expect(products).toHaveCount(2);
+  await expectLoopGridPresentation(page.locator('ul.products'), page.viewportSize()?.width ?? 0);
   for (let index = 0; index < await products.count(); index += 1) {
     const product = products.nth(index);
+    await expectLoopCardPresentation(product, { kind: 'demo' });
     const productTitle = product.locator('.woocommerce-loop-product__title');
     await expect(productTitle).toBeVisible();
     expect((await productTitle.innerText()).trim()).not.toBe('');
