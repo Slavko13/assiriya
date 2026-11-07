@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S82 Paper SCR-009/010 product and cart:** `67` tests = `65 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S82 добавляет шесть public PDP/cart scenarios и усиливает admin isolation assertion без ослабления прежних контрактов.
+**Текущий regression после I2-S83 complete Paper frontend inventory:** `70` tests = `68 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S83 добавляет по одному последовательному 13-screen inventory scenario на каждый public project без изменения production frontend/backend.
 
 ## Технические критерии Итерации 2
 
@@ -988,6 +988,18 @@ I2-S81 accepts only current project-owned fixture migration, public rendering, r
 
 I2-S82 accepts the current marked simple-product and Cart Block presentation only. Production supplier/WMS/fitment/favorites/city/fulfillment integrations, offer ranking, verified stock/ETA, split-shipment rules, checkout/order/payment completion, Paper mobile approval, pixel-perfect sign-off, AT/browser matrix and full WCAG remain outside the slice.
 
+### I2-S83 — complete Paper baseline and frontend route matrix
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S83-ACC-001 | Live Paper source is fresh and complete before further frontend work | file `01M6BSMXQST9XYEMQYXQARBFFT`, page `p-1-0`: 13 artboards / 4489 nodes / token hash `811c9dc5`; all SCR-001—013 exports retain exact native dimensions in `docs/qa/visual-diffs/i2-s83/` | `PASS / INVENTORY` |
+| I2-S83-ACC-002 | Every Paper screen has an honest current route/component classification | `docs/implementation/frontend-route-matrix.md` contains exactly 13 rows and the reviewed result `0 DONE / 10 PARTIAL / 3 MISSING`; SCR-003/007 use exact 404 evidence and SCR-008 uses an explicit absence-state capture, never a fabricated screen | `PASS / INVENTORY / DESIGN_REVIEW_REQUIRED` |
+| I2-S83-ACC-003 | Current visual evidence covers desktop and both supported mobile widths | `13` Paper references + `39` current actual captures (`1440/390/360`) + `26` native-scale diagnostic side-by-side/overlay comparisons; repository total `133 PNG` = `87 actual + 16 Paper + 30 comparisons`; no `after` files because S83 changes no UI | `PASS / PROVISIONAL / DESIGN_REVIEW_REQUIRED` |
+| I2-S83-ACC-004 | Route, dead-link, reusable-component and gap inventories are explicit | current `200/404` matrix, non-home broken `#vin-request`, orphaned `/contacts/`, per-SCR gap/severity/action, reusable/missing primitives and duplication risks are recorded; missing routes remain debt and are not treated as successful acceptance | `PASS / INVENTORY` |
+| I2-S83-ACC-005 | Executable evidence and regression stay clean without production mutation | targeted inventory `3 passed`; full `70` = `68 passed / 2 intentional skipped / 0 failed`; serious/critical axe, no-overflow, runtime, expected-document-404, dialog focus, real two-row cart/checkout entry and desktop route checks pass; production PHP/CSS/JS and WordPress data unchanged | `PASS / TECHNICAL` |
+
+I2-S83 accepts only the completeness and truthfulness of the inventory. It does not accept any screen as Paper-exact, close a DEC, repair a dead link, provide missing vehicle/taxonomy/checkout behavior, approve mobile designs, or complete backend/commerce/security/full-WCAG scope. Implementation resumes with I2-S84.
+
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
 | ID | Критерий | Доказательство | Статус |
@@ -996,7 +1008,7 @@ I2-S82 accepts the current marked simple-product and Cart Block presentation onl
 | OPS-QT-001-ACC-002 | Edge config валиден, запускается under hardening и не блокирует public admin | `caddy validate`; exact `read-only + cap_drop ALL + cap_add NET_BIND_SERVICE + no-new-privileges` runtime health `200`; admin deny отсутствует, HTTPS forwarding сохранён | `PASS` локально |
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
-| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config/documentation preflight `11 passed`: environment/deployment guards включают no ports/host network, two-site/IP/snapshot, forbidden global removal, WP-CLI `run -T`, shared required `PUBLIC_URL`, bootstrap-before-Caddy и internal-link smoke rejection, плюс current-summary drift guard | `PASS` локально |
+| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config/documentation preflight `12 passed`: environment/deployment guards включают no ports/host network, two-site/IP/snapshot, forbidden global removal, WP-CLI `run -T`, shared required `PUBLIC_URL`, bootstrap-before-Caddy и internal-link smoke rejection, плюс current-summary drift и I2-S83 evidence guards | `PASS` локально |
 | OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до завершённого server run с сохранённым two-site evidence |
 | OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до завершённого server run |
 

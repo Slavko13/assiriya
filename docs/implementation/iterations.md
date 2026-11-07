@@ -2196,6 +2196,32 @@ Qualifier: это prevention-срез; одноразовая локальная
 - targeted new PDP/cart `6 passed`, existing cart+catalog `18 passed`, combined cart+new `15 passed`, isolated admin isolation `1 passed`; final full regression `67` = `65 passed / 2 intentional skipped / 0 failed`; PHP/JS syntax, `git diff --check`, preflight `11/11`, axe/no-overflow/runtime and inventory `10/0/0/0` pass;
 - independent code/test findings on unit counts, skeleton state, unsupported copy, accessibility, internal markers/SKU, hard-coded specifications and fail-closed isolation were fixed; final visual review reports no blockers on desktop or mobile. Mobile and final design sign-off remain `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not pixel-perfect acceptance.
 
+### I2-S83 — complete Paper baseline and frontend route matrix
+
+**Статус:** `DONE / INVENTORY / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** all Paper `SCR-001—013`; `PBL-010/PBL-040`; `DG-017/018`; `DEC-019/020` remain open. This slice inventories the current frontend and does not complete a functional requirement.
+
+Критерии среза:
+
+- live Paper freshness is checked before export; all 13 artboards, IDs, dimensions, node count and token hash are recorded;
+- every SCR has an explicit route or component, desktop/current mobile evidence and one of `DONE/PARTIAL/MISSING`, with `PROVISIONAL` used only as a qualifier;
+- all current visual gaps, reusable/missing components, duplication risks, dead links and route statuses are documented before further frontend work;
+- current actuals are captured on `1440/390/360`; missing screens use exact `404` or fail-closed absence evidence and are never presented as implemented;
+- screenshots pass serious/critical axe, no-overflow and runtime gates; dialog keyboard/focus and real Woo cart/checkout entry are exercised;
+- no production PHP/CSS/JS, WordPress data, backend integration or open DEC is changed in this inventory-only slice.
+
+Вне scope: any visual fix, new route/taxonomy, vehicle/VIN behavior, checkout activation, backend contract, commercial data, Paper mobile approval, pixel-perfect sign-off, AT/browser matrix and full WCAG.
+
+Выполнено:
+
+- live Paper file `01M6BSMXQST9XYEMQYXQARBFFT` is unchanged at 13 artboards / 4489 nodes / token hash `811c9dc5`; all 13 artboards were exported at their native dimensions;
+- `docs/implementation/frontend-route-matrix.md` maps all screens and records `0 DONE / 10 PARTIAL / 3 MISSING`; SCR-003/007 are exact 404 states, SCR-008 has no route/state and uses the current vehicle status dialog as absence evidence;
+- the route audit records current `200` destinations plus dead `/vehicle/`, child taxonomy, `/about/`, `/faq/`, `/documents/`, `/offer/`, `/privacy/`, the broken non-home `#vin-request` fragment and orphaned `/contacts/` page;
+- `docs/qa/visual-diffs/i2-s83/` contains `13` Paper references, `39` current actual captures and `26` diagnostic comparisons; repository total is `133 PNG` = `87 actual + 16 Paper + 30 comparisons`;
+- `tests/e2e/frontend-inventory.spec.ts` adds one sequential 13-screen scenario per public project; targeted `3 passed`; final full regression `70` = `68 passed / 2 intentional skipped / 0 failed`; axe/no-overflow/runtime, exact expected-404 acknowledgement and route/fragment inventory pass;
+- component inventory preserves shared header/footer/dialog/category/listing/PDP/cart/button/input primitives and identifies missing form/state/filter/order/vehicle/FAQ primitives plus card/breadcrumb/state duplication risks; no frontend/backend implementation was performed.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`
@@ -2211,7 +2237,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 - owner-approved public `/wp-login.php` отвечает `2xx`, unauthenticated `/wp-admin/` ведёт на same-origin WordPress login; pre-existing foreign container IDs/states/health и listeners 80/443 не меняются;
 - remote proof требуется до статуса `DEPLOYED`.
 
-Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; config/documentation preflight `11 passed` (10 existing environment/deployment guards + current-summary drift guard). Completed server run сознательно не заявлен: две partial attempts зафиксированы выше, но полного remote proof ещё нет.
+Выполнено локально: Bash syntax `PASS`; Compose config `PASS`, published ports `0`; Caddy validate `PASS`; official cloudflared `2026.10.7` image/version `PASS`; config/documentation preflight `12 passed` (environment/deployment guards + current-summary drift + I2-S83 evidence guard). Completed server run сознательно не заявлен: две partial attempts зафиксированы выше, но полного remote proof ещё нет.
 
 ## Следующие итерации
 

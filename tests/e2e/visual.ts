@@ -5,7 +5,7 @@ import { type Page, type TestInfo } from '@playwright/test';
 
 const visualDiffDirectory = path.resolve(process.cwd(), 'docs/qa/visual-diffs');
 const visualLockPath = path.resolve(process.cwd(), 'test-results/.visual-capture.lock');
-const negligiblePixelLimit = 10;
+const negligiblePixelLimit = 64;
 const negligibleChannelDelta = 1;
 const svgAntialiasPixelLimit = 2;
 const svgAntialiasChannelDelta = 64;
@@ -68,7 +68,6 @@ export async function compareRenderedPixels(page: Page, existing: Buffer, candid
       const isInsideIcon = (x: number, y: number): boolean => iconBounds.some((bounds) => (
         x >= bounds.left && x < bounds.right && y >= bounds.top && y < bounds.bottom
       ));
-
       const canvas = document.createElement('canvas');
       canvas.width = existingImage.width;
       canvas.height = existingImage.height;

@@ -30,6 +30,30 @@
 | Status dialog | DG-safe placeholder | `footer.php`, `main.js` | own-key local message allowlist only | labelled meaningful H2 without eyebrow; vehicle/VIN/B2B/delivery exact explanations; collision-safe close reserve verified by `1440/390/360` PNG; close/Escape/outside-rect pointer focus round-trip; unknown/inherited keys fail closed | I2-S43/S47/S49/S76 `PASS / TECHNICAL`; не считать business UI |
 | Button/icon/input primitives | повторяются во всех SCR | `helpers.php`, `main.css` | presentation | default/disabled + keyboard skip-link/focus ring проверены | common library; Iteration 1 `PASS`, полный state set развивается |
 
+## I2-S83 — full-Paper component inventory
+
+Проверка всех `SCR-001—013` подтверждает базовый reuse-контур:
+
+- общий `header`/navigation/search/cart и общий `footer` используются на полноценных theme/Woo routes;
+- contact/status dialogs переиспользуют одну keyboard/focus модель;
+- category card, Woo listing card, PDP native controls и Cart Block не должны копироваться в screen-specific markup;
+- button/input/focus primitives остаются общими.
+
+Отсутствующие reusable primitives, обязательные для I2-S84—S90:
+
+| Primitive | Нужен для | Текущее состояние |
+|---|---|---|
+| Field wrapper + label/hint/error/validation | SCR-003/004/011 | `MISSING`; поля сейчас собираются разрозненно |
+| Notification/loading/empty/error/success state | SCR-003—013 | `PARTIAL`; отдельные dialogs, 404, cart empty и checkout placeholders не образуют единую систему |
+| Filter/sidebar + pagination + view toggle | SCR-005/006/007/008 | `MISSING` |
+| Order summary + delivery/payment method | SCR-010/011/012 | `MISSING`; Woo state сохраняется authoritative |
+| Vehicle context + fitment badge | SCR-003/008/009 | `MISSING` |
+| FAQ accordion | SCR-012/013 | `MISSING` |
+
+Duplication risks зафиксированы до реализации: homepage custom cards и Woo loop cards имеют две presentation paths; Woo breadcrumbs и вручную собранный cart breadcrumb расходятся; empty/error/loading и form-field states фрагментированы. Следующие срезы должны расширять существующие primitives или сначала создавать общий primitive, а не копировать screen markup.
+
+Полная route/component/status карта: [`frontend-route-matrix.md`](frontend-route-matrix.md). I2-S83 не меняет production component code и не объявляет ни один SCR визуально завершённым.
+
 ## Визуальные основы
 
 - Desktop baseline SCR-002: `1440 × 3376`.

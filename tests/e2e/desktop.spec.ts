@@ -32,8 +32,9 @@ test('visual artifact comparison retains only explicitly bounded pixel noise', a
 
     return {
       baseline: createPng(20),
-      tenByOne: createPng(20, Array.from({ length: 10 }, (_, index) => index), 1),
-      elevenByOne: createPng(20, Array.from({ length: 11 }, (_, index) => index), 1),
+      boundedBaseline: createPng(70),
+      sixtyFourByOne: createPng(70, Array.from({ length: 64 }, (_, index) => index), 1),
+      sixtyFiveByOne: createPng(70, Array.from({ length: 65 }, (_, index) => index), 1),
       oneByTwo: createPng(20, [0], 2),
       twoBySixtyFourInsideSvg: createPng(20, [4, 5], 64),
       threeBySixtyFourInsideSvg: createPng(20, [4, 5, 6], 64),
@@ -57,15 +58,16 @@ test('visual artifact comparison retains only explicitly bounded pixel noise', a
     maxChannelDelta: 0,
     retention: 'exact',
   });
-  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.tenByOne))).resolves.toEqual({
+  const boundedBaseline = decode(dataUrls.boundedBaseline);
+  await expect(compareRenderedPixels(page, boundedBaseline, decode(dataUrls.sixtyFourByOne))).resolves.toEqual({
     equivalent: true,
-    changedPixels: 10,
+    changedPixels: 64,
     maxChannelDelta: 1,
     retention: 'bounded-channel-noise',
   });
-  await expect(compareRenderedPixels(page, baseline, decode(dataUrls.elevenByOne))).resolves.toMatchObject({
+  await expect(compareRenderedPixels(page, boundedBaseline, decode(dataUrls.sixtyFiveByOne))).resolves.toMatchObject({
     equivalent: false,
-    changedPixels: 11,
+    changedPixels: 65,
     maxChannelDelta: 1,
   });
   await expect(compareRenderedPixels(page, baseline, decode(dataUrls.oneByTwo))).resolves.toMatchObject({

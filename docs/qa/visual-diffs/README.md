@@ -257,6 +257,17 @@ report-home-YYYYMMDD.md
 - new targeted `6 passed`, existing cart+catalog `18 passed`, combined cart+new `15 passed`, isolated admin isolation `1 passed`; final full regression `67` = `65 passed / 2 intentional skipped / 0 failed`; PHP/JS/diff/preflight, axe serious/critical, runtime and inventory `10/0/0/0` pass;
 - repository total is `55` PNG (`48` actual captures + `3` Paper references + `4` comparisons). Independent code/test findings were fixed; final visual review reports no blockers. Result remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not Paper mobile/pixel-perfect, supplier/fulfillment/checkout, full WCAG/AT/browser or production commerce acceptance.
 
+## Complete Paper frontend inventory I2-S83
+
+- full evidence register: [`i2-s83/README.md`](i2-s83/README.md); live Paper file `01M6BSMXQST9XYEMQYXQARBFFT` contains 13 artboards / 4489 nodes with token hash `811c9dc5`;
+- all SCR-001—013 were exported and mapped to exact current routes/components; reviewed classification is `0 DONE / 10 PARTIAL / 3 MISSING`;
+- evidence adds `13` Paper references, `39` current actual captures on `1440/390/360`, `13` native-scale side-by-side files and `13` 50% overlays; there are deliberately no `after` captures because S83 changes no production UI;
+- repository total is `133 PNG` = `87 actual captures + 16 Paper references + 30 comparisons`;
+- SCR-003/007 store exact 404 evidence and SCR-008 stores the current fail-closed vehicle dialog as absence evidence; these are diagnostic artifacts, not accepted screens;
+- SCR-009 gallery and hydrated SCR-010 product images are pinned to their server-rendered canonical `src` in the test DOM so responsive/image-cache history cannot change the captured raster; Cart Block capture additionally requires two rows, no skeletons and two decoded images. Retained renderer noise is limited by executable `64px/Δ1` and inline-SVG `2px/Δ64` boundaries, while raster-image or any larger change rewrites the actual;
+- targeted inventory `3 passed`; final full regression `70` = `68 passed / 2 intentional skipped / 0 failed`; serious/critical axe, no-overflow/runtime, dialog focus, real two-row cart/checkout entry, expected document-404 and desktop route/fragment gates pass;
+- full gaps, conscious deviations, reusable/missing components, dead links and next slices are recorded in [`frontend-route-matrix.md`](../../implementation/frontend-route-matrix.md). Mobile and all visual classifications remain `PROVISIONAL / DESIGN_REVIEW_REQUIRED`; no DEC, backend or business behavior is accepted by this inventory.
+
 ## Отчёт
 
 Для каждого расхождения указать: компонент, координату/селектор, expected, actual, severity, источник (`Paper`, `DG`, `DEC`), принятое действие и статус. Не «исправлять» неоднозначность Paper без записи в decision log.
