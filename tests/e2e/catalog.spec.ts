@@ -278,10 +278,11 @@ test('keeps the seeded PDP customer-facing and relation-safe', async ({ page }, 
   expect(image.src).toBeTruthy();
   expect(image.alt.length > 0 || image.src.includes('placeholder'), 'Product image needs meaningful alt text or the Woo placeholder').toBe(true);
 
-  await expect(page.locator('.woocommerce-product-details__short-description')).toBeVisible();
-  await expect(page.locator('.woocommerce-Tabs-panel--description')).toBeVisible();
-  await expect(page.locator('.woocommerce-tabs .description_tab')).toContainText('Описание');
-  await expect(page.locator('.woocommerce-Tabs-panel--description h2')).toHaveCount(0);
+	await expect(page.locator('.woocommerce-product-details__short-description')).toHaveCount(0);
+	await expect(page.locator('.woocommerce-tabs')).toHaveCount(0);
+	const productDescription = productShell.locator(':scope > [data-pdp-section="description"]');
+	await expect(productDescription).toBeVisible();
+	await expect(productDescription.getByRole('heading', { level: 2, name: 'О товаре' })).toHaveCount(1);
   await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);
   await expect(page.locator('[data-demo-product-meta="product"], [data-demo-technical-sku]')).toHaveCount(0);
   const productMeta = page.locator('.summary > .product_meta');

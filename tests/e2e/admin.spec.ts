@@ -760,6 +760,7 @@ test.describe('WordPress administration', () => {
     const marker = Date.now();
     const productName = `E2E user product ${marker}`;
     const sku = `USER-E2E-${marker}`;
+    const partialMarkerSku = 'AZ-DEMO-999';
     const categoryName = `E2E user category ${marker}`;
     const categorySlug = `e2e-user-category-${marker}`;
     let restNonce = '';
@@ -865,6 +866,8 @@ test.describe('WordPress administration', () => {
       await expect(page.locator('.product_meta .sku')).toHaveText(sku);
       await expect(page.locator('p.stock')).toContainText('3');
       await expect(page.locator('p.stock')).not.toContainText('Демо-наличие');
+      const nativePriceText = await productShell.locator(':scope > .summary > .price').innerText();
+      expect(Number.parseFloat(nativePriceText.replace(/[^\d,.-]/g, '').replace(',', '.'))).toBe(4321);
       const cartForm = page.locator('form.cart');
       await expect(cartForm).toHaveCount(1);
       await expect(cartForm).toHaveAttribute('method', 'post');
@@ -922,6 +925,35 @@ test.describe('WordPress administration', () => {
       await expect(categoryAction).toBeVisible();
       await expect(categoryAction).toContainText(/\S/);
       await expect(categoryAction).not.toContainText(/демо/i);
+
+      const partialMarkerResponse = await page.request.put(`/wp-json/wc/v3/products/${productId}`, {
+        headers: requestHeaders,
+        data: {
+          sku: partialMarkerSku,
+          meta_data: [{ key: '_avtozakup_demo', value: '1' }],
+        },
+      });
+      expect(partialMarkerResponse.ok(), await partialMarkerResponse.text()).toBeTruthy();
+      await page.goto(createdProduct.permalink, { waitUntil: 'networkidle' });
+      await expect(page.locator('body')).not.toHaveClass(/\baz-product-detail-expanded\b/);
+      const partialMarkedShell = page.locator('.single-product div.product').first();
+      await expect(partialMarkedShell.locator(':scope > [data-pdp-section]')).toHaveCount(0);
+      await expect(partialMarkedShell.locator(':scope > .az-pdp-characteristics')).toHaveCount(0);
+      await expect(page.locator('.woocommerce-product-details__short-description')).toContainText(
+        'User-owned short description.',
+      );
+      await expect(page.locator('.woocommerce-Tabs-panel--description')).toContainText(
+        'User-owned long description.',
+      );
+      await expect(page.locator('p.stock')).toContainText('3');
+      await expect(page.locator('form.cart')).toHaveCount(1);
+      await expect(page.locator('.product_meta .sku')).toHaveCount(0);
+      await expect(page.locator('body')).not.toContainText(partialMarkerSku);
+      const restoreSkuResponse = await page.request.put(`/wp-json/wc/v3/products/${productId}`, {
+        headers: requestHeaders,
+        data: { sku },
+      });
+      expect(restoreSkuResponse.ok(), await restoreSkuResponse.text()).toBeTruthy();
     } finally {
       try {
         if (restNonce) {

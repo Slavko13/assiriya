@@ -2169,6 +2169,33 @@ Qualifier: это prevention-срез; одноразовая локальная
 - Quick Tunnel Compose requires the same `PUBLIC_URL` for `wordpress` and `wpcli`; native taxonomy/page menu objects are created under that public origin; deploy runs bootstrap before recreating project Caddy; smoke rejects public links/actions containing `localhost`, `127.0.0.1` or `caddy`;
 - valid config red test failed before the WP-CLI URL fix; post-fix preflight is `11/11`; nav/oils/cart targets pass, the only PDP contrast finding was fixed and retested, final full regression is `61` = `59 passed / 2 intentional skipped / 0 failed`, post-suite inventory is `10/0/0/0`, all 36 actual PNG were refreshed, the three PDP provenance filenames became `product-public-copy-*`, and repository total remains `37` PNG (`36` actual + Paper).
 
+### I2-S82 — Paper-exact product detail and cart presentation
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S71/I2-S75/I2-S77/I2-S81`; Paper `SCR-009/010`; `FR-CAT-002/003`, `FR-OFR-001—005`, `FR-CART-001—004` presentation/transport partials; `PBL-011—019`; `DEC-002/005/006/008—012/019/020` remain open.
+
+Критерии среза:
+
+- desktop `1440` follows the current Paper hierarchy and measured geometry for SCR-009/010, with references, before/after, side-by-side and overlay evidence;
+- WooCommerce remains authoritative for product title/image/price/quantity/add, Cart Store rows/count/totals/remove and checkout navigation; the theme adds presentation and confirmed project-owned context only;
+- no inert favorite/selection/city/supplier-purchase controls, invented ranking, availability, delivery promise or compatibility claim is introduced while its contract is open;
+- the accepted no-mini-heading and no-public-demo-copy rules override the two conflicting Paper labels and are recorded as conscious deviations;
+- `390/360` are provisional safe reflows with usable focus/tap targets, no document overflow, no serious/critical axe findings and no runtime errors;
+- marked and unmarked Woo products remain isolated; quantity/add/cart/reload/reopen and real total recalculation are covered by executable tests;
+- targeted and full regression, configuration preflight, PHP/JS syntax, diff/inventory checks and independent code/visual reviews must pass before `DONE`.
+
+Вне scope: production supplier/WMS/fitment/favorites/city/fulfillment integrations, approved offer ranking, promised stock/ETA, split-shipment rules, checkout/order/payment completion, Paper mobile approval, AT/browser matrix and full WCAG.
+
+Выполнено:
+
+- theme `0.15.0` composes the measured SCR-009 `392/413/423` desktop grid and SCR-010 `860/396` cart grid around native Woo nodes; gallery zoom, VIN/catalog support, semantic live price/availability, lower PDP sections and compact cart hierarchy are present without decorative overlines or public design/demo markers;
+- Woo remains authoritative for title/image/price/quantity/add and Cart Store rows/unit count/totals/remove/navigation; DOM fallback sums positive row quantities and never converts an unresolved skeleton into zero; unmarked and partial-marker products keep native price/stock/form/descriptions;
+- unsupported supplier ranking/source, package/specification guesses, city, ETA, selection/favorites, split-shipment and supplier purchase actions are omitted and recorded as conscious Paper deviations; all referenced ISSUE/DG/DEC remain open;
+- `docs/qa/visual-diffs/i2-s82/` contains Paper and before/after `1440/390/360`, native-scale desktop side-by-side and 50% overlays plus the discrepancy/deviation register; repository total is `55` PNG (`48` actual captures + `3` Paper references + `4` comparisons);
+- targeted new PDP/cart `6 passed`, existing cart+catalog `18 passed`, combined cart+new `15 passed`, isolated admin isolation `1 passed`; final full regression `67` = `65 passed / 2 intentional skipped / 0 failed`; PHP/JS syntax, `git diff --check`, preflight `11/11`, axe/no-overflow/runtime and inventory `10/0/0/0` pass;
+- independent code/test findings on unit counts, skeleton state, unsupported copy, accessibility, internal markers/SKU, hard-coded specifications and fail-closed isolation were fixed; final visual review reports no blockers on desktop or mobile. Mobile and final design sign-off remain `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not pixel-perfect acceptance.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

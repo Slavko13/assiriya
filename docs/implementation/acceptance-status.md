@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S81 public storefront copy, routes and cart CTA:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S81 strengthens existing homepage/catalog/cart/admin/deployment scenarios without adding a new test case.
+**Текущий regression после I2-S82 Paper SCR-009/010 product and cart:** `67` tests = `65 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S82 добавляет шесть public PDP/cart scenarios и усиливает admin isolation assertion без ослабления прежних контрактов.
 
 ## Технические критерии Итерации 2
 
@@ -975,6 +975,18 @@ I2-S80 accepts only the current Settings-backed renderer and its responsive pres
 | I2-S81-ACC-004 | Public renderer and bounded evidence remain clean | theme `0.14.0` removes public provenance/internal seed SKU/demo badges and uses neutral availability/checkout-unavailable copy; nav/oils/cart targets pass; PDP contrast finding fixed and retested; final full `61`: `59 passed / 2 skipped / 0 failed`; all 36 actual PNG refreshed, PDP artifacts renamed `product-public-copy-*`, repository total remains `37`; PHP/JS syntax, diff, preflight `11/11`, axe/no-overflow/runtime and inventory `10/0/0/0` pass | `PASS / PROVISIONAL / DESIGN_REVIEW_REQUIRED` |
 
 I2-S81 accepts only current project-owned fixture migration, public rendering, routing and the successful simple-product homepage transition. It does not verify real stock/price/offer truth, arbitrary product types, checkout/order/payment, production fitment/search, stable DNS, remote server deployment or Paper mobile/pixel-perfect/full WCAG acceptance.
+
+### I2-S82 — Paper SCR-009 product detail and SCR-010 cart
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S82-ACC-001 | Desktop `1440` reproduces the current Paper hierarchy and measured geometry without copying known contradictions | SCR-009 uses the measured `392/413/423` primary grid, bounded gallery/zoom, purchase surface, VIN strip, tabs and lower sections; SCR-010 uses compact breadcrumbs/H1/live count plus `860/396` rows/summary columns; Paper references, before/after, native-scale side-by-side and 50% overlay are stored in `docs/qa/visual-diffs/i2-s82/` | `PASS / PROVISIONAL / DESIGN_REVIEW_REQUIRED` |
+| I2-S82-ACC-002 | WooCommerce remains the single commerce-state owner | title, image, native price, quantity/add form, exact product ID, Cart Store rows/unit count/totals/remove and checkout/catalog hrefs are exercised; theme data uses current Woo name plus explicit project-owned brand/article only; no parallel JS price/cart state or hard-coded product specifications remains | `PASS / TECHNICAL` |
+| I2-S82-ACC-003 | Required product/cart behavior remains real | `6 passed` on `1440/390/360`: marked PDP native-price equality, real Tab focus, quantity `2`, add/reload/reopen; two different rows, total increase, one-of-two removal and persistence, live header/page count, continue-shopping navigation; existing cart suite covers last-row remove → empty and checkout guard | `PASS` |
+| I2-S82-ACC-004 | Isolation and truthful business boundaries fail closed | unmarked admin fixture preserves exact native price `4321`, stock/SKU/form/descriptions; a partial marker without valid identity keeps native PDP content while legacy synthetic `AZ-DEMO-###` remains suppressed; supplier/ranking/city/ETA/selection/favorite/split-shipment claims and decorative overlines are absent; `ISSUE-PAP-006/013/014`, `DG-006/018` and `DEC-002/005/006/008—012/019/020` remain open | `PASS / TECHNICAL` |
+| I2-S82-ACC-005 | Responsive, regression, evidence and cleanup gates are clean | targeted new `6 passed`; existing cart+catalog `18 passed`; combined cart+new `15 passed`; isolated admin `1 passed`; final full `67` = `65 passed / 2 intentional skipped / 0 failed`; axe serious/critical, no-overflow/runtime, PHP/JS syntax, diff and preflight `11/11`; repository `55` PNG; inventory `10/0/0/0`; independent code/test findings fixed and final visual review has no blockers | `PASS / PROVISIONAL / DESIGN_REVIEW_REQUIRED` |
+
+I2-S82 accepts the current marked simple-product and Cart Block presentation only. Production supplier/WMS/fitment/favorites/city/fulfillment integrations, offer ranking, verified stock/ETA, split-shipment rules, checkout/order/payment completion, Paper mobile approval, pixel-perfect sign-off, AT/browser matrix and full WCAG remain outside the slice.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

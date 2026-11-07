@@ -247,6 +247,16 @@ report-home-YYYYMMDD.md
 - nav/oils/cart targets pass; the one PDP category-link contrast finding (`4.35`) was fixed and the scenario retested; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`; PHP/JS syntax, preflight `11/11`, diff, axe serious/critical, no-overflow/runtime and inventory `10/0/0/0` pass;
 - independent code and visual reviews cover desktop/mobile homepage, public-copy PDP, cart states and shared dialogs. Result remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: no Paper mobile/pixel-perfect, full WCAG/AT/browser, commercial-data or production deployment acceptance is claimed.
 
+## Paper SCR-009 product detail and SCR-010 cart I2-S82
+
+- exact source/evidence inventory and discrepancy register: `i2-s82/README.md`; current Paper references, I2-S81 before captures and I2-S82 after captures exist for product/cart at desktop `1440`, with provisional after/before at `390/360`;
+- desktop side-by-side files preserve both `1440px` captures at `1:1`; overlays use a `1440px` Paper-height canvas, top alignment and 50% after opacity without scaling either source;
+- SCR-009 after uses the measured `392/413/423` primary grid, native gallery/zoom/price/quantity/add form, confirmed Woo name plus project brand/article, VIN route and honest lower sections; unsupported supplier/ETA/ranking/favorite/specification claims are absent;
+- SCR-010 after uses the measured `860/396` rows/summary columns, live Woo unit count, real two-row Cart Block data, native quantity/remove/totals/checkout/catalog links and the explicit checkout-unavailable guard; city/selection/favorites/source/ETA/split-shipment claims are absent;
+- `390/360` screenshots have no document overflow, clipping or overlap; mobile quantity controls and remove are `44px`; zoom is visible; the horizontally scrolling PDP tab strip is a documented provisional adaptation because Paper has no mobile frames;
+- new targeted `6 passed`, existing cart+catalog `18 passed`, combined cart+new `15 passed`, isolated admin isolation `1 passed`; final full regression `67` = `65 passed / 2 intentional skipped / 0 failed`; PHP/JS/diff/preflight, axe serious/critical, runtime and inventory `10/0/0/0` pass;
+- repository total is `55` PNG (`48` actual captures + `3` Paper references + `4` comparisons). Independent code/test findings were fixed; final visual review reports no blockers. Result remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not Paper mobile/pixel-perfect, supplier/fulfillment/checkout, full WCAG/AT/browser or production commerce acceptance.
+
 ## Отчёт
 
 Для каждого расхождения указать: компонент, координату/селектор, expected, actual, severity, источник (`Paper`, `DG`, `DEC`), принятое действие и статус. Не «исправлять» неоднозначность Paper без записи в decision log.

@@ -148,6 +148,53 @@
 
   const cartRoot = document.querySelector('.wp-block-woocommerce-cart');
   if (cartRoot && document.body.classList.contains('woocommerce-cart')) {
+    const cartPage = document.querySelector('[data-cart-page]');
+    const cartCountLabel = document.querySelector('[data-cart-count-label]');
+    const cartSupport = document.querySelector('[data-cart-support]');
+    const cartAssurance = document.querySelector('[data-cart-assurance]');
+    const cartItemLabel = (count) => {
+      const absolute = Math.abs(count) % 100;
+      const last = absolute % 10;
+      if (absolute > 10 && absolute < 20) return `${count} товаров`;
+      if (last === 1) return `${count} товар`;
+      if (last > 1 && last < 5) return `${count} товара`;
+      return `${count} товаров`;
+    };
+    const enhanceCartPresentation = (cartData = null) => {
+      const rows = [...cartRoot.querySelectorAll('.wc-block-cart-items .wc-block-cart-items__row')];
+      const readyRows = rows.filter((row) => {
+        const productCell = row.querySelector('.wc-block-cart-item__product');
+        const productName = productCell?.querySelector('.wc-block-components-product-name');
+        return Boolean(productCell && productName?.textContent?.trim());
+      });
+
+      const storeCount = cartData?.itemsCount;
+      const rowQuantities = readyRows.map((row) => Number.parseInt(
+        row.querySelector('.wc-block-components-quantity-selector__input')?.value ?? '',
+        10,
+      ));
+      const hasExactDomCount = readyRows.length > 0
+        && rowQuantities.length === readyRows.length
+        && rowQuantities.every((quantity) => Number.isSafeInteger(quantity) && quantity >= 0);
+      const domCount = hasExactDomCount
+        ? rowQuantities.reduce((total, quantity) => total + quantity, 0)
+        : null;
+      const count = Number.isSafeInteger(storeCount) && storeCount >= 0 ? storeCount : domCount;
+      const filled = (count !== null && count > 0) || readyRows.length > 0;
+      if (cartPage) cartPage.classList.toggle('is-cart-filled', filled);
+      if (cartCountLabel && count !== null) cartCountLabel.textContent = cartItemLabel(count);
+
+      const sidebar = cartRoot.querySelector('.wc-block-components-sidebar.wc-block-cart__sidebar');
+      if (cartSupport) {
+        cartSupport.hidden = !filled;
+      }
+      if (cartAssurance) {
+        cartAssurance.hidden = !filled;
+      }
+      const total = sidebar?.querySelector('.wc-block-components-totals-footer-item .wc-block-formatted-money-amount');
+      const summaryReady = filled && readyRows.length > 0 && Boolean(total?.textContent?.trim());
+      cartPage?.toggleAttribute('data-cart-ready', summaryReady);
+    };
     const cartLabels = [
       ['.wc-block-cart-items caption h2', 'Products in cart', 'Товары в корзине'],
       ['.wc-block-cart-items__header-image > span', 'Product', 'Товар'],
@@ -189,6 +236,7 @@
           break;
         }
       });
+      enhanceCartPresentation();
     };
     localizeCart();
     const cartObserver = new MutationObserver(localizeCart);
@@ -206,7 +254,8 @@
         const cartSelectors = dataRegistry.select(cartStore);
         const hasFinishedCartResolution = cartSelectors?.hasFinishedResolution?.('getCartData', []);
         if (hasFinishedCartResolution === false) return;
-        const count = cartSelectors?.getCartData?.()?.itemsCount;
+        const cartData = cartSelectors?.getCartData?.();
+        const count = cartData?.itemsCount;
         if (!Number.isSafeInteger(count) || count < 0) return;
         const nextCount = String(count);
         if (headerCartCount.textContent !== nextCount) headerCartCount.textContent = nextCount;
@@ -214,6 +263,7 @@
           const nextCopy = count === 0 ? cartIntroCopy.dataset.emptyCopy : cartIntroCopy.dataset.filledCopy;
           if (nextCopy && cartIntroCopy.textContent !== nextCopy) cartIntroCopy.textContent = nextCopy;
         }
+        enhanceCartPresentation(cartData);
       };
       syncHeaderCartCount();
       const unsubscribeCartStore = dataRegistry.subscribe(syncHeaderCartCount);

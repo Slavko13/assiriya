@@ -43,12 +43,11 @@ test('presents the demo cart as a responsive Paper-aligned order review', async 
   const intro = page.locator('.az-cart-intro');
   await expect(intro).toBeVisible();
   await expect(intro.getByRole('heading', { level: 1, name: 'Корзина' })).toBeVisible();
-  await expect(intro).toContainText('Проверьте выбранные товары и количество');
-  const steps = intro.getByRole('list', { name: 'Этапы оформления заказа' });
-  await expect(steps.getByRole('listitem')).toHaveCount(2);
-  await expect(steps.getByRole('listitem').first()).toHaveAttribute('aria-current', 'step');
-  await expect(steps.getByRole('listitem').first()).toContainText('Корзина');
-  await expect(steps.getByRole('listitem').last()).toContainText('Оформление');
+  await expect(intro).toContainText('Проверьте товары и количество');
+  await expect(intro.locator('[data-cart-count-label]')).toHaveText('1 товар');
+  const continueShopping = intro.locator('[data-cart-continue]');
+  await expect(continueShopping).toHaveText(/Продолжить покупки/);
+  await expect(continueShopping).toHaveAttribute('href', /\/shop\/$/);
 
   const demoNotice = page.locator('.avtozakup-demo-notice');
   await expect(demoNotice).toBeVisible();
@@ -220,6 +219,7 @@ test('keeps the header count aligned with a Cart Block quantity update', async (
 
   await expect(quantity).toHaveValue('2');
   await expect(headerCount).toHaveText('2');
+  await expect(page.locator('[data-cart-count-label]')).toHaveText('2 товара');
   await expect(headerCart).toHaveAccessibleName('Корзина 2');
   await expect(productRow).toHaveCount(1);
   await expect(productRow.locator('a.wc-block-components-product-name')).toHaveText(sourceName);
@@ -230,6 +230,7 @@ test('keeps the header count aligned with a Cart Block quantity update', async (
   expect(page.url()).toBe(cartUrl);
   await expect(quantity).toHaveValue('2');
   await expect(headerCount).toHaveText('2');
+  await expect(page.locator('[data-cart-count-label]')).toHaveText('2 товара');
   await expect(headerCart).toHaveAccessibleName('Корзина 2');
   await expect(productRow).toHaveCount(1);
   await expect(productRow.locator('a.wc-block-components-product-name')).toHaveText(sourceName);

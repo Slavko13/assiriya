@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.14.0' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.15.0' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 
@@ -151,6 +151,210 @@ function avtozakup_render_single_demo_identity(): void {
 	<?php
 }
 
+/**
+ * Return the curated presentation profile owned by the project seeder.
+ *
+ * The profile is deliberately available only for explicitly marked records.
+ * It does not promote WooCommerce or the fixture to a production PIM, WMS or
+ * supplier source. Unmarked merchant products keep the native Woo template.
+ *
+ * @return array<string, mixed>|null
+ */
+function avtozakup_demo_product_presentation( WC_Product $product ): ?array {
+	if ( null === avtozakup_demo_product_provenance( $product ) ) {
+		return null;
+	}
+
+	$identity = avtozakup_demo_product_identity( $product );
+	if ( null === $identity ) {
+		return null;
+	}
+
+	$profile = array(
+		'package'         => '',
+		'characteristics' => array(
+			'Наименование' => $product->get_name(),
+			'Бренд'        => $identity['brand'],
+			'Артикул'      => $identity['article'],
+		),
+		'specifications'  => array(),
+		'about'           => $product->get_description(),
+	);
+
+	return $profile;
+}
+
+/** @return array<string, mixed>|null */
+function avtozakup_current_demo_product_presentation(): ?array {
+	global $product;
+	return $product instanceof WC_Product ? avtozakup_demo_product_presentation( $product ) : null;
+}
+
+/** @param array<string, string> $rows */
+function avtozakup_render_pdp_definition_rows( array $rows ): void {
+	foreach ( $rows as $label => $value ) {
+		if ( '' === trim( $value ) ) {
+			continue;
+		}
+		?>
+		<div class="az-pdp-definition-row">
+			<dt><?php echo esc_html( $label ); ?></dt>
+			<dd><?php echo esc_html( $value ); ?></dd>
+		</div>
+		<?php
+	}
+}
+
+function avtozakup_render_demo_product_characteristics(): void {
+	$profile = avtozakup_current_demo_product_presentation();
+	if ( null === $profile ) {
+		return;
+	}
+	?>
+	<section id="az-pdp-characteristics" class="az-pdp-characteristics" data-pdp-section="characteristics" aria-labelledby="az-pdp-characteristics-title">
+		<h2 id="az-pdp-characteristics-title"><?php esc_html_e( 'Основные характеристики', 'avtozakup' ); ?></h2>
+		<dl class="az-pdp-definition-list">
+			<?php avtozakup_render_pdp_definition_rows( $profile['characteristics'] ); ?>
+		</dl>
+		<?php if ( '' !== $profile['package'] ) : ?>
+			<div class="az-pdp-package" aria-label="<?php esc_attr_e( 'Выбранная фасовка', 'avtozakup' ); ?>">
+				<span class="az-pdp-package__label"><?php esc_html_e( 'Фасовка', 'avtozakup' ); ?></span>
+				<strong><?php echo esc_html( $profile['package'] ); ?></strong>
+			</div>
+		<?php endif; ?>
+		<p class="az-pdp-characteristics__note">
+			<span aria-hidden="true">i</span>
+			<?php esc_html_e( 'Перед заказом проверьте вязкость, допуски и совместимость по руководству автомобиля.', 'avtozakup' ); ?>
+		</p>
+	</section>
+	<?php
+}
+
+function avtozakup_render_demo_product_fitment(): void {
+	if ( null === avtozakup_current_demo_product_presentation() ) {
+		return;
+	}
+	?>
+	<section class="az-pdp-fitment" data-pdp-section="fitment" aria-labelledby="az-pdp-fitment-title">
+		<span class="az-pdp-fitment__icon" aria-hidden="true">&#10003;</span>
+		<div>
+			<h2 id="az-pdp-fitment-title"><?php esc_html_e( 'Подойдёт ли товар вашему автомобилю?', 'avtozakup' ); ?></h2>
+			<p><?php esc_html_e( 'Сверьте спецификации с руководством. Если сомневаетесь — поможем проверить по VIN.', 'avtozakup' ); ?></p>
+		</div>
+		<a class="button" href="<?php echo esc_url( avtozakup_seeded_page_url( 'vin', 'vin-request' ) ); ?>"><?php esc_html_e( 'Проверить по VIN', 'avtozakup' ); ?> <span aria-hidden="true">→</span></a>
+	</section>
+	<?php
+}
+
+function avtozakup_render_demo_product_tabs(): void {
+	if ( null === avtozakup_current_demo_product_presentation() ) {
+		return;
+	}
+	?>
+	<nav class="az-pdp-tabs" data-pdp-section="tabs" aria-label="<?php esc_attr_e( 'Разделы карточки товара', 'avtozakup' ); ?>">
+		<a class="is-active" href="#az-pdp-offers"><?php esc_html_e( 'Цена и наличие', 'avtozakup' ); ?></a>
+		<a href="#az-pdp-specifications"><?php esc_html_e( 'Характеристики', 'avtozakup' ); ?></a>
+		<a href="#az-pdp-description"><?php esc_html_e( 'Описание', 'avtozakup' ); ?></a>
+		<a href="#az-pdp-analogs"><?php esc_html_e( 'Подбор аналогов', 'avtozakup' ); ?></a>
+		<a href="#az-pdp-reviews"><?php esc_html_e( 'Отзывы', 'avtozakup' ); ?></a>
+	</nav>
+	<?php
+}
+
+function avtozakup_render_demo_product_offers(): void {
+	global $product;
+	$profile = avtozakup_current_demo_product_presentation();
+	if ( ! $product instanceof WC_Product || null === $profile ) {
+		return;
+	}
+	?>
+	<section id="az-pdp-offers" class="az-pdp-offers" data-pdp-section="offers" aria-labelledby="az-pdp-offers-title">
+		<div class="az-pdp-section-heading">
+			<h2 id="az-pdp-offers-title"><?php esc_html_e( 'Цена и наличие', 'avtozakup' ); ?></h2>
+			<?php if ( '' !== $profile['package'] ) : ?>
+				<span><?php echo esc_html( sprintf( __( 'Фасовка: %s', 'avtozakup' ), $profile['package'] ) ); ?></span>
+			<?php endif; ?>
+		</div>
+		<div class="az-pdp-offer-table">
+			<dl class="az-pdp-offer-row">
+				<div>
+					<dt><?php esc_html_e( 'Товар', 'avtozakup' ); ?></dt>
+					<dd><?php echo esc_html( $product->get_name() ); ?></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Наличие', 'avtozakup' ); ?></dt>
+					<dd class="az-pdp-offer-row__availability"><?php esc_html_e( 'Уточняется', 'avtozakup' ); ?></dd>
+				</div>
+				<div>
+					<dt><?php esc_html_e( 'Цена', 'avtozakup' ); ?></dt>
+					<dd class="az-pdp-offer-row__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></dd>
+				</div>
+			</dl>
+		</div>
+	</section>
+	<?php
+}
+
+function avtozakup_render_demo_product_specifications(): void {
+	$profile = avtozakup_current_demo_product_presentation();
+	if ( null === $profile ) {
+		return;
+	}
+	?>
+	<section id="az-pdp-specifications" class="az-pdp-specifications" data-pdp-section="specifications" aria-labelledby="az-pdp-specifications-title">
+		<div>
+			<h2 id="az-pdp-specifications-title"><?php esc_html_e( 'Характеристики', 'avtozakup' ); ?></h2>
+			<dl class="az-pdp-definition-list"><?php avtozakup_render_pdp_definition_rows( $profile['characteristics'] ); ?></dl>
+		</div>
+		<div>
+			<h2><?php esc_html_e( 'Спецификации производителя', 'avtozakup' ); ?></h2>
+			<?php if ( ! empty( $profile['specifications'] ) ) : ?>
+				<p class="az-pdp-specifications__hint"><?php esc_html_e( 'Допуски и соответствия уточняйте по маркировке конкретной упаковки.', 'avtozakup' ); ?></p>
+				<dl class="az-pdp-definition-list"><?php avtozakup_render_pdp_definition_rows( $profile['specifications'] ); ?></dl>
+			<?php else : ?>
+				<p class="az-pdp-specifications__empty"><?php esc_html_e( 'Спецификации уточняются перед заказом.', 'avtozakup' ); ?></p>
+			<?php endif; ?>
+		</div>
+	</section>
+	<?php
+}
+
+function avtozakup_render_demo_product_description(): void {
+	$profile = avtozakup_current_demo_product_presentation();
+	if ( null === $profile ) {
+		return;
+	}
+	?>
+	<section id="az-pdp-description" class="az-pdp-description" data-pdp-section="description" aria-labelledby="az-pdp-description-title">
+		<div class="az-pdp-description__copy">
+			<h2 id="az-pdp-description-title"><?php esc_html_e( 'О товаре', 'avtozakup' ); ?></h2>
+			<?php echo wp_kses_post( wc_format_content( $profile['about'] ) ); ?>
+		</div>
+		<aside id="az-pdp-analogs" class="az-pdp-analogs" aria-labelledby="az-pdp-analogs-title">
+			<span class="az-pdp-analogs__icon" aria-hidden="true"></span>
+			<h2 id="az-pdp-analogs-title"><?php esc_html_e( 'Нужен другой вариант?', 'avtozakup' ); ?></h2>
+			<p><?php esc_html_e( 'Сравните другие товары в каталоге по характеристикам и цене.', 'avtozakup' ); ?></p>
+			<a class="button" href="<?php echo esc_url( avtozakup_wc_page_url( 'shop' ) ); ?>"><?php esc_html_e( 'Смотреть каталог', 'avtozakup' ); ?></a>
+		</aside>
+	</section>
+	<?php
+}
+
+function avtozakup_render_demo_product_reviews(): void {
+	if ( null === avtozakup_current_demo_product_presentation() ) {
+		return;
+	}
+	?>
+	<section id="az-pdp-reviews" class="az-pdp-reviews" data-pdp-section="reviews" aria-labelledby="az-pdp-reviews-title">
+		<div>
+			<h2 id="az-pdp-reviews-title"><?php esc_html_e( 'Отзывы о товаре', 'avtozakup' ); ?></h2>
+			<p><?php esc_html_e( 'Пока нет опубликованных отзывов. Задайте вопрос о товаре и его характеристиках.', 'avtozakup' ); ?></p>
+		</div>
+		<button class="button" type="button" data-contact-open><?php esc_html_e( 'Задать вопрос', 'avtozakup' ); ?> <span aria-hidden="true">→</span></button>
+	</section>
+	<?php
+}
+
 function avtozakup_configure_product_detail_layout(): void {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 		return;
@@ -165,7 +369,7 @@ function avtozakup_is_current_demo_product_page( WC_Product $product ): bool {
 	return function_exists( 'is_product' )
 		&& is_product()
 		&& get_queried_object_id() === $product->get_id()
-		&& null !== avtozakup_demo_product_provenance( $product );
+		&& null !== avtozakup_demo_product_presentation( $product );
 }
 
 function avtozakup_render_demo_product_meta(): void {
@@ -200,15 +404,39 @@ function avtozakup_configure_demo_product_page(): void {
 	}
 
 	$product = wc_get_product( get_queried_object_id() );
-	if ( ! $product instanceof WC_Product || null === avtozakup_demo_product_provenance( $product ) ) {
+	if ( ! $product instanceof WC_Product ) {
 		return;
 	}
-
-	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 	if ( null !== avtozakup_demo_technical_sku( $product ) ) {
 		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
 		add_action( 'woocommerce_single_product_summary', 'avtozakup_render_demo_product_meta', 40 );
 	}
+	if ( null === avtozakup_demo_product_presentation( $product ) ) {
+		return;
+	}
+
+	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+	remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
+	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+	add_action( 'woocommerce_before_single_product_summary', 'avtozakup_render_demo_product_characteristics', 25 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_fitment', 5 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_tabs', 10 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_offers', 15 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_specifications', 20 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_description', 25 );
+	add_action( 'woocommerce_after_single_product_summary', 'avtozakup_render_demo_product_reviews', 30 );
+}
+
+function avtozakup_demo_product_body_class( array $classes ): array {
+	if ( ! function_exists( 'is_product' ) || ! is_product() || ! function_exists( 'wc_get_product' ) ) {
+		return $classes;
+	}
+
+	$product = wc_get_product( get_queried_object_id() );
+	if ( $product instanceof WC_Product && null !== avtozakup_demo_product_presentation( $product ) ) {
+		$classes[] = 'az-product-detail-expanded';
+	}
+	return array_values( array_unique( $classes ) );
 }
 
 function avtozakup_demo_product_availability_text( string $availability, WC_Product $product ): string {
@@ -506,6 +734,7 @@ add_filter( 'woocommerce_breadcrumb_defaults', 'avtozakup_woocommerce_breadcrumb
 add_filter( 'woocommerce_get_breadcrumb', 'avtozakup_woocommerce_breadcrumb_trail' );
 add_filter( 'woocommerce_redirect_single_search_result', 'avtozakup_keep_product_search_results_page' );
 add_filter( 'body_class', 'avtozakup_product_loop_body_class' );
+add_filter( 'body_class', 'avtozakup_demo_product_body_class' );
 add_filter( 'woocommerce_post_class', 'avtozakup_product_loop_post_classes', 10, 2 );
 
 add_action(
