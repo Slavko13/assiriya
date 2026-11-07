@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S80 settings-backed contact dialog:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S80 strengthens existing homepage/admin scenarios without adding a new test case.
+**Текущий regression после I2-S81 public storefront copy, routes and cart CTA:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S81 strengthens existing homepage/catalog/cart/admin/deployment scenarios without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -965,6 +965,17 @@ I2-S79 accepts only truthful rendering of existing Woo data and existing homepag
 
 I2-S80 accepts only the current Settings-backed renderer and its responsive presentation. Channel ownership/validity/availability, external-app behavior, Telegram/MAX/callback, hours/holidays, CRM/SLA, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production contact acceptance remain outside the slice.
 
+### I2-S81 — public storefront copy, native routes and same-node cart CTA
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S81-ACC-001 | Project-owned fixtures migrate to customer-facing public copy without deleting or claiming user-owned data | core `0.4.0` updates all exact ownership-marked category/media/product/page records and exact legacy Settings copy; 72 marked terms remain, 59 legacy `demo-*` slugs receive stable non-demo slugs, 10 products use `AZ-0001…AZ-0010`, 10 media and 6 pages receive customer-facing metadata; repeated seed preserves the same entity counts/menu ID; unmarked records are outside mutation scope | `PASS / TECHNICAL` |
+| I2-S81-ACC-002 | Public navigation resolves through native objects and the current public origin | primary links target exact oils/maintenance taxonomy archives and the business page; `Смотреть масла →` opens the exact oils archive; native taxonomy/page menu objects replace stored custom absolute URLs; Quick Tunnel supplies the same required `PUBLIC_URL` to WordPress and WP-CLI, while smoke rejects homepage links/actions containing `localhost`, `127.0.0.1` or internal `caddy` | `PASS` локально / remote proof pending |
+| I2-S81-ACC-003 | Successful homepage add-to-cart becomes one canonical cart action in place | one exact Woo AJAX POST succeeds; the original focused action becomes `Перейти в корзину` with canonical same-origin cart href, add/AJAX data and classes removed, no sibling `added_to_cart wc-forward`; clicking it sends no second add POST, and homepage reload server-renders the cart-link state while the exact cart quantity remains `1` | `PASS / TECHNICAL` |
+| I2-S81-ACC-004 | Public renderer and bounded evidence remain clean | theme `0.14.0` removes public provenance/internal seed SKU/demo badges and uses neutral availability/checkout-unavailable copy; nav/oils/cart targets pass; PDP contrast finding fixed and retested; final full `61`: `59 passed / 2 skipped / 0 failed`; all 36 actual PNG refreshed, PDP artifacts renamed `product-public-copy-*`, repository total remains `37`; PHP/JS syntax, diff, preflight `11/11`, axe/no-overflow/runtime and inventory `10/0/0/0` pass | `PASS / PROVISIONAL / DESIGN_REVIEW_REQUIRED` |
+
+I2-S81 accepts only current project-owned fixture migration, public rendering, routing and the successful simple-product homepage transition. It does not verify real stock/price/offer truth, arbitrary product types, checkout/order/payment, production fitment/search, stable DNS, remote server deployment or Paper mobile/pixel-perfect/full WCAG acceptance.
+
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
 | ID | Критерий | Доказательство | Статус |
@@ -973,11 +984,11 @@ I2-S80 accepts only the current Settings-backed renderer and its responsive pres
 | OPS-QT-001-ACC-002 | Edge config валиден, запускается under hardening и не блокирует public admin | `caddy validate`; exact `read-only + cap_drop ALL + cap_add NET_BIND_SERVICE + no-new-privileges` runtime health `200`; admin deny отсутствует, HTTPS forwarding сохранён | `PASS` локально |
 | OPS-QT-001-ACC-003 | Connector pinned и доступен | official manifest для amd64/arm64; container reports `cloudflared version 2026.10.7` | `PASS` локально |
 | OPS-QT-001-ACC-004 | Installer/deploy scripts синтаксически валидны | Git Bash `bash -n` для двух scripts | `PASS` локально |
-| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config/documentation preflight `11 passed`: прежние 10 environment/deployment guards, включая no ports/host network, two-site/IP/snapshot, forbidden global removal и WP-CLI `run -T`, плюс current-summary drift guard | `PASS` локально |
+| OPS-QT-001-ACC-005 | Guardrails и non-interactive bootstrap зафиксированы regression test | combined config/documentation preflight `11 passed`: environment/deployment guards включают no ports/host network, two-site/IP/snapshot, forbidden global removal, WP-CLI `run -T`, shared required `PUBLIC_URL`, bootstrap-before-Caddy и internal-link smoke rejection, плюс current-summary drift guard | `PASS` локально |
 | OPS-QT-001-ACC-006 | Два существующих сайта не затронуты на target | mandatory before/after URL, container и listener checks внутри installer | `BLOCKED` до завершённого server run с сохранённым two-site evidence |
 | OPS-QT-001-ACC-007 | Public preview и WordPress-authenticated admin entry работают через Cloudflare | remote smoke `/`, REST, Store API, `/wp-login.php` final `2xx` + `#loginform` и unauthenticated `/wp-admin/` → same-origin login | `BLOCKED` до завершённого server run |
 
-Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а server остаётся `NOT_DEPLOYED`. Первая partial remote попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary. Ни одна не дала successful bootstrap, complete before/after inventory или public/admin smoke; подготовленный `run -T` fix требует повторного полного run. Случайный `trycloudflare.com` URL и WordPress login public; длинный credential остаётся только в mode-600 env. Это ephemeral preview без production SLA, stable DNS, rate-limit/MFA или production admin acceptance.
+Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а server остаётся `NOT_DEPLOYED`. Первая partial remote попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy Caddy и выявила non-TTY WP-CLI boundary. Ни одна не дала successful bootstrap, complete before/after inventory или public/admin smoke; последующие `run -T`, shared-URL, bootstrap-before-Caddy и smoke-guard fixes подтверждены только локально и требуют повторного полного run. Случайный `trycloudflare.com` URL и WordPress login public; длинный credential остаётся только в mode-600 env. Это ephemeral preview без production SLA, stable DNS, rate-limit/MFA или production admin acceptance.
 
 ## Технические критерии Итерации 1
 
@@ -1025,7 +1036,7 @@ Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а serve
 - Paper reference: `docs/qa/visual-diffs/paper-home-desktop-1440.png`.
 - Actual desktop: `docs/qa/visual-diffs/homepage-desktop-chrome-1440.png`.
 - Actual mobile: `docs/qa/visual-diffs/homepage-mobile-chrome-390.png`, `docs/qa/visual-diffs/homepage-mobile-chrome-360.png`.
-- Demo provenance PDP: `docs/qa/visual-diffs/product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`.
+- Public-copy PDP: `docs/qa/visual-diffs/product-public-copy-desktop-chrome-1440.png`, `product-public-copy-mobile-chrome-390.png`, `product-public-copy-mobile-chrome-360.png`.
 - Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
 - Product search empty state: `docs/qa/visual-diffs/product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png`.
 - Product search results: `docs/qa/visual-diffs/product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png`.

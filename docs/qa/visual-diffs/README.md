@@ -9,7 +9,7 @@
 - `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3491; presentation was cleaned up in I2-S76 and the truthful product collections were recaptured/reviewed in I2-S79.
 - `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация, refreshed in I2-S79 with contained product snap rails.
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual shop artifacts, refreshed in I2-S78 with the shared Paper-informed native Woo card; an approved full SCR-005/006 baseline is still absent.
-- `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP provenance artifacts from I2-S3, visually refreshed in I2-S77 inside the Paper-informed product shell; they do not approve demo commercial data or a full PDP baseline.
+- `product-public-copy-desktop-chrome-1440.png`, `product-public-copy-mobile-chrome-390.png`, `product-public-copy-mobile-chrome-360.png` — current customer-facing PDP artifacts, renamed and refreshed in I2-S81 after public provenance/internal seeded SKU labels were removed; they do not approve commercial data or a full PDP baseline.
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual PDP technical/presentation artifacts from I2-S4, visually refreshed in I2-S77; desktop follows the safe SCR-009 title/gallery/purchase subset, while mobile remains a provisional reflow because Paper has no mobile PDP frame.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts from I2-S5, refreshed in I2-S78 on the shared light listing surface; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts from I2-S6, refreshed in I2-S78 with the shared listing card; order/ranking remain unapproved.
@@ -32,9 +32,9 @@ homepage-mobile-chrome-360.png
 catalog-desktop-chrome-1440.png
 catalog-mobile-chrome-390.png
 catalog-mobile-chrome-360.png
-product-demo-provenance-desktop-chrome-1440.png
-product-demo-provenance-mobile-chrome-390.png
-product-demo-provenance-mobile-chrome-360.png
+product-public-copy-desktop-chrome-1440.png
+product-public-copy-mobile-chrome-390.png
+product-public-copy-mobile-chrome-360.png
 product-technical-baseline-desktop-chrome-1440.png
 product-technical-baseline-mobile-chrome-390.png
 product-technical-baseline-mobile-chrome-360.png
@@ -238,6 +238,14 @@ report-home-YYYYMMDD.md
 - 3 new contact-dialog artifacts were added. Removing the visible desktop topbar hours refreshed all 11 existing desktop full-page artifacts (account, cart, empty cart, catalog, homepage, category, both PDP guards, both search guards and status dialog); the existing `product-category-mobile-chrome-390.png` guard was also deterministically recaptured and reviewed. Repository total is `37` PNG (`36` actual + Paper reference);
 - valid pre-fix target `3 failed`; post-fix target `3 passed`; admin save/clear/restore target `1 passed`; final full regression `61` = `59 passed / 2 intentional skipped / 0 failed`; PHP lint, axe serious/critical, no-overflow, runtime, preflight `11/11`, diff and inventory `10/0/0/0` pass;
 - independent review found no overflow, wrapping, target-size, focus or shared-dialog regression. This remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not verification of contact channels, hours, external apps, Paper mobile/pixel-perfect, full WCAG/AT/browser or production contact acceptance.
+
+## Public storefront copy, routes and cart CTA I2-S81
+
+- core `0.4.0` and theme `0.14.0` retain internal ownership while public category/card/PDP/cart/footer surfaces use customer-facing language without provenance, internal seeded SKU or demo-site labels; neutral stock/checkout-unavailable copy does not claim verified inventory or active checkout;
+- primary oils/maintenance/business navigation and `Смотреть масла →` resolve exact same-origin native taxonomy/page destinations; one successful homepage add morphs the original action to `Перейти в корзину`, emits no sibling action or second add request and survives reload as server-rendered cart state;
+- all 36 actual screenshots were deterministically refreshed because public/footer copy can affect every full-page surface; the three former PDP provenance artifacts were renamed to `product-public-copy-*`; repository total remains `37` PNG (`36` actual + Paper reference);
+- nav/oils/cart targets pass; the one PDP category-link contrast finding (`4.35`) was fixed and the scenario retested; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`; PHP/JS syntax, preflight `11/11`, diff, axe serious/critical, no-overflow/runtime and inventory `10/0/0/0` pass;
+- independent code and visual reviews cover desktop/mobile homepage, public-copy PDP, cart states and shared dialogs. Result remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: no Paper mobile/pixel-perfect, full WCAG/AT/browser, commercial-data or production deployment acceptance is claimed.
 
 ## Отчёт
 

@@ -10,7 +10,6 @@ type HomeCardOptions = {
   expectedBrand?: string;
   expectedReference?: string;
   expectedProductId?: string;
-  expectedProvenance?: string;
 };
 
 export async function expectLoopCardPresentation(card: Locator, options: LoopCardOptions): Promise<void> {
@@ -50,8 +49,8 @@ export async function expectLoopCardPresentation(card: Locator, options: LoopCar
     await expect(reference).toHaveCount(1);
     await expect(reference).toHaveAttribute('data-reference-kind', 'article');
     await expect(reference).toContainText(/^Артикул:\s*\S/);
-    await expect(card.locator('[data-demo-provenance="product"]')).toBeVisible();
-    await expect(card).not.toContainText(/AZ-DEMO-/);
+    await expect(card.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+    await expect(card).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
   } else {
     await expect(card.locator('[data-demo-provenance="product"]')).toHaveCount(0);
     await expect(card).not.toHaveClass(/\baz-loop-product-card--demo\b/);
@@ -163,16 +162,8 @@ export async function expectHomeProductCardPresentation(
   }
 
   const provenance = card.locator('[data-demo-provenance="product"]');
-  if (options.kind === 'demo') {
-    await expect(provenance).toHaveCount(1);
-    await expect(provenance).toHaveText(
-      options.expectedProvenance ?? 'Демонстрационный товар · цена и наличие не подтверждены',
-    );
-    await expect(card).not.toContainText(/AZ-DEMO-/);
-  } else {
-    await expect(provenance).toHaveCount(0);
-    await expect(card).not.toContainText(/демонстрацион|AZ-DEMO-/i);
-  }
+  await expect(provenance).toHaveCount(0);
+  await expect(card).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
 
   await expect(
     card.locator('.az-product-card__favorite, .az-product-card__stock, .az-product-card__note'),
@@ -187,7 +178,7 @@ export async function expectHomeProductCardPresentation(
   expect(actionBox!.x + actionBox!.width).toBeLessThanOrEqual(cardBox!.x + cardBox!.width + 1);
   expect(actionBox!.y + actionBox!.height).toBeLessThanOrEqual(cardBox!.y + cardBox!.height + 1);
 
-  for (const element of [title, reference, provenance, action]) {
+  for (const element of [title, reference, action]) {
     if (await element.count()) {
       const clipping = await element.evaluate((node: HTMLElement) => ({
         horizontal: node.scrollWidth > node.clientWidth + 1,

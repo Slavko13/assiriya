@@ -129,8 +129,9 @@ test('keeps generic product-search results scoped and explicit', async ({ page }
     const productTitle = product.locator('.woocommerce-loop-product__title');
     await expect(productTitle).toBeVisible();
     expect((await productTitle.innerText()).trim()).not.toBe('');
-    await expect(product.locator('[data-demo-provenance="product"]')).toContainText('Демонстрационный товар');
-    await expect(product.locator('.add_to_cart_button')).toHaveText('Добавить в демо-корзину');
+    await expect(product.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+    await expect(product).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
+    await expect(product.locator('.add_to_cart_button')).toHaveText('Добавить в корзину');
     const productUrl = await product.locator('.woocommerce-loop-product__link').getAttribute('href');
     expect(productUrl).toBeTruthy();
     const parsedProductUrl = new URL(productUrl!, page.url());

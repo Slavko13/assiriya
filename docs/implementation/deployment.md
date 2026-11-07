@@ -78,9 +78,11 @@ Workflow:
 4. создать mode-600 `.env.quick` со случайными секретами либо сохранить существующий;
 5. при повторном deploy создать парный DB/uploads backup;
 6. запустить outbound-only `cloudflared`, получить новый `https://*.trycloudflare.com` и атомарно сохранить его как `PUBLIC_URL`;
-7. build/start/recreate только services Compose-проекта `avtozakup`, выполнить идемпотентный non-TTY WP-CLI bootstrap (`run -T`) и public smoke;
-8. подтвердить доступность public WordPress login/admin entry point, неизменность двух URL, foreign container IDs/states и listeners 80/443;
-9. вывести `AVTOZAKUP_PREVIEW_URL=...` последней строкой.
+7. передать один обязательный `PUBLIC_URL` одновременно `wordpress` и `wpcli`, чтобы bootstrap создавал native taxonomy/page menu objects и project pages сразу на публичном origin;
+8. поднять DB и WordPress, затем выполнить идемпотентный non-TTY WP-CLI bootstrap (`run -T`) **до** пересоздания project Caddy;
+9. пересоздать только project Caddy, выполнить public smoke и fail-closed отклонить homepage links/actions с `localhost`, `127.0.0.1` или internal `caddy`;
+10. подтвердить доступность public WordPress login/admin entry point, неизменность двух URL, foreign container IDs/states и listeners 80/443;
+11. вывести `AVTOZAKUP_PREVIEW_URL=...` последней строкой.
 
 Маршрут: `Cloudflare edge → cloudflared → project Caddy:8080 → WordPress:80`. `compose.quick-tunnel.yaml` не содержит `ports`, не использует host networking и не подключается к сетям двух существующих сайтов. По явному решению владельца project Caddy пропускает `/wp-admin/` и `/wp-login.php` к штатной WordPress-аутентификации. CIDR-ограничение здесь не заявляется; это public demo exception, не production security baseline.
 
@@ -102,7 +104,7 @@ Playwright всегда требует явный absolute root `BASE_URL`; fall
 
 Admin E2E выполняет временные settings writes и Woo fixture create/edit/force-delete. Он разрешён только при одновременном наличии `WP_ADMIN_USER`, `WP_ADMIN_PASSWORD` и `E2E_ALLOW_ADMIN_WRITES=1`, после ручной проверки exact target ownership. Partial opt-in завершает config с ошибкой, в которой нет supplied values; trace/video/screenshot для admin project отключены.
 
-Mutating admin E2E не является production smoke и не запускается в deploy workflow. Production smoke ограничивается нижеперечисленными read-only/public проверками и demo guard.
+Mutating admin E2E не является production smoke и не запускается в deploy workflow. Production smoke ограничивается нижеперечисленными read-only/public проверками и checkout guard.
 
 ## Git deployment
 
@@ -133,9 +135,9 @@ Restore согласованно возвращает DB и uploads, поэто�
 ## Проверка после deployment
 
 - Compose services healthy;
-- `/` и `/wp-json/` не перенаправляются на localhost/internal host;
+- `/` и `/wp-json/` не перенаправляются на localhost/internal host; rendered homepage links/actions также не содержат `localhost`, `127.0.0.1` или internal `caddy`;
 - production CIDR-profile: разрешённый IP открывает admin, посторонний получает `403`; Quick Tunnel demo-profile: public login отвечает и guest `/wp-admin/` ведёт на same-origin login;
-- главная, категории, товар, cart и demo checkout guard работают;
+- главная, exact oils/maintenance/business destinations, direct oils CTA, категории, товар, cart и neutral checkout guard работают;
 - DB persistence после restart;
 - два существующих сайта имеют те же URL, containers, networks и health;
 - commit, URL, время, backup path и результаты smoke сохранены в отчёте.
@@ -151,11 +153,12 @@ Restore согласованно возвращает DB и uploads, поэто�
 - isolated Caddy security drill — `PASS`: homepage `200`, external admin `403`, trusted admin `200`, `X-Content-Type-Options: nosniff`;
 - paired DB+uploads backup/restore — `PASS`;
 - isolated restore drill — `PASS`;
-- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in и Quick Tunnel isolation guards проверены, current regression summaries line-compared against the deliberate `61/59/2/0` lock.
-- Playwright: 61 tests, 59 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, catalog/search/Paper-informed responsive PDP with public-demo/unmarked isolation, nav/dialog/skip-link focus contracts, branded guest login/reset entrypoints, current public-theme no-pre-heading contract with collision-safe open status-dialog artifacts, cart continuity, responsive filled/empty cart presentation with polished decorative icon, native quantity/final-row removal synchronization, demo guards и bounded visual comparator.
+- Config/documentation preflight: 11 unit tests passed; missing/unsafe target, partial admin-write opt-in, shared WordPress/WP-CLI `PUBLIC_URL`, bootstrap-before-Caddy and Quick Tunnel isolation/internal-link guards проверены, current regression summaries line-compared against the deliberate `61/59/2/0` lock.
+- Playwright: 61 tests, 59 passed, 2 intentional skipped, 0 failed; desktop 1440, mobile 390/360, admin save+restore, Woo CRUD/cleanup, project Settings negative capability, customer-facing catalog/search/Paper-informed responsive PDP with project-owned/unmarked isolation, exact native oils/maintenance/business routes, direct oils promo, same-node cart CTA, nav/dialog/skip-link focus contracts, branded guest login/reset entrypoints, current public-theme no-pre-heading contract, cart continuity, responsive filled/empty cart presentation, native quantity/final-row removal synchronization, neutral checkout guard и bounded visual comparator.
 - I2-S78 listing-card evidence: shop/category/strict product search keep native Woo thumbnail/title/permalink/price/type-specific action inside a Paper-informed `4/3/2/1` responsive shell with `>=48px` CTA; marked demo identity fails closed, unmarked admin SKU remains exact, category count is Russian and unsupported ordering is absent. Targeted public run `6 passed`, localized category refresh `3 passed`, admin target plus dependencies `53 passed / 2 intentional skipped`; final full regression `61` = `59 passed / 2 intentional skipped / 0 failed`.
 - I2-S79 homepage-collection evidence: exact admin `popular_title/text` and `stock_title/text` save/public-render/restore passes; custom cards keep native Woo data/action generation, fail-closed marked/unmarked identity and no invented stock/ETA/favorite/filter semantics; desktop five-card grid and contained mobile snap rails pass `1440/390/360`. Valid pre-fix `3 failed`, post-fix homepage target `3 passed`, changed admin targets pass; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`, inventory `10/0/0/0`; 3 homepage, 3 status-background and one existing `390px` category artifact were refreshed, repository total remains `34` (`33` actual + Paper).
 - I2-S80 contact-dialog evidence: theme `0.13.0` renders only nonempty renderable admin-backed `contact_phone`/`contact_email` values with normalized links, neutral copy, wrapping and `>=64px` rows on `1440/390/360`; explicit empty config has no fallback actions, unsupported topbar/dialog hours and internal admin instructions are absent, while existing close/Enter/Escape/outside/focus-return behavior remains. Valid pre-fix `3 failed`, post-fix contact target `3 passed`, admin save/clear/restore target `1 passed`; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`, inventory `10/0/0/0`; 3 contact artifacts were added and 12 existing artifacts refreshed (all desktop surfaces plus the `390px` category guard), repository total `37` (`36` actual + Paper). This is local evidence only; server remains `NOT_DEPLOYED` until a completed reconciled installer run.
+- I2-S81 storefront/deployment evidence: core `0.4.0` performs exact project-owned customer-copy migration without deletion; theme `0.14.0` removes public provenance/internal-seed/demo labels, resolves native routes and morphs a successful homepage action in place to the canonical cart link. Two seed runs preserve 72 marked terms, 10 products, 10 media, 6 pages and menu ID while cleaning 59 legacy slugs; nav/oils/cart targets pass; all 36 actual PNG are refreshed and PDP artifacts renamed `product-public-copy-*`, total remains `37` (`36` actual + Paper); final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`, inventory `10/0/0/0`. Quick Tunnel config/smoke fixes are local evidence only; server remains `NOT_DEPLOYED` until a completed reconciled installer run.
 
-Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image и Caddy validation checks. Первая partial remote installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy project Caddy и выявила non-TTY WP-CLI boundary. `run -T` fix подготовлен. Завершённый reconciled run, полный inventory/two-site before-after и public preview/admin smoke не зафиксированы, поэтому server остаётся `NOT_DEPLOYED`.
+Application runtime результаты относятся к локальному адресу `http://localhost:8086/`. Quick Tunnel package отдельно прошёл Bash syntax, Compose no-published-ports, pinned image, shared WordPress/WP-CLI public URL, bootstrap-before-Caddy, internal-link smoke guard и Caddy validation checks. Первая partial remote installer-попытка выявила Caddy file-capability failure; после narrow fix вторая подтвердила healthy project Caddy и выявила non-TTY WP-CLI boundary. Последующие `run -T`/URL/order/smoke fixes подтверждены локально, но завершённый reconciled run, полный inventory/two-site before-after и public preview/admin smoke не зафиксированы, поэтому server остаётся `NOT_DEPLOYED`.
 

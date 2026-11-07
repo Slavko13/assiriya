@@ -31,11 +31,14 @@ fi
 [[ "$base_url" =~ ^https?:// ]] || { echo "Invalid smoke-test URL: $base_url" >&2; exit 2; }
 [[ "$base_url" =~ ^(https?://[^/]+) ]] || { echo "Could not determine smoke-test origin: $base_url" >&2; exit 2; }
 base_origin="${BASH_REMATCH[1]}"
+homepage_html="$(mktemp "${TMPDIR:-/tmp}/avtozakup-smoke-home.XXXXXX")"
+trap 'rm -f -- "$homepage_html"' EXIT
 
 check_url() {
     local path="$1"
+    local output_file="${2:-/dev/null}"
     local effective
-    effective="$(curl --fail --silent --show-error --location --max-time 20 --connect-timeout 5 --output /dev/null --write-out '%{url_effective}' "${base_url}${path}")"
+    effective="$(curl --fail --silent --show-error --location --max-time 20 --connect-timeout 5 --output "$output_file" --write-out '%{url_effective}' "${base_url}${path}")"
     if [[ ! "$effective" =~ ^(https?://[^/]+) ]] || [[ "${BASH_REMATCH[1]}" != "$base_origin" ]]; then
         echo "Cross-origin or internal redirect detected for ${path}: ${effective}" >&2
         exit 1
@@ -43,7 +46,11 @@ check_url() {
     echo "OK ${path} -> ${effective}"
 }
 
-check_url "/"
+check_url "/" "$homepage_html"
+if grep -Eqi "(href|action)=[\"'](https?:)?//(localhost|127\\.0\\.0\\.1|caddy)([:/])" "$homepage_html"; then
+    echo "Homepage contains a public link to an internal development origin." >&2
+    exit 1
+fi
 check_url "/wp-json/"
 check_url "/wp-json/wc/store/v1/products?per_page=1"
 echo "Smoke tests passed for $base_url"

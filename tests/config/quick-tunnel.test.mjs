@@ -11,14 +11,37 @@ async function projectFile(relativePath) {
   return readFile(path.join(projectRoot, relativePath), 'utf8');
 }
 
+function composeServiceBlock(compose, serviceName) {
+  const lines = compose.split(/\r?\n/);
+  const start = lines.findIndex((line) => line === `  ${serviceName}:`);
+  assert.notEqual(start, -1, `Missing Compose service: ${serviceName}`);
+
+  const next = lines.findIndex((line, index) => index > start && /^  [a-zA-Z0-9_-]+:$/.test(line));
+  return lines.slice(start, next === -1 ? lines.length : next).join('\n');
+}
+
 test('Quick Tunnel Compose is outbound-only and pinned', async () => {
   const compose = await projectFile('compose.quick-tunnel.yaml');
 
   assert.match(compose, /cloudflare\/cloudflared:2026\.10\.7/);
   assert.match(compose, /http:\/\/caddy:8080/);
   assert.match(compose, /Caddyfile\.quick-tunnel/);
-  assert.match(compose, /^  caddy:[\s\S]*?cap_drop:\s*\n\s*- ALL\s*\n\s*cap_add:\s*\n\s*- NET_BIND_SERVICE/m);
-  assert.match(compose, /^  cloudflared:[\s\S]*?restart: "no"/m);
+
+  const wordpress = composeServiceBlock(compose, 'wordpress');
+  const wpcli = composeServiceBlock(compose, 'wpcli');
+  const caddy = composeServiceBlock(compose, 'caddy');
+  const cloudflared = composeServiceBlock(compose, 'cloudflared');
+
+  assert.match(
+    wordpress,
+    /WP_HOME: \$\{PUBLIC_URL:\?Set PUBLIC_URL in the Quick Tunnel environment file\}[\s\S]*?WP_SITEURL: \$\{PUBLIC_URL:\?Set PUBLIC_URL in the Quick Tunnel environment file\}/,
+  );
+  assert.match(
+    wpcli,
+    /WP_HOME: \$\{PUBLIC_URL:\?Set PUBLIC_URL in the Quick Tunnel environment file\}[\s\S]*?WP_SITEURL: \$\{PUBLIC_URL:\?Set PUBLIC_URL in the Quick Tunnel environment file\}/,
+  );
+  assert.match(caddy, /cap_drop:\s*\n\s*- ALL\s*\n\s*cap_add:\s*\n\s*- NET_BIND_SERVICE/);
+  assert.match(cloudflared, /restart: "no"/);
   assert.doesNotMatch(compose, /^\s+ports:/m);
   assert.doesNotMatch(compose, /network_mode:\s*host/);
 });
@@ -49,6 +72,13 @@ test('deployment guardrails preserve foreign services', async () => {
   assert.match(deploy, /avtozakup-quick-tunnel\.lock/);
   assert.match(deploy, /docker volume inspect avtozakup_db_data/);
   assert.match(deploy, /run --rm -T --no-deps --entrypoint sh wpcli/);
+  assert.match(deploy, /stop caddy >\/dev\/null/);
+  assert.doesNotMatch(deploy, /stop caddy[^\n]*\|\| true/);
+  assert.ok(
+    deploy.indexOf('Running the idempotent WordPress bootstrap.')
+      < deploy.indexOf('Recreating only the project Caddy container after bootstrap'),
+    'The public project proxy must start only after bootstrap succeeds.',
+  );
   assert.doesNotMatch(deploy, /docker\s+compose[^\n]*(?:down|--remove-orphans)/);
   assert.doesNotMatch(deploy, /docker\s+(?:system\s+)?prune/);
   assert.doesNotMatch(deploy, /done < <\(docker ps/);

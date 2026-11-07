@@ -10,6 +10,12 @@ services:
     expose:
       - "80"
 
+  wpcli:
+    environment:
+      WP_HOME: ${PUBLIC_URL:?Set PUBLIC_URL in the Quick Tunnel environment file}
+      WP_SITEURL: ${PUBLIC_URL:?Set PUBLIC_URL in the Quick Tunnel environment file}
+      WP_ENVIRONMENT_TYPE: production
+
   caddy:
     image: caddy:2.10.2-alpine
     restart: unless-stopped

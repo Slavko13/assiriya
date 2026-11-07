@@ -237,8 +237,11 @@ else
     log "No project database volume exists; this is an initial deployment."
 fi
 
-log "Starting a fresh outbound-only Cloudflare Quick Tunnel."
 MUTATION_STARTED=1
+log "Stopping only the project preview proxy while the public URL and storefront data are reconciled."
+"${compose[@]}" stop caddy >/dev/null
+
+log "Starting a fresh outbound-only Cloudflare Quick Tunnel."
 "${compose[@]}" up -d --no-deps --force-recreate cloudflared
 
 tunnel_url=""
@@ -309,12 +312,13 @@ wait_healthy db 180 || fail "The project database did not become healthy."
 log "Recreating only the project WordPress container with the new public URL."
 "${compose[@]}" up -d --no-deps --force-recreate wordpress
 wait_healthy wordpress 300 || fail "WordPress did not become healthy."
-log "Recreating only the project Caddy container; it has no published host ports."
-"${compose[@]}" up -d --no-deps --force-recreate caddy
-wait_healthy caddy 180 || fail "The project Caddy did not become healthy."
 
 log "Running the idempotent WordPress bootstrap."
 "${compose_tools[@]}" run --rm -T --no-deps --entrypoint sh wpcli /workspace/scripts/bootstrap-wordpress.sh
+
+log "Recreating only the project Caddy container after bootstrap; it has no published host ports."
+"${compose[@]}" up -d --no-deps --force-recreate caddy
+wait_healthy caddy 180 || fail "The project Caddy did not become healthy."
 
 log "Waiting for the public Quick Tunnel smoke tests."
 smoke_ok=0

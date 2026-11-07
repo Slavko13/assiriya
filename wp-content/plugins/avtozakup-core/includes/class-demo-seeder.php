@@ -115,14 +115,52 @@ final class Demo_Seeder {
 
 		foreach ( $definitions as $key => $definition ) {
 			$demo_key = 'category:' . $key;
-			$term = $this->find_demo_term( $demo_key );
-			$description = 'Демонстрационная категория первой итерации по структуре каталога Paper. Не является источником реального ассортимента.';
+			$owned_terms = $this->find_demo_terms( $demo_key );
+			$term = null;
+			foreach ( $owned_terms as $owned_term ) {
+				if ( $definition[1] === $owned_term->slug ) {
+					$term = $owned_term;
+					break;
+				}
+			}
+			if ( ! $term instanceof WP_Term && isset( $owned_terms[0] ) ) {
+				$term = $owned_terms[0];
+			}
+			$description = sprintf(
+				'Товары категории «%s». Перед заказом уточняйте совместимость с вашим автомобилем.',
+				$definition[0]
+			);
 
 			if ( $term instanceof WP_Term ) {
+				foreach ( $owned_terms as $owned_term ) {
+					if ( $owned_term->term_id === $term->term_id ) {
+						continue;
+					}
+					$archive_slug = $owned_term->slug;
+					if ( str_contains( $archive_slug, 'demo-' ) ) {
+						$archive_slug = $this->available_term_slug( 'catalog-' . $definition[1] . '-' . $owned_term->term_id );
+					}
+					$updated_duplicate = wp_update_term(
+						$owned_term->term_id,
+						'product_cat',
+						array(
+							'name'        => $definition[0],
+							'slug'        => $archive_slug,
+							'description' => $description,
+						)
+					);
+					if ( is_wp_error( $updated_duplicate ) ) {
+						throw new RuntimeException( $updated_duplicate->get_error_message() );
+					}
+				}
+
+				$canonical_slug = $definition[1] === $term->slug
+					? $definition[1]
+					: $this->available_term_slug( $definition[1], $term->term_id );
 				$updated = wp_update_term(
 					$term->term_id,
 					'product_cat',
-					array( 'name' => $definition[0], 'description' => $description )
+					array( 'name' => $definition[0], 'slug' => $canonical_slug, 'description' => $description )
 				);
 				if ( is_wp_error( $updated ) ) {
 					throw new RuntimeException( $updated->get_error_message() );
@@ -153,14 +191,14 @@ final class Demo_Seeder {
 	/** @return array<string, int> */
 	private function seed_media(): array {
 		$files = array(
-			'product-filter.jpg' => 'Демонстрационный масляный фильтр',
-			'product-oil.jpg' => 'Демонстрационное моторное масло',
-			'product-spark.jpg' => 'Демонстрационная свеча зажигания',
-			'product-pads.jpg' => 'Демонстрационные тормозные колодки',
-			'product-disc.jpg' => 'Демонстрационный тормозной диск',
-			'product-belt.jpg' => 'Демонстрационный комплект ремня ГРМ',
-			'product-shock.jpg' => 'Демонстрационный амортизатор',
-			'product-alternator.jpg' => 'Демонстрационный генератор',
+			'product-filter.jpg' => 'Масляный фильтр',
+			'product-oil.jpg' => 'Моторное масло',
+			'product-spark.jpg' => 'Свеча зажигания',
+			'product-pads.jpg' => 'Тормозные колодки',
+			'product-disc.jpg' => 'Тормозной диск',
+			'product-belt.jpg' => 'Комплект ремня ГРМ',
+			'product-shock.jpg' => 'Амортизатор',
+			'product-alternator.jpg' => 'Генератор',
 			'hero-oil.webp' => 'Масло — изображение первого экрана',
 			'vin-engine.avif' => 'Двигатель — иллюстрация VIN-блока',
 		);
@@ -171,6 +209,13 @@ final class Demo_Seeder {
 			$demo_key = 'media:' . $filename;
 			$attachment_id = $this->find_demo_post_id( 'attachment', $demo_key );
 			if ( $attachment_id > 0 ) {
+				wp_update_post(
+					array(
+						'ID'         => $attachment_id,
+						'post_title' => $title,
+					)
+				);
+				update_post_meta( $attachment_id, '_wp_attachment_image_alt', $title );
 				$result[ $filename ] = $attachment_id;
 				continue;
 			}
@@ -243,7 +288,7 @@ final class Demo_Seeder {
 				throw new RuntimeException( sprintf( 'Marked demo product %s is no longer a simple WooCommerce product.', $demo_key ) );
 			}
 
-			$sku = 'AZ-DEMO-' . str_pad( (string) $position, 3, '0', STR_PAD_LEFT );
+			$sku = 'AZ-' . str_pad( (string) $position, 4, '0', STR_PAD_LEFT );
 			$sku_owner = wc_get_product_id_by_sku( $sku );
 			if ( $sku_owner > 0 && $sku_owner !== $product->get_id() ) {
 				throw new RuntimeException( sprintf( 'SKU collision for %s. Existing content was not changed.', $sku ) );
@@ -252,8 +297,8 @@ final class Demo_Seeder {
 			$product->set_name( $definition[0] );
 			$product->set_status( 'publish' );
 			$product->set_catalog_visibility( 'visible' );
-			$product->set_description( 'Демонстрационная карточка первой итерации. Цена, остаток, применяемость и срок поставки не подтверждены внешними системами.' );
-			$product->set_short_description( sprintf( 'Демо-товар · %s · артикул %s', $definition[1], $definition[2] ) );
+			$product->set_description( 'Товар для обслуживания автомобиля. Перед заказом уточняйте совместимость с вашей комплектацией.' );
+			$product->set_short_description( sprintf( '%s · артикул %s', $definition[1], $definition[2] ) );
 			$product->set_sku( $sku );
 			$product->set_regular_price( $definition[4] );
 			$product->set_price( $definition[4] );
@@ -284,11 +329,11 @@ final class Demo_Seeder {
 	private function seed_pages(): array {
 		$definitions = array(
 			'home' => array( 'Автозакуп', 'home', '<!-- wp:paragraph --><p>Главная страница выводится темой «Автозакуп» и редактируется в разделе «Автозакуп → Главная».</p><!-- /wp:paragraph -->' ),
-			'delivery' => array( 'Доставка и оплата', 'delivery', '<!-- wp:heading --><h2>Доставка и оплата</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Страница подготовлена для демонстрации. Реальные способы, стоимость и сроки будут опубликованы после утверждения правил и подключения сервисов.</p><!-- /wp:paragraph -->' ),
-			'returns' => array( 'Возврат', 'returns', '<!-- wp:heading --><h2>Возврат</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Демонстрационная страница не заменяет утверждённые правила возврата. Онлайн-регистрация возвратов пока не выполняется.</p><!-- /wp:paragraph -->' ),
-			'vin' => array( 'Подбор по VIN', 'vin-request', '<!-- wp:heading --><h2>Подбор по VIN</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Функция ещё не подключена: эта страница не принимает и не сохраняет VIN или персональные данные.</p><!-- /wp:paragraph -->' ),
-			'business' => array( 'Для бизнеса', 'business', '<!-- wp:heading --><h2>Для бизнеса</h2><!-- /wp:heading --><!-- wp:paragraph --><p>B2B-регистрация, специальные цены и счета не активированы. Условия появятся после утверждения правил проверки организаций.</p><!-- /wp:paragraph -->' ),
-			'contacts' => array( 'Контакты', 'contacts', '<!-- wp:heading --><h2>Контакты</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Контактные данные первой итерации редактируются в разделе «Автозакуп → Главная».</p><!-- /wp:paragraph -->' ),
+			'delivery' => array( 'Доставка и оплата', 'delivery', '<!-- wp:heading --><h2>Доставка и оплата</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Способы, стоимость и сроки доставки зависят от региона и состава заказа. Подробности уточняйте у менеджера.</p><!-- /wp:paragraph -->' ),
+			'returns' => array( 'Возврат', 'returns', '<!-- wp:heading --><h2>Возврат</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Условия возврата зависят от состояния товара и причины обращения. Перед отправкой свяжитесь с магазином.</p><!-- /wp:paragraph -->' ),
+			'vin' => array( 'Подбор по VIN', 'vin-request', '<!-- wp:heading --><h2>Подбор по VIN</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Для подбора детали по VIN свяжитесь с менеджером — он уточнит автомобиль, нужную деталь и совместимость.</p><!-- /wp:paragraph -->' ),
+			'business' => array( 'Для бизнеса', 'business', '<!-- wp:heading --><h2>Для бизнеса</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Подбираем запчасти для автосервисов и обсуждаем индивидуальные условия сотрудничества.</p><!-- /wp:paragraph -->' ),
+			'contacts' => array( 'Контакты', 'contacts', '<!-- wp:heading --><h2>Контакты</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Свяжитесь с магазином удобным способом, чтобы уточнить наличие, совместимость и условия получения товара.</p><!-- /wp:paragraph -->' ),
 		);
 		$result = array();
 
@@ -394,7 +439,7 @@ final class Demo_Seeder {
 		if ( ! empty( $terms ) && $terms[0] instanceof WP_Term ) {
 			$menu_id = $terms[0]->term_id;
 		} else {
-			$created = wp_create_nav_menu( 'Автозакуп — основное демо-меню' );
+			$created = wp_create_nav_menu( 'Автозакуп — основное меню' );
 			if ( is_wp_error( $created ) ) {
 				throw new RuntimeException( $created->get_error_message() );
 			}
@@ -402,14 +447,15 @@ final class Demo_Seeder {
 			update_term_meta( $menu_id, self::DEMO_META, '1' );
 			update_term_meta( $menu_id, self::DEMO_KEY_META, $menu_key );
 		}
+		$renamed = wp_update_term( $menu_id, 'nav_menu', array( 'name' => 'Автозакуп — основное меню' ) );
+		if ( is_wp_error( $renamed ) ) {
+			throw new RuntimeException( $renamed->get_error_message() );
+		}
 
-		$shop_url = get_permalink( $pages['shop'] ) ?: home_url( '/' );
-		$oils_url = get_term_link( $categories['oils'], 'product_cat' );
-		$maintenance_url = get_term_link( $categories['filters'], 'product_cat' );
 		$items = array(
-			'oils' => array( 'Масла и жидкости', is_wp_error( $oils_url ) ? $shop_url : $oils_url ),
-			'maintenance' => array( 'Запчасти для ТО', is_wp_error( $maintenance_url ) ? $shop_url : $maintenance_url ),
-			'business' => array( 'Для автосервисов', get_permalink( $pages['business'] ) ?: home_url( '/#business' ) ),
+			'oils' => array( 'Масла и жидкости', $categories['oils'], 'product_cat', 'taxonomy' ),
+			'maintenance' => array( 'Запчасти для ТО', $categories['filters'], 'product_cat', 'taxonomy' ),
+			'business' => array( 'Для автосервисов', $pages['business'], 'page', 'post_type' ),
 		);
 		$existing = wp_get_nav_menu_items( $menu_id, array( 'post_status' => 'any' ) );
 		$desired_keys = array_map( static fn ( string $key ): string => 'menu-item:' . $key, array_keys( $items ) );
@@ -439,8 +485,9 @@ final class Demo_Seeder {
 				$item_id,
 				array(
 					'menu-item-title' => $definition[0],
-					'menu-item-url' => $definition[1],
-					'menu-item-type' => 'custom',
+					'menu-item-object-id' => $definition[1],
+					'menu-item-object' => $definition[2],
+					'menu-item-type' => $definition[3],
 					'menu-item-status' => 'publish',
 				)
 			);
@@ -494,6 +541,16 @@ final class Demo_Seeder {
 		}
 
 		$defaults = Settings::defaults();
+		$legacy_copy = array(
+			'popular_text' => 'Демонстрационная подборка товаров WooCommerce',
+			'stock_title' => 'В наличии на нашем складе',
+			'stock_text' => 'Наличие в первой итерации носит демонстрационный характер',
+		);
+		foreach ( $legacy_copy as $setting_key => $legacy_value ) {
+			if ( $force || $is_new || $legacy_value === $settings[ $setting_key ] ) {
+				$settings[ $setting_key ] = $defaults[ $setting_key ];
+			}
+		}
 		$link_map = array(
 			'hero_primary_url' => 'shop',
 			'hero_secondary_url' => 'delivery',
@@ -553,31 +610,41 @@ final class Demo_Seeder {
 		return '';
 	}
 
-	private function find_demo_term( string $demo_key ): ?WP_Term {
+	/** @return WP_Term[] */
+	private function find_demo_terms( string $demo_key ): array {
 		$terms = get_terms(
 			array(
 				'taxonomy' => 'product_cat',
 				'hide_empty' => false,
 				'meta_key' => self::DEMO_KEY_META,
 				'meta_value' => $demo_key,
-				'number' => 1,
+				'orderby' => 'term_id',
+				'order' => 'ASC',
 			)
 		);
 		if ( is_wp_error( $terms ) ) {
 			throw new RuntimeException( $terms->get_error_message() );
 		}
-		return ! empty( $terms ) && $terms[0] instanceof WP_Term ? $terms[0] : null;
+		return array_values(
+			array_filter(
+				$terms,
+				static fn ( $term ): bool => $term instanceof WP_Term
+					&& '1' === get_term_meta( $term->term_id, self::DEMO_META, true )
+			)
+		);
 	}
 
-	private function available_term_slug( string $preferred ): string {
-		if ( ! get_term_by( 'slug', $preferred, 'product_cat' ) ) {
+	private function available_term_slug( string $preferred, int $ignore_term_id = 0 ): string {
+		$existing = get_term_by( 'slug', $preferred, 'product_cat' );
+		if ( ! $existing instanceof WP_Term || $existing->term_id === $ignore_term_id ) {
 			return $preferred;
 		}
 		$counter = 1;
 		do {
-			$candidate = 'demo-' . $preferred . ( $counter > 1 ? '-' . $counter : '' );
+			$candidate = 'avtozakup-' . $preferred . ( $counter > 1 ? '-' . $counter : '' );
 			++$counter;
-		} while ( get_term_by( 'slug', $candidate, 'product_cat' ) );
+			$existing = get_term_by( 'slug', $candidate, 'product_cat' );
+		} while ( $existing instanceof WP_Term && $existing->term_id !== $ignore_term_id );
 		return $candidate;
 	}
 

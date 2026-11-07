@@ -1,14 +1,14 @@
 === Автозакуп Core ===
 Contributors: avtozakup
-Tags: woocommerce, homepage, demo-data
+Tags: woocommerce, homepage, storefront
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Настройки главной страницы и безопасный демонстрационный контур магазина «Автозакуп».
+Настройки главной страницы, стартовый каталог и защитные границы магазина «Автозакуп».
 
 == Description ==
 
@@ -20,7 +20,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 * публичный API `avtozakup_get_homepage_settings()` для темы;
 * идемпотентную команду `wp avtozakup seed-demo`;
 * fail-closed dry-run/confirm repair для legacy WooCommerce page duplicates;
-* безопасную блокировку checkout в demo-окружении и для отмеченных demo-товаров;
+* безопасную блокировку checkout до подключения полноценного оформления заказов;
 * интерфейсы адаптеров для будущих каталога, остатков, применяемости, поставщиков и VIN workflow.
 
 Плагин не реализует реальные резервы, оплату, подбор по VIN, B2B-верификацию или интеграции поставщиков.
@@ -36,11 +36,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 `wp avtozakup seed-demo`
 
-Создаёт или обновляет только сущности с метками `_avtozakup_demo=1` и стабильным `_avtozakup_demo_key`. Команда создаёт 8 категорий, 10 товаров, шесть принадлежащих проекту страниц и меню, использует настроенные WooCommerce core pages read-only, выбирает demo-сущности в настройках и активирует тему `avtozakup`, если она установлена.
+Создаёт или обновляет только принадлежащие проекту сущности с метками `_avtozakup_demo=1` и стабильным `_avtozakup_demo_key`. Команда создаёт 8 категорий, 10 товаров, шесть принадлежащих проекту страниц и меню, использует настроенные WooCommerce core pages read-only, выбирает project-owned сущности в настройках и активирует тему `avtozakup`, если она установлена.
 
 `wp avtozakup seed-demo --force`
 
-Дополнительно назначает plugin-owned front page, меню и подборки вместо текущей demo-конфигурации. Валидные WooCommerce shop/cart/checkout/my-account pages и содержимое без demo-метки команда не изменяет.
+Дополнительно назначает plugin-owned front page, меню и подборки вместо текущей project-owned конфигурации. Валидные WooCommerce shop/cart/checkout/my-account pages и содержимое без ownership-метки команда не изменяет.
 
 `wp avtozakup repair-woo-pages`
 
@@ -48,11 +48,11 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 `wp avtozakup repair-woo-pages --confirm`
 
-После проверенной backup применяет свежий план, обновляет только Woo page references и перемещает точные marked demo-дубли в recoverable Trash. Повторный запуск является no-op.
+После проверенной backup применяет свежий план, обновляет только Woo page references и перемещает точные marked project duplicates в recoverable Trash. Повторный запуск является no-op.
 
 Если локальные изображения присутствуют в теме `avtozakup/assets/images`, seeder импортирует их в медиатеку через WordPress Media API. MAHLE CU 2939 намеренно остаётся с placeholder, как в макете.
 
-== Demo checkout guard ==
+== Checkout guard ==
 
 Checkout блокируется, если:
 
@@ -70,9 +70,14 @@ Checkout блокируется, если:
 
 == Uninstall ==
 
-При удалении плагина удаляются его options, но demo-контент сохраняется. Для явного удаления только маркированных demo-сущностей перед uninstall задайте `AVTOZAKUP_REMOVE_DEMO_DATA_ON_UNINSTALL=true`.
+При удалении плагина удаляются его options, но project-owned контент сохраняется. Для явного удаления только маркированных сущностей перед uninstall задайте `AVTOZAKUP_REMOVE_DEMO_DATA_ON_UNINSTALL=true`.
 
 == Changelog ==
+
+= 0.4.0 =
+* Customer-facing storefront copy without public provenance or internal seeded SKU labels.
+* Native taxonomy/page navigation and public-URL-safe bootstrap.
+* Same-node homepage cart transition after a successful WooCommerce AJAX add.
 
 = 0.3.0 =
 * WooCommerce core pages are referenced read-only and no longer duplicated by demo seed.

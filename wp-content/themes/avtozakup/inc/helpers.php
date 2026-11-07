@@ -13,7 +13,7 @@ function avtozakup_home_settings(): array {
 		'oil_title' => 'МАСЛА ДЛЯ|КАЖДОГО ТО',
 		'oil_text' => 'Надёжная защита двигателя каждый день',
 		'oil_button_label' => 'Смотреть масла →',
-		'oil_button_url' => '#catalog',
+		'oil_button_url' => '',
 		'oil_image' => AVTOZAKUP_THEME_URI . '/assets/images/hero-oil.webp',
 		'vin_title' => 'Подберём нужную деталь',
 		'vin_text' => 'Оставьте VIN и описание детали — менеджер поможет с выбором.',
@@ -26,9 +26,9 @@ function avtozakup_home_settings(): array {
 		'contact_phone' => '+7 (000) 000-00-00',
 		'contact_email' => 'info@example.invalid',
 		'maintenance_title' => 'Расходники для планового ТО',
-		'maintenance_text' => 'Демонстрационная подборка товаров WooCommerce',
-		'stock_title' => 'В наличии на нашем складе',
-		'stock_text' => 'Наличие в первой итерации носит демонстрационный характер',
+		'maintenance_text' => 'Подборка товаров для регулярного обслуживания автомобиля.',
+		'stock_title' => 'Товары для вашего автомобиля',
+		'stock_text' => 'Ещё больше товаров для обслуживания и ремонта автомобиля.',
 		'featured_category_ids' => array(),
 		'maintenance_product_ids' => array(),
 		'stock_product_ids' => array(),
@@ -71,6 +71,7 @@ function avtozakup_home_settings(): array {
 			$settings[ $contact_key ] = is_scalar( $raw[ $contact_key ] ) ? trim( (string) $raw[ $contact_key ] ) : '';
 		}
 	}
+	$settings['oil_button_url'] = avtozakup_catalog_category_url( 'oils', 'masla-i-zhidkosti' );
 
 	return $settings;
 }
@@ -178,15 +179,10 @@ function avtozakup_demo_product_provenance( WC_Product $product ): ?array {
 		return null;
 	}
 
-	$source_key = strtolower( preg_replace( '/\s+/', '', (string) $product->get_meta( '_avtozakup_demo_source', true ) ) );
-	$source_labels = array(
-		'paper:scr-002,scr-006,scr-007,scr-009' => 'Источник демо-данных: Paper SCR-002, SCR-006, SCR-007, SCR-009',
-	);
-
 	return array(
-		'loop'   => 'Демонстрационный товар · цена и наличие не подтверждены',
-		'single' => 'Демонстрационный товар. Цена, остаток, срок поставки и применяемость не подтверждены внешними системами.',
-		'source' => $source_labels[ $source_key ] ?? '',
+		'loop'   => 'Цена и наличие уточняются',
+		'single' => 'Цена, наличие, срок поставки и применяемость уточняются перед заказом.',
+		'source' => '',
 	);
 }
 
@@ -247,8 +243,11 @@ function avtozakup_loop_product_identity( WC_Product $product ): array {
 }
 
 /**
- * Return the synthetic SKU owned by the demo seeder.
- * A marked product with any other SKU keeps the standard WooCommerce meta UI.
+ * Return the synthetic SKU owned by the project seeder.
+ *
+ * The legacy AZ-DEMO-### shape remains recognised during an upgrade so the
+ * public product meta cannot expose it before the idempotent bootstrap has
+ * migrated the record to AZ-####.
  */
 function avtozakup_demo_technical_sku( WC_Product $product ): ?string {
 	if ( null === avtozakup_demo_product_provenance( $product ) ) {
@@ -256,7 +255,7 @@ function avtozakup_demo_technical_sku( WC_Product $product ): ?string {
 	}
 
 	$sku = (string) $product->get_sku();
-	return 1 === preg_match( '/\AAZ-DEMO-\d{3}\z/', $sku ) ? $sku : null;
+	return 1 === preg_match( '/\AAZ-(?:DEMO-\d{3}|\d{4})\z/', $sku ) ? $sku : null;
 }
 
 /**
@@ -265,7 +264,7 @@ function avtozakup_demo_technical_sku( WC_Product $product ): ?string {
  */
 function avtozakup_home_loop_add_to_cart_text( string $text, WC_Product $_product ): string {
 	$labels = array(
-		'Add to cart'    => 'В корзину',
+		'Add to cart'    => 'Добавить в корзину',
 		'Select options' => 'Выбрать параметры',
 		'View products'   => 'Посмотреть товары',
 		'Read more'       => 'Подробнее',
@@ -274,10 +273,33 @@ function avtozakup_home_loop_add_to_cart_text( string $text, WC_Product $_produc
 	return $labels[ $text ] ?? $text;
 }
 
+function avtozakup_home_product_uses_direct_cart_action( WC_Product $product ): bool {
+	return $product->is_type( 'simple' )
+		&& $product->is_purchasable()
+		&& $product->is_in_stock()
+		&& $product->supports( 'ajax_add_to_cart' );
+}
+
+function avtozakup_home_product_is_in_cart( WC_Product $product ): bool {
+	if ( ! avtozakup_home_product_uses_direct_cart_action( $product ) || ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return false;
+	}
+
+	foreach ( WC()->cart->get_cart() as $cart_item ) {
+		if (
+			absint( $cart_item['product_id'] ?? 0 ) === $product->get_id()
+			&& 0 === absint( $cart_item['variation_id'] ?? 0 )
+		) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function avtozakup_product_card( WC_Product $product ): void {
-	$identity   = avtozakup_loop_product_identity( $product );
-	$provenance = avtozakup_demo_product_provenance( $product );
-	$permalink  = $product->get_permalink();
+	$identity  = avtozakup_loop_product_identity( $product );
+	$permalink = $product->get_permalink();
 	?>
 	<article class="az-product-card az-product-card--<?php echo esc_attr( $identity['kind'] ); ?>" data-home-product-card data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
 		<a class="az-product-card__media" href="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( $product->get_name() ); ?>">
@@ -293,23 +315,26 @@ function avtozakup_product_card( WC_Product $product ): void {
 			<?php endif; ?>
 			<div class="az-product-card__footer">
 				<div class="az-product-card__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
-				<?php if ( null !== $provenance ) : ?>
-					<div class="az-product-card__provenance" data-demo-provenance="product"><?php echo esc_html( $provenance['loop'] ); ?></div>
-				<?php endif; ?>
 				<div class="az-product-card__action">
 					<?php
-					$had_global_product = array_key_exists( 'product', $GLOBALS );
-					$global_product     = $GLOBALS['product'] ?? null;
-					add_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20, 2 );
-					try {
-						$GLOBALS['product'] = $product;
-						woocommerce_template_loop_add_to_cart();
-					} finally {
-						remove_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20 );
-						if ( $had_global_product ) {
-							$GLOBALS['product'] = $global_product;
-						} else {
-							unset( $GLOBALS['product'] );
+					if ( avtozakup_home_product_is_in_cart( $product ) ) {
+						?>
+						<a class="button az-product-card__cart-link" data-home-cart-link href="<?php echo esc_url( wc_get_cart_url() ); ?>"><?php esc_html_e( 'Перейти в корзину', 'avtozakup' ); ?></a>
+						<?php
+					} else {
+						$had_global_product = array_key_exists( 'product', $GLOBALS );
+						$global_product     = $GLOBALS['product'] ?? null;
+						add_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20, 2 );
+						try {
+							$GLOBALS['product'] = $product;
+							woocommerce_template_loop_add_to_cart();
+						} finally {
+							remove_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20 );
+							if ( $had_global_product ) {
+								$GLOBALS['product'] = $global_product;
+							} else {
+								unset( $GLOBALS['product'] );
+							}
 						}
 					}
 					?>
@@ -330,8 +355,67 @@ function avtozakup_wc_page_url( string $page ): string {
 	return home_url( '/' );
 }
 
+function avtozakup_catalog_category_url( string $stable_key, string $fallback_slug ): string {
+	if ( ! taxonomy_exists( 'product_cat' ) ) {
+		return avtozakup_wc_page_url( 'shop' );
+	}
+
+	$term = null;
+	$manifest = get_option( 'avtozakup_demo_manifest', array() );
+	$manifest_term_id = is_array( $manifest ) ? absint( $manifest['categories'][ $stable_key ] ?? 0 ) : 0;
+	if ( $manifest_term_id > 0 ) {
+		$candidate = get_term( $manifest_term_id, 'product_cat' );
+		if ( $candidate instanceof WP_Term ) {
+			$term = $candidate;
+		}
+	}
+
+	if ( ! $term instanceof WP_Term ) {
+		$candidate = get_term_by( 'slug', $fallback_slug, 'product_cat' );
+		if ( $candidate instanceof WP_Term ) {
+			$term = $candidate;
+		}
+	}
+
+	if ( ! $term instanceof WP_Term ) {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
+				'meta_key'   => '_avtozakup_demo_key',
+				'meta_value' => 'category:' . $stable_key,
+				'number'      => 1,
+			)
+		);
+		if ( ! is_wp_error( $terms ) && isset( $terms[0] ) && $terms[0] instanceof WP_Term ) {
+			$term = $terms[0];
+		}
+	}
+
+	if ( $term instanceof WP_Term ) {
+		$url = get_term_link( $term, 'product_cat' );
+		if ( ! is_wp_error( $url ) ) {
+			return $url;
+		}
+	}
+
+	return avtozakup_wc_page_url( 'shop' );
+}
+
+function avtozakup_seeded_page_url( string $stable_key, string $fallback_path ): string {
+	$manifest = get_option( 'avtozakup_demo_manifest', array() );
+	$page_id = is_array( $manifest ) ? absint( $manifest['pages'][ $stable_key ] ?? 0 ) : 0;
+	if ( $page_id > 0 ) {
+		$url = get_permalink( $page_id );
+		if ( is_string( $url ) && '' !== $url ) {
+			return $url;
+		}
+	}
+	return home_url( '/' . trim( $fallback_path, '/' ) . '/' );
+}
+
 function avtozakup_primary_menu_fallback(): void {
-	echo '<ul class="az-primary-menu"><li><a href="' . esc_url( home_url( '/product-category/oils/' ) ) . '">' . esc_html__( 'Масла и жидкости', 'avtozakup' ) . '</a></li><li><a href="' . esc_url( home_url( '/product-category/maintenance/' ) ) . '">' . esc_html__( 'Запчасти для ТО', 'avtozakup' ) . '</a></li><li><a href="#business">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li></ul>';
+	echo '<ul class="az-primary-menu"><li><a href="' . esc_url( avtozakup_catalog_category_url( 'oils', 'masla-i-zhidkosti' ) ) . '">' . esc_html__( 'Масла и жидкости', 'avtozakup' ) . '</a></li><li><a href="' . esc_url( avtozakup_catalog_category_url( 'filters', 'zapchasti-dlya-to' ) ) . '">' . esc_html__( 'Запчасти для ТО', 'avtozakup' ) . '</a></li><li><a href="' . esc_url( avtozakup_seeded_page_url( 'business', 'business' ) ) . '">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li></ul>';
 }
 
 function avtozakup_footer_buyers_fallback(): void {
@@ -339,7 +423,7 @@ function avtozakup_footer_buyers_fallback(): void {
 }
 
 function avtozakup_footer_business_fallback(): void {
-	echo '<ul><li><a href="#business">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li><li><button type="button" data-status-dialog="b2b" aria-haspopup="dialog">' . esc_html__( 'Условия сотрудничества', 'avtozakup' ) . '</button></li><li><button type="button" data-contact-open aria-haspopup="dialog">' . esc_html__( 'Запросить предложение', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/faq/' ) ) . '">' . esc_html__( 'Частые вопросы', 'avtozakup' ) . '</a></li></ul>';
+	echo '<ul><li><a href="' . esc_url( avtozakup_seeded_page_url( 'business', 'business' ) ) . '">' . esc_html__( 'Для автосервисов', 'avtozakup' ) . '</a></li><li><button type="button" data-status-dialog="b2b" aria-haspopup="dialog">' . esc_html__( 'Условия сотрудничества', 'avtozakup' ) . '</button></li><li><button type="button" data-contact-open aria-haspopup="dialog">' . esc_html__( 'Запросить предложение', 'avtozakup' ) . '</button></li><li><a href="' . esc_url( home_url( '/faq/' ) ) . '">' . esc_html__( 'Частые вопросы', 'avtozakup' ) . '</a></li></ul>';
 }
 
 function avtozakup_footer_info_fallback(): void {

@@ -86,10 +86,10 @@
   const statusCopy = statusDialog?.querySelector('[data-status-copy]');
   let statusTrigger = null;
   const messages = {
-    vehicle: 'Подбор по автомобилю ожидает решения об источнике каталога применяемости (DEC-004). Пока доступен каталог WooCommerce.',
-    vin: 'VIN-заявка не отправляется: обязательные контакты, согласие и маршрут обработки зависят от DEC-017 и DEC-018.',
-    b2b: 'B2B-сценарий откроется после утверждения минимального состава, полномочий и условий (DEC-016).',
-    delivery: 'Города, способы получения и география ещё согласуются в DEC-001 и DEC-014.'
+    vehicle: 'Подбор по автомобилю временно недоступен. Перейдите в каталог или воспользуйтесь поиском.',
+    vin: 'Онлайн-заявка по VIN временно недоступна. Свяжитесь с нами для подбора детали.',
+    b2b: 'Чтобы обсудить условия для автосервиса, свяжитесь с нами.',
+    delivery: 'Уточните доступные способы получения у менеджера.'
   };
   document.querySelectorAll('[data-status-dialog]').forEach((trigger) => {
     trigger.addEventListener('click', (event) => {
@@ -112,6 +112,39 @@
       if (event.target === dialog) dialog.close();
     });
   });
+
+  const transformHomeAddButton = (button) => {
+    if (!(button instanceof HTMLAnchorElement)) return;
+    const card = button.closest('[data-home-product-card]');
+    const action = button.closest('.az-product-card__action');
+    if (!card || !action) return;
+
+    const headerCartLink = document.querySelector('a.az-cart-link[href]');
+    if (!(headerCartLink instanceof HTMLAnchorElement)) return;
+
+    const label = 'Перейти в корзину';
+    button.href = headerCartLink.href;
+    button.textContent = label;
+    button.setAttribute('aria-label', label);
+    button.setAttribute('data-home-cart-link', '');
+    button.removeAttribute('aria-describedby');
+    button.removeAttribute('data-product_id');
+    button.removeAttribute('data-product_sku');
+    button.removeAttribute('data-quantity');
+    button.removeAttribute('data-success_message');
+    button.removeAttribute('rel');
+    button.classList.remove('add_to_cart_button', 'ajax_add_to_cart', 'added', 'loading');
+    button.classList.add('az-product-card__cart-link');
+    action.querySelectorAll('a.added_to_cart.wc-forward').forEach((link) => link.remove());
+  };
+
+  if (window.jQuery) {
+    window.jQuery(document.body).on('added_to_cart.avtozakupHome', (_event, _fragments, _cartHash, $button) => {
+      const button = $button?.get?.(0);
+      transformHomeAddButton(button);
+      window.setTimeout(() => transformHomeAddButton(button), 0);
+    });
+  }
 
   const cartRoot = document.querySelector('.wp-block-woocommerce-cart');
   if (cartRoot && document.body.classList.contains('woocommerce-cart')) {

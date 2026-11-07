@@ -9,8 +9,8 @@ type RuntimeErrors = {
   page: string[];
 };
 
-const demoCheckoutMessage = 'Это демонстрационный каталог. Оформление, оплата, резервирование, VIN- и B2B-операции отключены.';
-const demoCheckoutButtonLabel = 'Оформление отключено в демо-режиме';
+const demoCheckoutMessage = 'Онлайн-оформление заказа временно недоступно.';
+const demoCheckoutButtonLabel = 'Оформление заказа временно недоступно';
 
 function watchRuntimeErrors(page: Page): RuntimeErrors {
   const errors: RuntimeErrors = { console: [], page: [] };
@@ -120,7 +120,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(page.locator('#business h2#az-business-title')).toBeVisible();
     await expect(page.locator('dialog[data-contact-dialog] h2#az-contact-title')).toHaveText('Связаться с нами');
     await expect(page.locator('dialog[data-status-dialog-modal] h2#az-status-title')).toHaveText(
-      'Сценарий ещё согласуется',
+      'Функция временно недоступна',
     );
 
     const navToggle = page.locator(
@@ -138,6 +138,30 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(navLabel).toHaveText('Открыть меню');
     await expect(navPanel).toHaveCount(1);
     await expect(navPanel).not.toHaveClass(/\bis-open\b/);
+
+    const currentOrigin = new URL(page.url()).origin;
+    const primaryDestinations = [
+      ['Масла и жидкости', '/product-category/masla-i-zhidkosti/'],
+      ['Запчасти для ТО', '/product-category/zapchasti-dlya-to/'],
+      ['Для автосервисов', '/business/'],
+    ] as const;
+    for (const [label, pathname] of primaryDestinations) {
+      const link = page.locator('.az-primary-menu a').filter({ hasText: label });
+      await expect(link).toHaveCount(1);
+      const href = await link.getAttribute('href');
+      expect(href).toBeTruthy();
+      const destination = new URL(href!, page.url());
+      expect(destination.origin).toBe(currentOrigin);
+      expect(destination.pathname).toBe(pathname);
+    }
+    const oilsNavHref = await page.locator('.az-primary-menu a').filter({ hasText: 'Масла и жидкости' }).getAttribute('href');
+    const oilsPromo = page.locator('.az-hero__promo a.az-button');
+    await expect(oilsPromo).toHaveText('Смотреть масла →');
+    await expect(oilsPromo).toHaveAttribute('href', oilsNavHref!);
+    if (!/^(?:localhost|127\.0\.0\.1)$/i.test(new URL(page.url()).hostname)) {
+      await expect(page.locator('a[href*="localhost"], a[href*="127.0.0.1"], a[href*="//caddy"]')).toHaveCount(0);
+    }
+    await expect(page.locator('body')).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
 
     if (testInfo.project.name === 'desktop-chrome-1440') {
       await expect(navToggle).toBeHidden();
@@ -201,7 +225,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     );
     await expect(demoAction).toHaveCount(1);
     await expect(demoAction).toBeVisible();
-    await expect(demoAction).toHaveText('Добавить в демо-корзину');
+    await expect(demoAction).toHaveText('Добавить в корзину');
     await expect(demoAction).toHaveAttribute('data-product_id', demoProductId!);
 
     const pageWidth = await page.evaluate(() => ({
@@ -531,9 +555,9 @@ test.describe('АВТОЗАКУП homepage', () => {
     await page.keyboard.press('Enter');
     await expect(statusDialog).toBeVisible();
     await expect(statusDialog).toHaveAttribute('open', '');
-    await expect(statusDialog).toHaveAccessibleName('Сценарий ещё согласуется');
+    await expect(statusDialog).toHaveAccessibleName('Функция временно недоступна');
     await expect(statusDialog.locator('[data-status-copy]')).toHaveText(
-      'Города, способы получения и география ещё согласуются в DEC-001 и DEC-014.',
+      'Уточните доступные способы получения у менеджера.',
     );
     const statusClose = statusDialog.getByRole('button', { name: 'Закрыть', exact: true });
     await expect(statusClose).toHaveCount(1);
@@ -562,6 +586,11 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(await statusDialog.getAttribute('open')).toBeNull();
     await expect(cityTrigger).toBeFocused();
 
+    await oilsPromo.click();
+    await page.waitForLoadState('networkidle');
+    expect(new URL(page.url()).pathname).toBe('/product-category/masla-i-zhidkosti/');
+    await expect(page.locator('body')).toHaveClass(/tax-product_cat/);
+
     expectNoRuntimeErrors(runtimeErrors);
   });
 
@@ -589,15 +618,15 @@ test.describe('АВТОЗАКУП homepage', () => {
     const actions = [
       {
         selector: '.az-vehicle-picker button[data-status-dialog="vehicle"]',
-        message: 'Подбор по автомобилю ожидает решения об источнике каталога применяемости (DEC-004). Пока доступен каталог WooCommerce.',
+        message: 'Подбор по автомобилю временно недоступен. Перейдите в каталог или воспользуйтесь поиском.',
       },
       {
         selector: '#vin-request button[data-status-dialog="vin"]',
-        message: 'VIN-заявка не отправляется: обязательные контакты, согласие и маршрут обработки зависят от DEC-017 и DEC-018.',
+        message: 'Онлайн-заявка по VIN временно недоступна. Свяжитесь с нами для подбора детали.',
       },
       {
         selector: '#business button[data-status-dialog="b2b"]',
-        message: 'B2B-сценарий откроется после утверждения минимального состава, полномочий и условий (DEC-016).',
+        message: 'Чтобы обсудить условия для автосервиса, свяжитесь с нами.',
       },
     ];
     const initialUrl = page.url();
@@ -612,7 +641,7 @@ test.describe('АВТОЗАКУП homepage', () => {
       await page.keyboard.press('Enter');
       await expect(statusDialog).toBeVisible();
       await expect(statusDialog).toHaveAttribute('open', '');
-      await expect(statusDialog).toHaveAccessibleName('Сценарий ещё согласуется');
+      await expect(statusDialog).toHaveAccessibleName('Функция временно недоступна');
       await expect(statusCopy).toHaveText(action.message);
       await expect(statusClose).toBeFocused();
       await page.keyboard.press('Enter');
@@ -640,16 +669,25 @@ test.describe('АВТОЗАКУП homepage', () => {
     expectNoRuntimeErrors(runtimeErrors);
   });
 
-  test('keeps repeated AJAX additions aligned with the cart', async ({ page }) => {
+  test('turns a successful homepage add action into a canonical cart link', async ({ page }) => {
     const runtimeErrors = watchRuntimeErrors(page);
+    let addRequestCount = 0;
+    page.on('request', (request) => {
+      const requestUrl = new URL(request.url());
+      if (request.method() === 'POST' && requestUrl.searchParams.get('wc-ajax') === 'add_to_cart') {
+        addRequestCount += 1;
+      }
+    });
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const addToCart = page.locator('.az-product-card a.add_to_cart_button[data-product_id]').first();
     await expect(addToCart, 'At least one purchasable in-stock product is required').toBeVisible();
-    const sourceCard = addToCart.locator('xpath=ancestor::article[@data-product-id][1]');
-    await expect(sourceCard).toHaveCount(1);
-    const sourceProductId = await sourceCard.getAttribute('data-product-id');
+    const sourceCardFromAction = addToCart.locator('xpath=ancestor::article[@data-product-id][1]');
+    await expect(sourceCardFromAction).toHaveCount(1);
+    const sourceProductId = await sourceCardFromAction.getAttribute('data-product-id');
     expect(sourceProductId).toMatch(/^\d+$/);
+    const sourceCard = page.locator(`[data-home-product-card][data-product-id="${sourceProductId}"]`).first();
+    await expect(sourceCard).toHaveCount(1);
     await expect(addToCart).toHaveAttribute('data-product_id', sourceProductId!);
     await expect(addToCart).toHaveAttribute('data-quantity', '1');
     const sourceTitleLink = sourceCard.locator('.az-product-card__title');
@@ -657,39 +695,34 @@ test.describe('АВТОЗАКУП homepage', () => {
     const sourceProductHref = await sourceTitleLink.getAttribute('href');
     expect(sourceProductName).not.toBe('');
     expect(sourceProductHref).toBeTruthy();
+    await addToCart.evaluate((element) => element.setAttribute('data-test-original-home-action', ''));
+    const addResponsePromise = page.waitForResponse(
+      (response) => {
+        const responseUrl = new URL(response.url());
+        return response.request().method() === 'POST'
+          && responseUrl.searchParams.getAll('wc-ajax').length === 1
+          && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
+      },
+    );
+    await addToCart.click();
+    const addResponse = await addResponsePromise;
 
-    const addExactProductOnce = async () => {
-      const addResponsePromise = page.waitForResponse(
-        (response) => {
-          const responseUrl = new URL(response.url());
-          return response.request().method() === 'POST'
-            && responseUrl.searchParams.getAll('wc-ajax').length === 1
-            && responseUrl.searchParams.get('wc-ajax') === 'add_to_cart';
-        },
-      );
-      await addToCart.click();
-      const addResponse = await addResponsePromise;
+    expect(addResponse.ok(), `Add-to-cart failed with HTTP ${addResponse.status()}`).toBeTruthy();
+    const addRequest = addResponse.request();
+    expect(addRequest.method()).toBe('POST');
+    expect(addRequest.headers()['content-type']).toMatch(/^application\/x-www-form-urlencoded(?:;|$)/i);
+    const addUrl = new URL(addRequest.url());
+    expect(addUrl.origin).toBe(new URL(page.url()).origin);
+    expect(addUrl.pathname).toBe('/');
+    expect([...addUrl.searchParams.entries()]).toEqual([['wc-ajax', 'add_to_cart']]);
+    expect(addUrl.hash).toBe('');
+    const addPayload = new URLSearchParams(addRequest.postData() ?? '');
+    expect(addPayload.getAll('product_id')).toEqual([sourceProductId!]);
+    expect(addPayload.getAll('quantity')).toEqual(['1']);
+    const responsePayload = await addResponse.json();
+    expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
+    expect(addRequestCount).toBe(1);
 
-      expect(addResponse.ok(), `Add-to-cart failed with HTTP ${addResponse.status()}`).toBeTruthy();
-      const addRequest = addResponse.request();
-      expect(addRequest.method()).toBe('POST');
-      expect(addRequest.headers()['content-type']).toMatch(
-        /^application\/x-www-form-urlencoded(?:;|$)/i,
-      );
-      const addUrl = new URL(addRequest.url());
-      expect(addUrl.origin).toBe(new URL(page.url()).origin);
-      expect(addUrl.pathname).toBe('/');
-      expect([...addUrl.searchParams.entries()]).toEqual([['wc-ajax', 'add_to_cart']]);
-      expect(addUrl.hash).toBe('');
-      const addPayload = new URLSearchParams(addRequest.postData() ?? '');
-      expect(addPayload.getAll('product_id')).toEqual([sourceProductId!]);
-      expect(addPayload.getAll('quantity')).toEqual(['1']);
-      const responsePayload = await addResponse.json();
-      expect(responsePayload.error, 'WooCommerce rejected the add-to-cart request').not.toBe(true);
-    };
-
-    await addExactProductOnce();
-    await expect(addToCart).toHaveClass(/\badded\b/);
     const cartLink = page.locator('a.az-cart-link');
     const cartBadge = cartLink.locator('#az-cart-count');
     const expectHeaderCartState = async (count: number, context: string) => {
@@ -709,9 +742,6 @@ test.describe('АВТОЗАКУП homepage', () => {
     };
     await expectHeaderCartState(1, 'After the first AJAX addition');
 
-    await addExactProductOnce();
-    await expectHeaderCartState(2, 'After the repeated AJAX addition');
-
     const cartHref = await cartLink.getAttribute('href');
     expect(cartHref).toBeTruthy();
     const cartUrl = new URL(cartHref!, page.url());
@@ -719,10 +749,24 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(cartUrl.pathname).toBe('/cart/');
     expect(cartUrl.search).toBe('');
     expect(cartUrl.hash).toBe('');
-    await cartLink.click();
+
+    const actionArea = sourceCard.locator('.az-product-card__action');
+    const transformedAction = actionArea.locator('a[data-home-cart-link][data-test-original-home-action]');
+    await expect(transformedAction).toHaveCount(1);
+    await expect(transformedAction).toHaveText('Перейти в корзину');
+    await expect(transformedAction).toHaveAccessibleName('Перейти в корзину');
+    await expect(transformedAction).toHaveAttribute('href', cartUrl.href);
+    await expect(transformedAction).not.toHaveClass(/\b(?:add_to_cart_button|ajax_add_to_cart|added|loading)\b/);
+    await expect(transformedAction).not.toHaveAttribute('data-product_id', /.+/);
+    await expect(transformedAction).not.toHaveAttribute('data-quantity', /.+/);
+    await expect(actionArea.locator('a.added_to_cart.wc-forward')).toHaveCount(0);
+    await expect(transformedAction).toBeFocused();
+
+    await transformedAction.click();
     await page.waitForLoadState('networkidle');
     expect(page.url(), 'The cart link must open the exact canonical WooCommerce URL').toBe(cartUrl.href);
-    await expectHeaderCartState(2, 'After full navigation to the cart');
+    expect(addRequestCount, 'The cart link must not send a second add-to-cart request').toBe(1);
+    await expectHeaderCartState(1, 'After full navigation to the cart');
     const cartItems = page.locator('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row');
     await expect(cartItems).toHaveCount(1);
     const cartItem = cartItems.first();
@@ -731,13 +775,33 @@ test.describe('АВТОЗАКУП homepage', () => {
     await expect(cartProductLink).toHaveCount(1);
     await expect(cartProductLink).toHaveText(sourceProductName);
     await expect(cartProductLink).toHaveAttribute('href', sourceProductHref!);
+    const cartQuantity = cartItem.locator('input.qty, .wc-block-components-quantity-selector__input');
+    await expect(cartQuantity).toHaveCount(1);
+    await expect(cartQuantity).toHaveValue('1');
     await expectExactDemoCheckoutNotice(page);
+
+    await page.goBack({ waitUntil: 'networkidle' });
+    expect(new URL(page.url()).pathname).toBe('/');
+    const homepageReload = await page.reload({ waitUntil: 'networkidle' });
+    expect(homepageReload?.ok(), 'The homepage reload must return a successful document response').toBe(true);
+    const reloadedSourceCard = page.locator(`[data-home-product-card][data-product-id="${sourceProductId}"]`).first();
+    await expect(reloadedSourceCard).toHaveCount(1);
+    const serverCartAction = reloadedSourceCard.locator('.az-product-card__action > a[data-home-cart-link]');
+    await expect(serverCartAction).toHaveCount(1);
+    await expect(serverCartAction).toHaveText('Перейти в корзину');
+    await expect(serverCartAction).toHaveAttribute('href', cartUrl.href);
+    await expect(reloadedSourceCard.locator('.az-product-card__action > a.add_to_cart_button')).toHaveCount(0);
+    await expect(reloadedSourceCard.locator('.az-product-card__action > a.added_to_cart')).toHaveCount(0);
+    await serverCartAction.click();
+    await page.waitForLoadState('networkidle');
+    expect(page.url()).toBe(cartUrl.href);
+    expect(addRequestCount).toBe(1);
 
     const canonicalCartUrl = cartUrl.href;
     const reloadResponse = await page.reload({ waitUntil: 'networkidle' });
     expect(reloadResponse?.ok(), 'The canonical cart reload must return a successful document response').toBe(true);
     expect(page.url(), 'The reload must preserve the exact canonical cart URL').toBe(canonicalCartUrl);
-    await expectHeaderCartState(2, 'After an immediate canonical cart reload');
+    await expectHeaderCartState(1, 'After an immediate canonical cart reload');
     await expect(cartItems).toHaveCount(1);
     const reloadedCartItem = cartItems.first();
     await expect(reloadedCartItem).toContainText(sourceProductName);
@@ -762,7 +826,7 @@ test.describe('АВТОЗАКУП homepage', () => {
     await checkoutLink.click();
     await page.waitForLoadState('networkidle');
     expect(page.url(), 'The checkout link must open the exact canonical WooCommerce URL').toBe(checkoutUrl.href);
-    await expectHeaderCartState(2, 'After full navigation to checkout');
+    await expectHeaderCartState(1, 'After full navigation to checkout');
     await expectExactDemoCheckoutNotice(page);
     const classicDisabledButton = page.getByRole('button', { name: demoCheckoutButtonLabel, exact: true });
     if (await classicDisabledButton.count()) {
@@ -775,7 +839,7 @@ test.describe('АВТОЗАКУП homepage', () => {
 
     await page.goBack({ waitUntil: 'networkidle' });
     expect(page.url(), 'Browser Back must restore the exact canonical cart URL').toBe(canonicalCartUrl);
-    await expectHeaderCartState(2, 'After browser Back from checkout to the cart');
+    await expectHeaderCartState(1, 'After browser Back from checkout to the cart');
     await expect(cartItems).toHaveCount(1);
     const historyCartItem = cartItems.first();
     await expect(historyCartItem).toContainText(sourceProductName);
@@ -789,7 +853,7 @@ test.describe('АВТОЗАКУП homepage', () => {
 
     await page.goForward({ waitUntil: 'networkidle' });
     expect(page.url(), 'Browser Forward must restore the exact canonical checkout URL').toBe(checkoutUrl.href);
-    await expectHeaderCartState(2, 'After browser Forward from the cart to checkout');
+    await expectHeaderCartState(1, 'After browser Forward from the cart to checkout');
     await expectExactDemoCheckoutNotice(page);
     const forwardClassicDisabledButton = page.getByRole('button', {
       name: demoCheckoutButtonLabel,

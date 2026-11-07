@@ -1139,7 +1139,7 @@ test.describe('WordPress administration', () => {
       );
       await expect(productAction).toHaveCount(1);
       await expect(productAction).toBeVisible();
-      await expect(productAction).toHaveText('В корзину');
+      await expect(productAction).toHaveText('Добавить в корзину');
       await expect(productAction).toHaveAttribute('data-product_id', String(productId));
       await expect(
         page.locator(`[aria-labelledby="az-stock-title"] .az-product-card[data-product-id="${productId}"]`),

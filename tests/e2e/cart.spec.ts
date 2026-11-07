@@ -53,8 +53,9 @@ test('presents the demo cart as a responsive Paper-aligned order review', async 
   const demoNotice = page.locator('.avtozakup-demo-notice');
   await expect(demoNotice).toBeVisible();
   await expect(demoNotice).toHaveText(
-    'Это демонстрационный каталог. Оформление, оплата, резервирование, VIN- и B2B-операции отключены.',
+    'Онлайн-оформление заказа временно недоступно.',
   );
+  expect(await demoNotice.evaluate((element) => getComputedStyle(element, '::before').content)).toBe('none');
 
   const cartMain = page.locator('.wc-block-cart__main');
   const cartSidebar = page.locator('.wc-block-cart__sidebar');
@@ -92,7 +93,7 @@ test('presents the demo cart as a responsive Paper-aligned order review', async 
   await expect(checkout).toBeVisible();
   await expect(checkout).toHaveAttribute('href', /\/checkout\/$/);
   if (testInfo.project.name === 'desktop-chrome-1440') {
-    await expect(cartSidebar.getByRole('heading', { name: 'Итого' })).toBeVisible();
+    await expect(cartSidebar.getByRole('heading', { name: 'Итого', includeHidden: true })).not.toBeVisible();
     await expect(cartSidebar.getByText('Итого к оплате', { exact: true })).toBeVisible();
   }
 

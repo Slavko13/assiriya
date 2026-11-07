@@ -77,7 +77,7 @@ final class Demo_Checkout_Guard {
 
 		return sprintf(
 			'<button type="button" class="button alt" disabled aria-disabled="true">%s</button>',
-			esc_html__( 'Оформление отключено в демо-режиме', 'avtozakup-core' )
+			esc_html__( 'Оформление заказа временно недоступно', 'avtozakup-core' )
 		);
 	}
 
@@ -153,7 +153,7 @@ final class Demo_Checkout_Guard {
 	}
 
 	private function message(): string {
-		return __( 'Это демонстрационный каталог. Оформление, оплата, резервирование, VIN- и B2B-операции отключены.', 'avtozakup-core' );
+		return __( 'Онлайн-оформление заказа временно недоступно.', 'avtozakup-core' );
 	}
 }
 

@@ -191,7 +191,7 @@ Qualifier: это prevention-срез; одноразовая локальная
 - unknown raw source meta не публикуется; только текущий whitelist source отображается как Paper SCR-002/006/007/009;
 - category/search loops и single product summary получают provenance через именованные Woo hooks без template override;
 - E2E на `1440/390/360`: каталог → «Тормозная система» → marked card → multi-result product-name search «Фильтр» → marked result → PDP disclaimer/source; provenance scenario `3 passed`, весь `catalog.spec.ts` `6 passed` (`2` сценария × `3` viewport), `0 failed`;
-- actual PDP screenshots: `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png`;
+- actual PDP screenshots (renamed to public-copy artifacts in I2-S81): `product-public-copy-desktop-chrome-1440.png`, `product-public-copy-mobile-chrome-390.png`, `product-public-copy-mobile-chrome-360.png`;
 - full regression: `19` tests, `17 passed`, `2 intentional skipped`, `0 failed`.
 
 Статус относится только к явной demo provenance. `PBL-011`, `FR-CAT-002`, `FR-OFR-002`, перечисленные TC/DG/DEC остаются partial/open; visual имеет `DESIGN_REVIEW_REQUIRED`.
@@ -2144,6 +2144,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 - the hard-coded «Ежедневно 9:00–20:00» claims in the topbar/dialog and the customer-facing WordPress admin instruction were removed; shared status-dialog presentation and behavior stay separately scoped;
 - valid pre-fix homepage target: `3 failed`; post-fix target: `3 passed`; admin save/clear/restore target: `1 passed`; final full regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
 - 3 new contact-dialog artifacts were added and 12 existing artifacts were refreshed (all 11 desktop full-page surfaces plus the existing `390px` category guard), giving `37` PNG (`36` actual + Paper); PHP lint, `git diff --check`, preflight `11/11`, axe/no-overflow/runtime and post-suite inventory `10/0/0/0` pass; independent code and visual reviews report no remaining findings.
+
+### I2-S81 — public storefront copy, native routes and same-node cart CTA
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S1/I2-S3/I2-S4/I2-S25/I2-S29/I2-S57/I2-S58/I2-S77—S80`; `SCR-002/005/006/009/010`; `FR-CAT-001/002`, `FR-CART-001/002` renderer/transport partials; `PBL-010/011/019/040`; `DEC-002/003/005/006/008—014/019/020` remain open; Quick Tunnel hardening extends `OPS-QT-001` without claiming remote deployment.
+
+Критерии среза:
+
+- customer-facing project-owned category/product/media/page/settings copy contains no public demo/provenance/internal-seed labels, while exact ownership markers remain internal and no record is deleted;
+- primary navigation and homepage oil promo resolve exact native taxonomy/page destinations on the current origin, with no stored `localhost`/internal-host public URL;
+- one successful simple-product homepage AJAX add changes the same action into a canonical cart link, emits no extra Woo forward link or second add request, and survives a full homepage reload;
+- WordPress and WP-CLI receive the same mandatory Quick Tunnel `PUBLIC_URL`; bootstrap completes before the project Caddy is recreated, and public smoke rejects internal-host links/actions;
+- responsive screenshots, contrast, accessibility/runtime, cleanup and the full regression remain clean.
+
+Вне scope: real inventory/offer/price freshness, arbitrary variable/grouped/external products, checkout/order/payment, fitment/search contracts, stable DNS, completed remote deployment, Paper mobile/pixel-perfect approval, AT/browser matrix and full WCAG.
+
+Выполнено:
+
+- core `0.4.0` migrates exact project-owned legacy copy without deletion: all 72 marked terms remain, 59 legacy `demo-*` slugs receive stable non-demo slugs, canonical selections use clean routes, 10 products use `AZ-0001…AZ-0010`, and 10 media/6 pages/exact legacy Settings copy receive customer-facing metadata; two seed runs preserve counts and menu ID, while unmarked records remain outside the mutation contract;
+- theme `0.14.0` removes public provenance/internal seeded SKU/demo markers, keeps native Woo data/actions, uses neutral availability and checkout-unavailable language, resolves exact oils/maintenance/business links dynamically, and sends `Смотреть масла →` to the oils archive;
+- the homepage `added_to_cart` handler morphs the original focused action to `Перейти в корзину`, removes add/AJAX transport attributes/classes, suppresses the native sibling link, sends no second POST on cart navigation and server-renders the same state after reload;
+- Quick Tunnel Compose requires the same `PUBLIC_URL` for `wordpress` and `wpcli`; native taxonomy/page menu objects are created under that public origin; deploy runs bootstrap before recreating project Caddy; smoke rejects public links/actions containing `localhost`, `127.0.0.1` or `caddy`;
+- valid config red test failed before the WP-CLI URL fix; post-fix preflight is `11/11`; nav/oils/cart targets pass, the only PDP contrast finding was fixed and retested, final full regression is `61` = `59 passed / 2 intentional skipped / 0 failed`, post-suite inventory is `10/0/0/0`, all 36 actual PNG were refreshed, the three PDP provenance filenames became `product-public-copy-*`, and repository total remains `37` PNG (`36` actual + Paper).
 
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 

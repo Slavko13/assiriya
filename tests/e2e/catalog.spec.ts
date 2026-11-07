@@ -188,7 +188,7 @@ test('opens the dynamic catalog and a published WooCommerce category', async ({ 
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
 
-test('shows explicit demo provenance through shop, product search and PDP', async ({ page }, testInfo) => {
+test('keeps public catalog copy free from fixture and implementation labels', async ({ page }, testInfo) => {
   const runtimeErrors = watchRuntimeErrors(page);
   await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -199,11 +199,10 @@ test('shows explicit demo provenance through shop, product search and PDP', asyn
   await page.locator('.az-category-card').filter({ hasText: 'Тормозная система' }).click();
   await page.waitForLoadState('networkidle');
 
-  const shopProduct = page.locator('ul.products li.product').filter({
-    has: page.locator('[data-demo-provenance="product"]'),
-  }).first();
+  const shopProduct = page.locator('ul.products li.product').first();
   await expect(shopProduct).toBeVisible();
-  await expect(shopProduct.locator('[data-demo-provenance="product"]')).toContainText('цена и наличие не подтверждены');
+  await expect(shopProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+  await expect(shopProduct).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
 
   const search = page.getByRole('searchbox', { name: 'Поиск товаров' });
   await search.fill('Фильтр');
@@ -212,17 +211,16 @@ test('shows explicit demo provenance through shop, product search and PDP', asyn
 
   const searchProduct = page.locator('ul.products li.product').filter({ hasText: 'Масляный фильтр' }).first();
   await expect(searchProduct).toBeVisible();
-  await expect(searchProduct.locator('[data-demo-provenance="product"]')).toContainText('Демонстрационный товар');
+  await expect(searchProduct.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+  await expect(searchProduct).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
   await searchProduct.locator('.woocommerce-loop-product__link').click();
   await page.waitForLoadState('networkidle');
 
   await expect(page.locator('body')).toHaveClass(/single-product/);
-  const provenance = page.locator('.summary [data-demo-provenance="product"]');
-  await expect(provenance).toBeVisible();
-  await expect(provenance).toContainText('Цена, остаток, срок поставки и применяемость не подтверждены внешними системами');
-  await expect(provenance).toContainText('Paper SCR-002, SCR-006, SCR-007, SCR-009');
+  await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+  await expect(page.locator('main#primary')).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
 
-  await captureStableVisual(page, testInfo, `product-demo-provenance-${testInfo.project.name}.png`);
+  await captureStableVisual(page, testInfo, `product-public-copy-${testInfo.project.name}.png`);
 
   const pageWidth = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -233,7 +231,7 @@ test('shows explicit demo provenance through shop, product search and PDP', asyn
   expect(runtimeErrors.page, `Uncaught page errors:\n${runtimeErrors.page.join('\n')}`).toEqual([]);
 });
 
-test('keeps the marked demo PDP technical and relation-safe', async ({ page }, testInfo) => {
+test('keeps the seeded PDP customer-facing and relation-safe', async ({ page }, testInfo) => {
   const runtimeErrors = watchRuntimeErrors(page);
   await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -241,9 +239,7 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   expect(shopUrl).toBeTruthy();
   await page.goto(shopUrl!, { waitUntil: 'networkidle' });
 
-  const productCard = page.locator('ul.products li.product').filter({
-    has: page.locator('[data-demo-provenance="product"]'),
-  }).first();
+  const productCard = page.locator('ul.products li.product').filter({ hasText: 'Тормозной диск' }).first();
   await expect(productCard).toBeVisible();
   const expectedName = (await productCard.locator('.woocommerce-loop-product__title').innerText()).trim();
   const loopAction = productCard.locator('a.add_to_cart_button[data-product_id]');
@@ -260,7 +256,7 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   const title = productShell.locator(':scope > h1.product_title');
   await expect(title).toHaveCount(1);
   await expect(title).toHaveText(expectedName);
-  const publicIdentity = productShell.locator(':scope > .az-product-identity[data-product-identity="demo"]');
+  const publicIdentity = productShell.locator(':scope > .az-product-identity[data-product-identity="catalog"]');
   await expect(publicIdentity).toHaveCount(1);
   await expect(publicIdentity.locator('dt')).toHaveText(['Бренд', 'Артикул']);
   const publicBrand = publicIdentity.locator('[data-product-brand]');
@@ -285,17 +281,16 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   await expect(page.locator('.woocommerce-product-details__short-description')).toBeVisible();
   await expect(page.locator('.woocommerce-Tabs-panel--description')).toBeVisible();
   await expect(page.locator('.woocommerce-tabs .description_tab')).toContainText('Описание');
-  await expect(page.locator('.woocommerce-Tabs-panel--description h2')).toHaveText('Описание');
-  await expect(page.locator('[data-demo-provenance="product"]')).toBeVisible();
+  await expect(page.locator('.woocommerce-Tabs-panel--description h2')).toHaveCount(0);
+  await expect(page.locator('[data-demo-provenance="product"]')).toHaveCount(0);
+  await expect(page.locator('[data-demo-product-meta="product"], [data-demo-technical-sku]')).toHaveCount(0);
+  const productMeta = page.locator('.summary > .product_meta');
+  await expect(productMeta).toBeVisible();
+  await expect(productMeta.locator('.sku_wrapper')).toHaveCount(0);
+  await expect(productMeta.locator('.posted_in a')).toHaveAttribute('href', /\/product-category\//);
+  await expect(productShell).not.toContainText(/демо|демонстрац|Paper SCR|AZ-DEMO-/i);
 
-  const demoMeta = page.locator('[data-demo-product-meta="product"]');
-  await expect(demoMeta).toBeVisible();
-  await expect(demoMeta).toContainText('Технический демо-SKU');
-  await expect(demoMeta).toContainText('не OEM и не артикул производителя');
-  await expect(demoMeta.locator('[data-demo-technical-sku]')).toHaveText(/^AZ-DEMO-\d{3}$/);
-  await expect(demoMeta.locator('.posted_in a')).toHaveAttribute('href', /\/product-category\//);
-
-  await expect(page.locator('p.stock')).toContainText('Демо-наличие не подтверждено внешними системами');
+  await expect(page.locator('p.stock')).toContainText('Наличие уточняется');
   const cartForm = page.locator('form.cart');
   await expect(cartForm).toHaveCount(1);
   await expect(cartForm).toHaveAttribute('method', 'post');
@@ -310,7 +305,7 @@ test('keeps the marked demo PDP technical and relation-safe', async ({ page }, t
   await expect(addToCartSubmit).toHaveCount(1);
   await expect(addToCartSubmit).toHaveAttribute('type', 'submit');
   await expect(addToCartSubmit).toHaveAttribute('value', productId!);
-  await expect(addToCartSubmit).toHaveText('Добавить в демо-корзину');
+  await expect(addToCartSubmit).toHaveText('Добавить в корзину');
   const quantityInput = cartForm.locator('.quantity input.qty');
   await expect(quantityInput).toHaveCount(1);
   const [galleryBox, summaryBox, quantityBox, submitBox] = await Promise.all([

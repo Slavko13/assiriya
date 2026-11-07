@@ -29,7 +29,7 @@ $az_contact_method_count = (int) $az_has_contact_phone + (int) ( '' !== $az_cont
 		</nav>
 	</div>
 	<div class="az-container az-footer__bottom">
-		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php esc_html_e( 'АВТОЗАКУП · Демонстрационный MVP', 'avtozakup' ); ?></span>
+		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php esc_html_e( 'АВТОЗАКУП', 'avtozakup' ); ?></span>
 		<div><a href="<?php echo esc_url( home_url( '/offer/' ) ); ?>"><?php esc_html_e( 'Публичная оферта', 'avtozakup' ); ?></a><a href="<?php echo esc_url( get_privacy_policy_url() ?: home_url( '/privacy/' ) ); ?>"><?php esc_html_e( 'Персональные данные', 'avtozakup' ); ?></a></div>
 	</div>
 </footer>
@@ -61,8 +61,8 @@ $az_contact_method_count = (int) $az_has_contact_phone + (int) ( '' !== $az_cont
 <dialog class="az-dialog" data-status-dialog-modal aria-labelledby="az-status-title">
 	<form method="dialog">
 		<button class="az-dialog__close" value="close" aria-label="<?php esc_attr_e( 'Закрыть', 'avtozakup' ); ?>">×</button>
-		<h2 id="az-status-title"><?php esc_html_e( 'Сценарий ещё согласуется', 'avtozakup' ); ?></h2>
-		<p data-status-copy><?php esc_html_e( 'Этот шаг появится после утверждения бизнес-правил и обработки персональных данных.', 'avtozakup' ); ?></p>
+		<h2 id="az-status-title"><?php esc_html_e( 'Функция временно недоступна', 'avtozakup' ); ?></h2>
+		<p data-status-copy><?php esc_html_e( 'Пожалуйста, воспользуйтесь каталогом или свяжитесь с нами.', 'avtozakup' ); ?></p>
 		<button class="az-button" value="close"><?php esc_html_e( 'Понятно', 'avtozakup' ); ?></button>
 	</form>
 </dialog>
