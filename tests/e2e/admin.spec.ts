@@ -597,20 +597,24 @@ test.describe('WordPress administration', () => {
     const heroTitle = page.locator('#hero_title');
     await expect(heroTitle).toBeVisible();
     const originalTitle = await heroTitle.inputValue();
-    const collectionFields = {
+    const presentationFields = {
       popularTitle: page.locator('#popular_title'),
       popularText: page.locator('#popular_text'),
       stockTitle: page.locator('#stock_title'),
       stockText: page.locator('#stock_text'),
+      contactPhone: page.locator('#contact_phone'),
+      contactEmail: page.locator('#contact_email'),
     };
-    for (const field of Object.values(collectionFields)) {
+    for (const field of Object.values(presentationFields)) {
       await expect(field).toBeVisible();
     }
-    const originalCollectionCopy = {
-      popularTitle: await collectionFields.popularTitle.inputValue(),
-      popularText: await collectionFields.popularText.inputValue(),
-      stockTitle: await collectionFields.stockTitle.inputValue(),
-      stockText: await collectionFields.stockText.inputValue(),
+    const originalPresentation = {
+      popularTitle: await presentationFields.popularTitle.inputValue(),
+      popularText: await presentationFields.popularText.inputValue(),
+      stockTitle: await presentationFields.stockTitle.inputValue(),
+      stockText: await presentationFields.stockText.inputValue(),
+      contactPhone: await presentationFields.contactPhone.inputValue(),
+      contactEmail: await presentationFields.contactEmail.inputValue(),
     };
     await page.goto('/', { waitUntil: 'networkidle' });
     const originalRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
@@ -618,20 +622,25 @@ test.describe('WordPress administration', () => {
     );
     expect(originalRenderedTitleLines.length).toBeGreaterThan(0);
     await page.goto('/wp-admin/admin.php?page=avtozakup');
-    const marker = `E2E проверка редактирования ${Date.now()}`;
+    const markerId = Date.now();
+    const marker = `E2E проверка редактирования ${markerId}`;
     const markerCopy = {
       popularTitle: `${marker} — плановое ТО`,
       popularText: `${marker} — описание планового ТО`,
       stockTitle: `${marker} — складская подборка`,
       stockText: `${marker} — описание складской подборки`,
+      contactPhone: '+7 (999) 123-45-67',
+      contactEmail: `e2e-contact-${markerId}@example.test`,
     };
 
     try {
       await heroTitle.fill(marker);
-      await collectionFields.popularTitle.fill(markerCopy.popularTitle);
-      await collectionFields.popularText.fill(markerCopy.popularText);
-      await collectionFields.stockTitle.fill(markerCopy.stockTitle);
-      await collectionFields.stockText.fill(markerCopy.stockText);
+      await presentationFields.popularTitle.fill(markerCopy.popularTitle);
+      await presentationFields.popularText.fill(markerCopy.popularText);
+      await presentationFields.stockTitle.fill(markerCopy.stockTitle);
+      await presentationFields.stockText.fill(markerCopy.stockText);
+      await presentationFields.contactPhone.fill(markerCopy.contactPhone);
+      await presentationFields.contactEmail.fill(markerCopy.contactEmail);
       await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
@@ -642,6 +651,8 @@ test.describe('WordPress administration', () => {
       await expect(page.locator('#popular_text')).toHaveValue(markerCopy.popularText);
       await expect(page.locator('#stock_title')).toHaveValue(markerCopy.stockTitle);
       await expect(page.locator('#stock_text')).toHaveValue(markerCopy.stockText);
+      await expect(page.locator('#contact_phone')).toHaveValue(markerCopy.contactPhone);
+      await expect(page.locator('#contact_email')).toHaveValue(markerCopy.contactEmail);
 
       await page.goto('/', { waitUntil: 'networkidle' });
       const mutatedRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
@@ -652,23 +663,55 @@ test.describe('WordPress administration', () => {
       await expect(page.locator('[data-home-collection-copy="maintenance"]')).toHaveText(markerCopy.popularText);
       await expect(page.locator('#az-stock-title')).toHaveText(markerCopy.stockTitle);
       await expect(page.locator('[data-home-collection-copy="stock"]')).toHaveText(markerCopy.stockText);
+      await expect(page.locator('[data-contact-method="phone"] [data-contact-value]')).toHaveText(
+        markerCopy.contactPhone,
+      );
+      await expect(page.locator('[data-contact-method="phone"]')).toHaveAttribute(
+        'href',
+        `tel:${markerCopy.contactPhone.replace(/[^+\d]/g, '')}`,
+      );
+      await expect(page.locator('[data-contact-method="email"] [data-contact-value]')).toHaveText(
+        markerCopy.contactEmail,
+      );
+      await expect(page.locator('[data-contact-method="email"]')).toHaveAttribute(
+        'href',
+        `mailto:${markerCopy.contactEmail}`,
+      );
+
+      await page.goto('/wp-admin/admin.php?page=avtozakup');
+      await page.locator('#contact_phone').fill('');
+      await page.locator('#contact_email').fill('');
+      await Promise.all([
+        page.waitForURL(/settings-updated=true/),
+        page.locator('#submit').click(),
+      ]);
+      await expect(page.locator('#contact_phone')).toHaveValue('');
+      await expect(page.locator('#contact_email')).toHaveValue('');
+      await page.goto('/', { waitUntil: 'networkidle' });
+      await expect(page.locator('[data-contact-method]')).toHaveCount(0);
+      await expect(page.locator('[data-contact-intro]')).toHaveText('Контакты пока не настроены.');
+      await expect(page.locator('a[href="tel:+70000000000"], a[href="mailto:info@example.invalid"]')).toHaveCount(0);
     } finally {
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       await page.locator('#hero_title').fill(originalTitle);
-      await page.locator('#popular_title').fill(originalCollectionCopy.popularTitle);
-      await page.locator('#popular_text').fill(originalCollectionCopy.popularText);
-      await page.locator('#stock_title').fill(originalCollectionCopy.stockTitle);
-      await page.locator('#stock_text').fill(originalCollectionCopy.stockText);
+      await page.locator('#popular_title').fill(originalPresentation.popularTitle);
+      await page.locator('#popular_text').fill(originalPresentation.popularText);
+      await page.locator('#stock_title').fill(originalPresentation.stockTitle);
+      await page.locator('#stock_text').fill(originalPresentation.stockText);
+      await page.locator('#contact_phone').fill(originalPresentation.contactPhone);
+      await page.locator('#contact_email').fill(originalPresentation.contactEmail);
       await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
       ]);
       await expect(page.locator('#hero_title')).toHaveValue(originalTitle);
-      await expect(page.locator('#popular_title')).toHaveValue(originalCollectionCopy.popularTitle);
-      await expect(page.locator('#popular_text')).toHaveValue(originalCollectionCopy.popularText);
-      await expect(page.locator('#stock_title')).toHaveValue(originalCollectionCopy.stockTitle);
-      await expect(page.locator('#stock_text')).toHaveValue(originalCollectionCopy.stockText);
+      await expect(page.locator('#popular_title')).toHaveValue(originalPresentation.popularTitle);
+      await expect(page.locator('#popular_text')).toHaveValue(originalPresentation.popularText);
+      await expect(page.locator('#stock_title')).toHaveValue(originalPresentation.stockTitle);
+      await expect(page.locator('#stock_text')).toHaveValue(originalPresentation.stockText);
+      await expect(page.locator('#contact_phone')).toHaveValue(originalPresentation.contactPhone);
+      await expect(page.locator('#contact_email')).toHaveValue(originalPresentation.contactEmail);
     }
 
     await page.goto('/', { waitUntil: 'networkidle' });
@@ -676,13 +719,27 @@ test.describe('WordPress administration', () => {
       lines.map((line) => (line.textContent ?? '').trim()),
     );
     expect(restoredRenderedTitleLines).toEqual(originalRenderedTitleLines);
-    await expect(page.locator('#az-maintenance-title')).toHaveText(originalCollectionCopy.popularTitle);
+    await expect(page.locator('#az-maintenance-title')).toHaveText(originalPresentation.popularTitle);
     await expect(page.locator('[data-home-collection-copy="maintenance"]')).toHaveText(
-      originalCollectionCopy.popularText,
+      originalPresentation.popularText,
     );
-    await expect(page.locator('#az-stock-title')).toHaveText(originalCollectionCopy.stockTitle);
+    await expect(page.locator('#az-stock-title')).toHaveText(originalPresentation.stockTitle);
     await expect(page.locator('[data-home-collection-copy="stock"]')).toHaveText(
-      originalCollectionCopy.stockText,
+      originalPresentation.stockText,
+    );
+    await expect(page.locator('[data-contact-method="phone"] [data-contact-value]')).toHaveText(
+      originalPresentation.contactPhone,
+    );
+    await expect(page.locator('[data-contact-method="phone"]')).toHaveAttribute(
+      'href',
+      `tel:${originalPresentation.contactPhone.replace(/[^+\d]/g, '')}`,
+    );
+    await expect(page.locator('[data-contact-method="email"] [data-contact-value]')).toHaveText(
+      originalPresentation.contactEmail,
+    );
+    await expect(page.locator('[data-contact-method="email"]')).toHaveAttribute(
+      'href',
+      `mailto:${originalPresentation.contactEmail}`,
     );
 
     const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);

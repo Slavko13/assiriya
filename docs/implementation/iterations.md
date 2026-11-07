@@ -2122,6 +2122,29 @@ Qualifier: это prevention-срез; одноразовая локальная
 - valid pre-fix homepage target: `3 failed`; post-fix target: `3 passed`; admin presentation save/render/restore and CRUD/custom-card targets pass; final full regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
 - 3 homepage and 3 status-dialog-background artifacts plus the existing `390px` category guard were deterministically refreshed; repository total remains `34` PNG (`33` actual + Paper); PHP lint, `git diff --check`, preflight `11/11` and post-suite inventory `10/0/0/0` pass; independent code review's one global-filter scope finding was fixed, and final code/visual reviews, including the category recapture, report no remaining findings.
 
+### I2-S80 — settings-backed contact dialog presentation
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S45/I2-S49/I2-S76`; `SCR-001`, `UI-SCR001-003/004/006`; technical Settings/presentation partial; `PBL-040`, `NFR-A11Y-002`; `DEC-001/018/019/020` remain open.
+
+Критерии среза:
+
+- `contact_phone` and `contact_email` are the only possible public contact values and survive admin save → exact public render/link relation → explicit-empty fail-closed state → exact restore;
+- the dialog has a meaningful H2, neutral description and up to two nonempty renderable configured rows, with no decorative mini-heading, unsupported hours or internal WordPress instruction; when both channels are empty it shows an honest no-contacts message and no actionable fallback;
+- both rows remain contained and at least `64px` high on `1440/390/360`, long values wrap, and the existing automatic close focus, Enter/Escape/outside dismissal and opener focus-return contracts remain intact;
+- Telegram, MAX, callback, channel availability, working hours, CRM/SLA and production contact acceptance are not inferred or displayed;
+- screenshots, axe serious/critical, runtime, cleanup and the full regression remain clean.
+
+Вне scope: verification or availability of the configured phone/email, external-app activation, Telegram/MAX/callback, operating hours/holidays, CRM/SLA, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production contact acceptance.
+
+Выполнено:
+
+- theme `0.13.0` renders only escaped Settings-backed phone/email cards with exact normalized `tel:` and `mailto:` relations, a neutral intro, scoped icons, long-value wrapping and mobile-safe action geometry;
+- the hard-coded «Ежедневно 9:00–20:00» claims in the topbar/dialog and the customer-facing WordPress admin instruction were removed; shared status-dialog presentation and behavior stay separately scoped;
+- valid pre-fix homepage target: `3 failed`; post-fix target: `3 passed`; admin save/clear/restore target: `1 passed`; final full regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
+- 3 new contact-dialog artifacts were added and 12 existing artifacts were refreshed (all 11 desktop full-page surfaces plus the existing `390px` category guard), giving `37` PNG (`36` actual + Paper); PHP lint, `git diff --check`, preflight `11/11`, axe/no-overflow/runtime and post-suite inventory `10/0/0/0` pass; independent code and visual reviews report no remaining findings.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

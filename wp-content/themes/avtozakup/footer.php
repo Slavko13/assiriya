@@ -1,6 +1,12 @@
 <?php
 /** Site footer. @package Avtozakup */
 $az_settings = avtozakup_home_settings();
+$az_contact_phone = trim( (string) $az_settings['contact_phone'] );
+$az_contact_phone_href = (string) preg_replace( '/[^+\d]/', '', $az_contact_phone );
+$az_contact_email = trim( (string) $az_settings['contact_email'] );
+$az_contact_email_href = is_email( $az_contact_email ) ? $az_contact_email : '';
+$az_has_contact_phone = '' !== $az_contact_phone && 1 === preg_match( '/\d/', $az_contact_phone_href );
+$az_contact_method_count = (int) $az_has_contact_phone + (int) ( '' !== $az_contact_email_href );
 ?>
 <footer class="az-footer">
 	<div class="az-container az-footer__grid">
@@ -28,14 +34,27 @@ $az_settings = avtozakup_home_settings();
 	</div>
 </footer>
 
-<dialog class="az-dialog" data-contact-dialog aria-labelledby="az-contact-title">
+<dialog class="az-dialog az-dialog--contact" data-contact-dialog aria-labelledby="az-contact-title" aria-describedby="az-contact-intro">
 	<form method="dialog">
 		<button class="az-dialog__close" value="close" aria-label="<?php esc_attr_e( 'Закрыть', 'avtozakup' ); ?>">×</button>
 		<h2 id="az-contact-title"><?php esc_html_e( 'Связаться с нами', 'avtozakup' ); ?></h2>
-		<p><?php esc_html_e( 'Ежедневно с 9:00 до 20:00', 'avtozakup' ); ?></p>
-		<a class="az-dialog__contact" href="tel:<?php echo esc_attr( preg_replace( '/[^+\d]/', '', (string) $az_settings['contact_phone'] ) ); ?>"><?php echo esc_html( (string) $az_settings['contact_phone'] ); ?></a>
-		<a class="az-dialog__contact" href="mailto:<?php echo esc_attr( (string) $az_settings['contact_email'] ); ?>"><?php echo esc_html( (string) $az_settings['contact_email'] ); ?></a>
-		<p class="az-dialog__note"><?php esc_html_e( 'Контакты редактируются в панели WordPress: Автозакуп → Главная.', 'avtozakup' ); ?></p>
+		<p id="az-contact-intro" class="az-dialog__intro" data-contact-intro><?php echo esc_html( $az_contact_method_count > 0 ? __( 'Выберите удобный способ связи.', 'avtozakup' ) : __( 'Контакты пока не настроены.', 'avtozakup' ) ); ?></p>
+		<div class="az-dialog__contacts">
+			<?php if ( $az_has_contact_phone ) : ?>
+			<a class="az-dialog__contact" data-contact-method="phone" href="tel:<?php echo esc_attr( $az_contact_phone_href ); ?>">
+				<span class="az-dialog__contact-icon"><?php echo avtozakup_icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<span class="az-dialog__contact-copy"><span data-contact-label><?php esc_html_e( 'Телефон', 'avtozakup' ); ?></span><strong data-contact-value><?php echo esc_html( $az_contact_phone ); ?></strong></span>
+				<?php echo avtozakup_icon( 'arrow', 'az-dialog__contact-arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</a>
+			<?php endif; ?>
+			<?php if ( '' !== $az_contact_email_href ) : ?>
+			<a class="az-dialog__contact" data-contact-method="email" href="mailto:<?php echo esc_attr( $az_contact_email_href ); ?>">
+				<span class="az-dialog__contact-icon"><?php echo avtozakup_icon( 'mail' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<span class="az-dialog__contact-copy"><span data-contact-label><?php esc_html_e( 'Электронная почта', 'avtozakup' ); ?></span><strong data-contact-value><?php echo esc_html( $az_contact_email ); ?></strong></span>
+				<?php echo avtozakup_icon( 'arrow', 'az-dialog__contact-arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</a>
+			<?php endif; ?>
+		</div>
 	</form>
 </dialog>
 

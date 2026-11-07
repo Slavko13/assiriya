@@ -65,7 +65,14 @@ function avtozakup_home_settings(): array {
 		}
 	}
 
-	return array_replace( $defaults, array_filter( $mapped, static fn( $value ) => '' !== $value && null !== $value ) );
+	$settings = array_replace( $defaults, array_filter( $mapped, static fn( $value ) => '' !== $value && null !== $value ) );
+	foreach ( array( 'contact_phone', 'contact_email' ) as $contact_key ) {
+		if ( array_key_exists( $contact_key, $raw ) ) {
+			$settings[ $contact_key ] = is_scalar( $raw[ $contact_key ] ) ? trim( (string) $raw[ $contact_key ] ) : '';
+		}
+	}
+
+	return $settings;
 }
 
 function avtozakup_heading_lines( string $value, bool $accent_first = false ): void {
@@ -130,6 +137,8 @@ function avtozakup_icon( string $name, string $class = '' ): string {
 		'car' => '<path d="m5 14 2-5h10l2 5v4h-2v-2H7v2H5v-4Z"/><path d="M4 13h16"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
 		'vin' => '<path d="M5 4v16M8 5v14M12 4v16M16 5v14M20 4v16"/>',
 		'headset' => '<path d="M5 13v-2a7 7 0 0 1 14 0v2"/><path d="M5 12H3v5h4v-5H5Zm14 0h2v5h-4v-5h2ZM17 18c-1 2-3 2-5 2"/>',
+		'phone' => '<path d="M5 4h4l2 5-2.5 1.5a14 14 0 0 0 5 5L15 13l5 2v4c0 1.1-.9 2-2 2C10.3 21 3 13.7 3 6c0-1.1.9-2 2-2Z"/>',
+		'mail' => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
 		'box' => '<path d="m4 7 8-4 8 4v10l-8 4-8-4V7Z"/><path d="m4 7 8 4 8-4M12 11v10"/>',
 		'swap' => '<path d="M5 8h13l-3-3M19 16H6l3 3"/>',
 		'shield' => '<path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-5"/>',

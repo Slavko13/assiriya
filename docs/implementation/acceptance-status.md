@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S79 truthful homepage product collections:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S79 strengthens existing homepage/admin scenarios without adding a new test case.
+**Текущий regression после I2-S80 settings-backed contact dialog:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S80 strengthens existing homepage/admin scenarios without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -953,6 +953,17 @@ I2-S78 accepts presentation and existing Woo data only. Sorting semantics, filte
 | I2-S79-ACC-004 | Evidence and cleanup stay bounded | valid pre-fix `3 failed`; post-fix homepage `3 passed`; both changed admin targets pass; full `61`: `59 passed / 2 skipped / 0 failed`; seven existing PNG refreshed, total stays `34`; PHP lint/preflight/diff clean; inventory `10/0/0/0`; independent scope finding fixed and visual review clean, including the `390px` category recapture | `PASS` |
 
 I2-S79 accepts only truthful rendering of existing Woo data and existing homepage selections/copy. Real stock/ETA/offers, favorite/filter behavior, fitment/OEM/analogs, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
+
+### I2-S80 — settings-backed contact dialog presentation
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S80-ACC-001 | Existing contact Settings are the only public source | admin presentation scenario saves unique `contact_phone`/`contact_email`, verifies exact public values plus normalized `tel:`/`mailto:` hrefs, clears both and verifies zero actionable fallbacks, then restores and re-verifies both originals | `PASS / TECHNICAL` |
+| I2-S80-ACC-002 | Customer copy fails closed | dialog contains only nonempty renderable configured phone/email rows plus a neutral intro; explicit empty state says contacts are not configured; hard-coded hours, topbar hours and internal «Автозакуп → Главная» instruction are absent; Telegram/MAX/callback/availability are not invented | `PASS / TECHNICAL` |
+| I2-S80-ACC-003 | Responsive dialog remains usable | labelled and described native dialog keeps prior close focus, Enter/Escape/outside dismissal and opener focus return; two icon rows are `>=64px`, contained and non-overflowing at `1440/390/360` | `PASS / PROVISIONAL` |
+| I2-S80-ACC-004 | Evidence and cleanup stay bounded | valid pre-fix `3 failed`; post-fix homepage `3 passed`; admin save/clear/restore target `1 passed`; full `61`: `59 passed / 2 skipped / 0 failed`; 3 new contact PNG plus 12 existing artifacts refreshed, total `37`; PHP lint/preflight/diff clean; inventory `10/0/0/0`; independent reviews clean | `PASS` |
+
+I2-S80 accepts only the current Settings-backed renderer and its responsive presentation. Channel ownership/validity/availability, external-app behavior, Telegram/MAX/callback, hours/holidays, CRM/SLA, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production contact acceptance remain outside the slice.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

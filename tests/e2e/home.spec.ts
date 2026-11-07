@@ -439,20 +439,41 @@ test.describe('АВТОЗАКУП homepage', () => {
     await page.keyboard.press('Enter');
     await expect(contactDialog).toBeVisible();
     await expect(contactDialog).toHaveAttribute('open', '');
+    await expect(contactDialog).toHaveClass(/\baz-dialog--contact\b/);
+    await expect(contactDialog).toHaveAttribute('aria-describedby', 'az-contact-intro');
     await expect(contactDialog).toHaveAccessibleName('Связаться с нами');
-    const contactLinks = contactDialog.locator('a.az-dialog__contact');
+    await expect(contactDialog.locator('[data-contact-intro]')).toHaveText(
+      'Выберите удобный способ связи.',
+    );
+    await expect(contactDialog).not.toContainText(/Ежедневно|Автозакуп → Главная/);
+    await expect(page.locator('.az-service-nav__hours')).toHaveCount(0);
+    await expect(contactDialog.locator('.az-dialog__note')).toHaveCount(0);
+    const contactLinks = contactDialog.locator('a.az-dialog__contact[data-contact-method]');
     await expect(contactLinks).toHaveCount(2);
-    const phoneLink = contactLinks.nth(0);
-    const emailLink = contactLinks.nth(1);
+    const phoneLink = contactDialog.locator('[data-contact-method="phone"]');
+    const emailLink = contactDialog.locator('[data-contact-method="email"]');
     await expect(phoneLink).toBeVisible();
     await expect(emailLink).toBeVisible();
-    const phoneText = (await phoneLink.innerText()).trim();
-    const emailText = (await emailLink.innerText()).trim();
+    await expect(phoneLink.locator('[data-contact-label]')).toHaveText('Телефон');
+    await expect(emailLink.locator('[data-contact-label]')).toHaveText('Электронная почта');
+    const phoneText = (await phoneLink.locator('[data-contact-value]').innerText()).trim();
+    const emailText = (await emailLink.locator('[data-contact-value]').innerText()).trim();
     await expect(phoneLink).toHaveAttribute('href', `tel:${phoneText.replace(/[^+\d]/g, '')}`);
     await expect(emailLink).toHaveAttribute('href', `mailto:${emailText}`);
+    for (const link of [phoneLink, emailLink]) {
+      await expect(link.locator('.az-dialog__contact-icon .az-icon')).toHaveCount(1);
+      const box = await link.boundingBox();
+      expect(box).toBeTruthy();
+      expect(box!.height).toBeGreaterThanOrEqual(64);
+    }
+    const contactDialogBox = await contactDialog.boundingBox();
+    expect(contactDialogBox).toBeTruthy();
+    expect(contactDialogBox!.width).toBeLessThanOrEqual(430);
     const contactClose = contactDialog.getByRole('button', { name: 'Закрыть', exact: true });
     await expect(contactClose).toHaveCount(1);
     await expect(contactClose).toBeFocused();
+    await captureStableVisual(page, testInfo, `contact-dialog-${testInfo.project.name}.png`);
+    await contactClose.focus();
     await page.keyboard.press('Enter');
     await expect(contactDialog).toBeHidden();
     expect(await contactDialog.getAttribute('open')).toBeNull();

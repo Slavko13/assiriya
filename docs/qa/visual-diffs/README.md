@@ -17,7 +17,8 @@
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts from I2-S71, visually refreshed in I2-S75 to remove the decorative cart eyebrow; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts from I2-S73, visually refreshed in I2-S75 with the owner-approved no-eyebrow rule and a deterministic cart illustration; Paper has no approved empty-state design, so they remain provisional.
 - `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
-- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76, recaptured in I2-S79 because the backdrop contains the updated homepage; the set verifies meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
+- `contact-dialog-desktop-chrome-1440.png`, `contact-dialog-mobile-chrome-390.png`, `contact-dialog-mobile-chrome-360.png` — I2-S80 actual baseline with the two currently configured phone/email rows; empty-config behavior is tested separately and renders no fallback action. These verify contained presentation and safe copy, not channel validity, availability or production contact acceptance.
+- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76, recaptured in I2-S79 because the backdrop contains the updated homepage; the desktop guard refreshed in I2-S80 after unsupported topbar hours were removed. The set verifies meaningful title/close layout, not domain-flow or final Paper acceptance.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -55,6 +56,9 @@ cart-empty-mobile-chrome-360.png
 account-login-desktop-chrome-1440.png
 account-login-mobile-chrome-390.png
 account-login-mobile-chrome-360.png
+contact-dialog-desktop-chrome-1440.png
+contact-dialog-mobile-chrome-390.png
+contact-dialog-mobile-chrome-360.png
 status-dialog-desktop-chrome-1440.png
 status-dialog-mobile-chrome-390.png
 status-dialog-mobile-chrome-360.png
@@ -225,6 +229,15 @@ report-home-YYYYMMDD.md
 - all 3 homepage artifacts and 3 open status-dialog artifacts were deterministically refreshed; the dialog files changed because their fixed backdrop includes the updated homepage. The full suite also recaptured the existing `product-category-mobile-chrome-390.png`; independent review found no category clipping, spacing, CTA or overflow regression. Repository total remains `34` PNG (`33` actual + Paper reference);
 - valid pre-fix homepage target `3 failed`; post-fix target `3 passed`; changed admin save/render/restore and CRUD-card targets pass; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`; axe serious/critical, no-overflow, runtime and inventory `10/0/0/0` pass;
 - independent review found no card hierarchy, clipping, CTA, rail-affordance or dialog regression. Real product imagery remains preferable to honest Woo placeholders; mobile rail and compact provenance remain `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not Paper mobile/pixel-perfect, full WCAG/AT/browser or production commerce acceptance.
+
+## Settings-backed contact dialog I2-S80
+
+- SCR-001 contact presentation contains a meaningful title, neutral intro and up to two nonempty renderable Settings-backed rows. The baseline has phone and email with exact escaped `tel:`/`mailto:` relations; the admin scenario proves save → public render → explicit-empty zero-action state → exact restore;
+- hard-coded working hours and the customer-facing WordPress admin instruction are absent. Telegram, MAX, callback, availability and CRM/SLA are deliberately not shown because no approved source exists;
+- scoped `0.13.0` styling gives each row an icon, wrapping value and `>=64px` action geometry inside a `408px` maximum dialog; existing initial close focus, Enter/Escape/outside dismissal and opener focus return remain covered on `1440/390/360`;
+- 3 new contact-dialog artifacts were added. Removing the visible desktop topbar hours refreshed all 11 existing desktop full-page artifacts (account, cart, empty cart, catalog, homepage, category, both PDP guards, both search guards and status dialog); the existing `product-category-mobile-chrome-390.png` guard was also deterministically recaptured and reviewed. Repository total is `37` PNG (`36` actual + Paper reference);
+- valid pre-fix target `3 failed`; post-fix target `3 passed`; admin save/clear/restore target `1 passed`; final full regression `61` = `59 passed / 2 intentional skipped / 0 failed`; PHP lint, axe serious/critical, no-overflow, runtime, preflight `11/11`, diff and inventory `10/0/0/0` pass;
+- independent review found no overflow, wrapping, target-size, focus or shared-dialog regression. This remains `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not verification of contact channels, hours, external apps, Paper mobile/pixel-perfect, full WCAG/AT/browser or production contact acceptance.
 
 ## Отчёт
 

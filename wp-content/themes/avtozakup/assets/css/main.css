@@ -62,7 +62,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-city .az-icon { width: 13px; height: 13px; }
 .az-service-nav { display: flex; align-items: center; gap: 28px; }
 .az-service-nav a:hover, .az-service-nav button:hover { color: var(--az-blue); }
-.az-service-nav__hours { padding-left: 26px; border-left: 1px solid var(--az-border); }
 .az-mainbar { height: 101px; border-bottom: 1px solid #e8edf3; }
 .az-mainbar__inner { gap: 16px; }
 .az-logo { display: inline-flex; align-items: center; min-width: 180px; font-size: 24px; font-weight: 800; letter-spacing: -1px; white-space: nowrap; }
@@ -254,10 +253,26 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-dialog__close { position: absolute; right: 15px; top: 13px; width: 34px; height: 34px; border: 0; border-radius: 50%; color: #607087; background: #f1f4f8; font-size: 24px; line-height: 1; cursor: pointer; }
 .az-dialog h2 { margin: 0 0 8px; padding-right: 44px; font-size: 28px; line-height: 1.2; }
 .az-dialog p { color: var(--az-muted); }
-.az-dialog__contact { display: block; margin-top: 10px; color: var(--az-ink); font-size: 18px; font-weight: 700; }
-.az-dialog__contact:hover { color: var(--az-blue); }
-.az-dialog__note { margin: 18px 0 0; padding-top: 15px; border-top: 1px solid var(--az-border); font-size: 11px; }
 .az-dialog .az-button { margin-top: 10px; }
+.az-dialog--contact { width: min(408px, calc(100% - 24px)); border-radius: 16px; }
+.az-dialog--contact form { padding: 28px 24px 24px; }
+.az-dialog--contact .az-dialog__close { top: 16px; right: 16px; width: 40px; height: 40px; }
+.az-dialog--contact h2 { margin: 0; padding-right: 48px; font-size: 20px; line-height: 26px; }
+.az-dialog--contact .az-dialog__intro { margin: 7px 0 20px; font-size: 14px; line-height: 21px; }
+.az-dialog__contacts { display: grid; gap: 10px; }
+.az-dialog--contact .az-dialog__contact {
+  min-height: 69px; margin: 0; padding: 11px 12px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 18px; gap: 12px; align-items: center;
+  border: 1px solid var(--az-border); border-radius: 10px; color: var(--az-ink); background: white; font-size: inherit; font-weight: inherit;
+  transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.az-dialog--contact .az-dialog__contact:hover,
+.az-dialog--contact .az-dialog__contact:focus-visible { border-color: #b6cced; color: var(--az-blue); background: #f8fbff; transform: translateY(-1px); }
+.az-dialog__contact-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; color: var(--az-blue); background: #eef5ff; }
+.az-dialog__contact-icon .az-icon { width: 22px; height: 22px; }
+.az-dialog__contact-copy { min-width: 0; }
+.az-dialog__contact-copy > span { display: block; color: var(--az-muted); font-size: 11px; line-height: 16px; }
+.az-dialog__contact-copy > strong { display: block; margin-top: 2px; font-size: 15px; line-height: 20px; font-weight: 750; overflow-wrap: anywhere; }
+.az-dialog__contact-arrow { width: 18px; height: 18px; color: #8b9aaf; }
 
 /* Generic pages and WooCommerce */
 .az-content { min-height: 55vh; padding-block: 48px 80px; }
@@ -683,7 +698,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 900px) {
   body.admin-bar .az-header { top: 46px; }
   .az-topbar { height: 32px; }
-  .az-service-nav a, .az-service-nav button, .az-service-nav__hours { display: none; }
+  .az-service-nav a, .az-service-nav button { display: none; }
   .az-mainbar { height: auto; min-height: 72px; padding: 10px 0; }
   .az-mainbar__inner { flex-wrap: wrap; }
   .az-logo { order: 1; }
