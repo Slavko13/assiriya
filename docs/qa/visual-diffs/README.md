@@ -6,8 +6,8 @@
 
 - `paper-home-desktop-1440.png` — reference текущего Paper SCR-002.
 - Размер макета: 1440 × 3376.
-- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3347.
-- `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация.
+- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3347, visually refreshed in I2-S76 after the public-theme decorative pre-heading cleanup.
+- `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация, visually refreshed in I2-S76.
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual artifacts среза I2-S1; отдельного утверждённого SCR-005 baseline в проекте реализации пока нет.
 - `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP artifacts среза I2-S3; это функциональное доказательство явной demo provenance, а не утверждённый PDP baseline.
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual technical PDP artifacts среза I2-S4; не являются полным SCR-009/Paper baseline.
@@ -16,6 +16,7 @@
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts from I2-S71, visually refreshed in I2-S75 to remove the decorative cart eyebrow; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts from I2-S73, visually refreshed in I2-S75 with the owner-approved no-eyebrow rule and a deterministic cart illustration; Paper has no approved empty-state design, so they remain provisional.
 - `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
+- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76; they verify the meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -50,6 +51,9 @@ cart-empty-mobile-chrome-360.png
 account-login-desktop-chrome-1440.png
 account-login-mobile-chrome-390.png
 account-login-mobile-chrome-360.png
+status-dialog-desktop-chrome-1440.png
+status-dialog-mobile-chrome-390.png
+status-dialog-mobile-chrome-360.png
 report-home-YYYYMMDD.md
 ```
 
@@ -181,7 +185,15 @@ report-home-YYYYMMDD.md
 - the inherited Woo empty-title mask that rendered as a broken blue block was explicitly reset and replaced with one self-authored decorative blue cart SVG; no DOM control, accessible-name contribution or new focus stop was added;
 - pre-fix targeted `3 failed`; post-fix targeted `3 passed`; cart file `9 passed`; full regression remains `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`;
 - all 6 existing cart artifacts were deterministically refreshed and independently reviewed; repository total stays 28 PNG (`27` actual + Paper reference), and no clipping/overflow/hierarchy issue was found;
-- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no approved empty-state icon, and the artifacts do not accept other legacy mini-headings, cart behavior/commercial rules, classic renderer, AT/browser/full WCAG or production commerce.
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: Paper has no approved empty-state icon; other then-current legacy mini-headings were handled separately by I2-S76, while cart behavior/commercial rules, classic renderer, AT/browser/full WCAG and production commerce remain unaccepted.
+
+## Remaining frontend mini-heading cleanup I2-S76
+
+- the VIN visual, B2B banner, contact dialog and shared status dialog no longer render decorative pre-headings; meaningful H2/copy/actions, functional badges/brands/labels and existing dialog behavior remain;
+- all 3 homepage artifacts were deterministically refreshed, and 3 open status-dialog artifacts were added to make the long status title/close-button boundary visible on `1440/390/360`;
+- valid pre-fix targeted run: `3 failed` with exactly 4 nodes; post-fix targeted run: `3 passed`; homepage file: `13 passed / 2 intentional skipped`; full regression: `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`;
+- repository total is `31` PNG (`30` actual + Paper reference); axe serious/critical, no-overflow and runtime gates pass, inventory is `10/0/0/0`, and independent code/visual reviews found no findings or title/close collision;
+- result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: stored-settings cleanup, VIN/B2B integrations, typography redesign, Paper approval, AT/browser/full WCAG and production behavior remain outside this visual slice.
 
 ## Отчёт
 

@@ -111,6 +111,17 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(page.locator(selector), `Required homepage section is missing: ${selector}`).toBeVisible();
     }
 
+    const decorativePreheadings = page.locator(
+      '.az-vin__visual > div > span, .az-business__copy > span, .az-dialog__eyebrow',
+    );
+    await expect(decorativePreheadings).toHaveCount(0);
+    await expect(page.locator('.az-vin__visual h2')).toHaveText(/Нужна помощь\s+с подбором\?/);
+    await expect(page.locator('#business h2#az-business-title')).toBeVisible();
+    await expect(page.locator('dialog[data-contact-dialog] h2#az-contact-title')).toHaveText('Связаться с нами');
+    await expect(page.locator('dialog[data-status-dialog-modal] h2#az-status-title')).toHaveText(
+      'Сценарий ещё согласуется',
+    );
+
     const navToggle = page.locator(
       'button.az-mobile-toggle[data-nav-toggle][aria-controls="az-primary-nav"]',
     );
@@ -487,6 +498,9 @@ test.describe('АВТОЗАКУП homepage', () => {
     );
     const statusClose = statusDialog.getByRole('button', { name: 'Закрыть', exact: true });
     await expect(statusClose).toHaveCount(1);
+    await expect(statusClose).toBeFocused();
+    await captureStableVisual(page, testInfo, `status-dialog-${testInfo.project.name}.png`);
+    await statusClose.focus();
     await expect(statusClose).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(statusDialog).toBeHidden();

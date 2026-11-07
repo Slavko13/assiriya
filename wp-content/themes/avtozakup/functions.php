@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AVTOZAKUP_THEME_VERSION', '0.9.1' );
+define( 'AVTOZAKUP_THEME_VERSION', '0.9.2' );
 define( 'AVTOZAKUP_THEME_DIR', get_template_directory() );
 define( 'AVTOZAKUP_THEME_URI', get_template_directory_uri() );
 

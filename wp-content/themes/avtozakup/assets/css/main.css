@@ -206,7 +206,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-vin { min-height: 333px; margin-top: 51px; display: grid; grid-template-columns: 522px 1fr; }
 .az-vin__visual { position: relative; overflow: hidden; min-height: 333px; color: white; background: linear-gradient(120deg, rgb(23 35 55 / 65%), rgb(44 64 86 / 70%)), var(--az-vin-image) center/cover no-repeat, var(--az-navy); }
 .az-vin__visual > div { position: absolute; left: 31px; bottom: 27px; width: min(410px, calc(100% - 62px)); }
-.az-vin__visual span { display: inline-block; margin-bottom: 11px; padding: 6px 10px; background: var(--az-blue); font-size: 10px; font-weight: 800; }
 .az-vin__visual h2 { margin: 0; font-size: 28px; line-height: 31px; font-weight: 800; }
 .az-vin__visual p { max-width: 370px; margin: 10px 0 0; color: #dae2ee; font-size: 13px; line-height: 19px; }
 .az-vin__form { min-width: 0; padding: 28px 31px; border: 1px solid #e4eaf1; }
@@ -218,8 +217,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-vin__actions { margin-top: 14px; display: flex; align-items: center; gap: 14px; }
 .az-vin__actions span { color: #5f6f82; font-size: 10px; line-height: 16px; }
 .az-business { min-height: 256px; margin-top: 30px; padding: 31px 40px; display: grid; grid-template-columns: 1fr 400px; gap: 70px; align-items: center; color: white; background: var(--az-navy); }
-.az-business__copy > span { color: #9fc0ea; font-size: 10px; line-height: 18px; font-weight: 800; }
-.az-business__copy h2 { margin: 10px 0 8px; font-size: 27px; line-height: 32px; letter-spacing: -.25px; font-weight: 800; }
+.az-business__copy h2 { margin: 0 0 8px; font-size: 27px; line-height: 32px; letter-spacing: -.25px; font-weight: 800; }
 .az-business__copy h2 .az-accent { color: white; }
 .az-business__copy p { margin: 0 0 18px; color: #d5deea; font-size: 13px; line-height: 22px; }
 .az-business__benefits > div { min-height: 59px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgb(255 255 255 / 10%); }
@@ -258,8 +256,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .az-dialog::backdrop { background: rgb(11 24 42 / 58%); backdrop-filter: blur(2px); }
 .az-dialog form { position: relative; padding: 34px; }
 .az-dialog__close { position: absolute; right: 15px; top: 13px; width: 34px; height: 34px; border: 0; border-radius: 50%; color: #607087; background: #f1f4f8; font-size: 24px; line-height: 1; cursor: pointer; }
-.az-dialog__eyebrow { margin: 0 0 5px; color: var(--az-blue); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
-.az-dialog h2 { margin: 0 0 8px; font-size: 28px; line-height: 1.2; }
+.az-dialog h2 { margin: 0 0 8px; padding-right: 44px; font-size: 28px; line-height: 1.2; }
 .az-dialog p { color: var(--az-muted); }
 .az-dialog__contact { display: block; margin-top: 10px; color: var(--az-ink); font-size: 18px; font-weight: 700; }
 .az-dialog__contact:hover { color: var(--az-blue); }

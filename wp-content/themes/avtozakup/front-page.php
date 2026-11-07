@@ -73,7 +73,7 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 
 	<section id="vin-request" class="az-vin az-container" tabindex="-1" aria-labelledby="az-vin-title">
 		<div class="az-vin__visual" style="--az-vin-image:url('<?php echo esc_url( (string) $settings['vin_image'] ); ?>')">
-			<div><span><?php esc_html_e( 'ПОДБОР ПО VIN', 'avtozakup' ); ?></span><h2><?php esc_html_e( 'Нужна помощь', 'avtozakup' ); ?><br><?php esc_html_e( 'с подбором?', 'avtozakup' ); ?></h2><p><?php esc_html_e( 'Поможем найти нужную деталь по VIN и вашему описанию.', 'avtozakup' ); ?></p></div>
+			<div><h2><?php esc_html_e( 'Нужна помощь', 'avtozakup' ); ?><br> <?php esc_html_e( 'с подбором?', 'avtozakup' ); ?></h2><p><?php esc_html_e( 'Поможем найти нужную деталь по VIN и вашему описанию.', 'avtozakup' ); ?></p></div>
 		</div>
 		<div class="az-vin__form">
 			<h2 id="az-vin-title"><?php echo esc_html( (string) $settings['vin_title'] ); ?></h2>
@@ -85,7 +85,7 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 	</section>
 
 	<section id="business" class="az-business az-container" aria-labelledby="az-business-title">
-		<div class="az-business__copy"><span><?php echo esc_html( (string) $settings['b2b_eyebrow'] ); ?></span><h2 id="az-business-title"><?php avtozakup_heading_lines( (string) $settings['b2b_title'] ); ?></h2><p><?php echo esc_html( (string) $settings['b2b_text'] ); ?></p><button class="az-button" type="button" data-status-dialog="b2b" aria-haspopup="dialog"><?php echo esc_html( (string) $settings['b2b_button_label'] ); ?></button></div>
+		<div class="az-business__copy"><h2 id="az-business-title"><?php avtozakup_heading_lines( (string) $settings['b2b_title'] ); ?></h2><p><?php echo esc_html( (string) $settings['b2b_text'] ); ?></p><button class="az-button" type="button" data-status-dialog="b2b" aria-haspopup="dialog"><?php echo esc_html( (string) $settings['b2b_button_label'] ); ?></button></div>
 		<div class="az-business__benefits"><div><?php echo avtozakup_icon( 'box' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Свой склад и поставщики', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Варианты получения под ваш запрос', 'avtozakup' ); ?></span></p></div><div><?php echo avtozakup_icon( 'swap' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Подбор аналогов', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Помогаем сравнить предложения', 'avtozakup' ); ?></span></p></div><div><?php echo avtozakup_icon( 'headset' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><p><strong><?php esc_html_e( 'Работа с автосервисами', 'avtozakup' ); ?></strong><span><?php esc_html_e( 'Персональное обсуждение условий', 'avtozakup' ); ?></span></p></div></div>
 	</section>
 

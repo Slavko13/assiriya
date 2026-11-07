@@ -2025,6 +2025,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 
 Вне scope: filled-cart data/control changes, remove/undo/minus/multi-row behavior, catalog navigation policy, recommendations, price/stock/reserve/offer rules, auth/persistence/concurrency, live announcement/focus transfer/AT/browser matrix, classic renderer, full WCAG, Paper approval and production commerce.
 
+### I2-S76 — remove remaining frontend decorative mini-headings
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** owner rule `TECH-088`; continuation `I2-S43/I2-S45/I2-S47/I2-S49/I2-S62/I2-S75`; `SCR-001/SCR-002`, `UI-SCR001-003/004/006`, `UI-SCR002-016/017`; `FR-VIN-001/002` and `FR-B2B-001` renderer/safety partials; `PBL-007/010/029/031/040`, `NFR-A11Y-002`, `NFR-UX-002`, `DG-017/018`; `DEC-016/017/018/019/020` remain open.
+
+Критерии среза:
+
+- remaining decorative pre-headings are absent from the public frontend: VIN visual «ПОДБОР ПО VIN», B2B eyebrow, contact-dialog «Помощь с подбором» and status-dialog «Предварительная функция»;
+- meaningful VIN/B2B/dialog H2 headings, explanatory copy, contacts, buttons, dialog labels and all existing focus/close/fail-closed behavior remain unchanged;
+- functional badges, product brands, navigation labels and status copy are not misclassified as decorative headings;
+- homepage screenshots, no-overflow, serious/critical axe and runtime gates pass on `1440/390/360`; dialog keyboard contracts remain passing.
+
+Выполнено и проверено:
+
+- valid pre-fix targeted baseline: `3 failed`, потому что executable contract нашёл все `4` оставшихся декоративных pre-heading; отдельный запуск при выключенном Docker не считался доказательством;
+- VIN/B2B/contact/status markup и связанные CSS-селекторы удалены; meaningful H2/copy/actions, `aria-labelledby`, focus/close/Escape/fail-closed contracts сохранены, а dialog H2 получил безопасный правый резерв под close-button;
+- post-fix targeted homepage scenario: `3 passed`; whole homepage file: `13 passed / 2 intentional skipped`; три homepage PNG обновлены и три status-dialog PNG добавлены для `1440/390/360`;
+- full regression: `61` tests = `59 passed / 2 intentional skipped`, `0 failed`; post-suite inventory: `10` published products / `0` temporary products / `0` temporary categories / `0` temporary shop managers;
+- repository visual set now contains `31` PNG (`30` actual + Paper reference); independent code and visual reviews found no findings, including no dialog title/close collision;
+- theme version `0.9.2` invalidates cached presentation assets; PHP lint passes for all 4 changed PHP files, `node --check` and `git diff --check` pass, and config/documentation preflight remains `11/11`.
+
+Вне scope: VIN/B2B submission or integrations, stored-settings schema cleanup, dialog behavior, product/card brand labels, demo/status badges, full typography redesign, Paper approval, AT/browser matrix, full WCAG and production domain behavior.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

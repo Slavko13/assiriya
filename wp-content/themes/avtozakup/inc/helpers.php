@@ -18,7 +18,6 @@ function avtozakup_home_settings(): array {
 		'vin_title' => 'Подберём нужную деталь',
 		'vin_text' => 'Оставьте VIN и описание детали — менеджер поможет с выбором.',
 		'vin_image' => AVTOZAKUP_THEME_URI . '/assets/images/vin-engine.avif',
-		'b2b_eyebrow' => 'ДЛЯ АВТОСЕРВИСОВ И БИЗНЕСА',
 		'b2b_title' => 'Вы занимаетесь ремонтом.|Мы помогаем с запчастями.',
 		'b2b_text' => 'Подберём детали, обсудим условия сотрудничества и удобный формат заказов.',
 		'b2b_button_label' => 'Узнать условия →',

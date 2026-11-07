@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S75 polished empty-cart icon and cart heading cleanup:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S75 strengthens the existing public empty-cart scenario without adding a new test case.
+**Текущий regression после I2-S76 remaining frontend mini-heading cleanup:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S76 strengthens the existing public homepage scenario without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -857,7 +857,7 @@ I2-S70 closes only one immediate cart→checkout browser Forward after the exact
 
 | ID | Критерий | Доказательство | Статус |
 |---|---|---|---|
-| I2-S71-ACC-001 | Cart has a distinct order-review composition | Russian H1/eyebrow/copy and two-step indicator render before the untouched Woo Cart Block; current step exposes `aria-current=step` | `PASS / PROVISIONAL` |
+| I2-S71-ACC-001 | Cart has a distinct order-review composition | Russian H1/original eyebrow/copy and two-step indicator render before the untouched Woo Cart Block; the eyebrow was removed by I2-S75 while current step still exposes `aria-current=step` | `PASS / PROVISIONAL` |
 | I2-S71-ACC-002 | Current Woo product remains the source of truth | after one real AJAX add, the sole row retains the exact source-card name, a visible decodable cart image, quantity `1`, header count `1` and canonical checkout href | `PASS / TECHNICAL` |
 | I2-S71-ACC-003 | Controls and summary are localized and usable | exact Woo-chrome selectors localize desktop semantic headers, quantity/plus/remove accessible names, totals labels and checkout CTA without touching product copy; product rowheader remains exposed at every viewport and totals/CTA do not overlap | `PASS / PROVISIONAL` |
 | I2-S71-ACC-004 | Responsive/a11y/runtime gates pass | targeted `3 passed` on `1440/390/360`; no horizontal overflow, serious/critical axe findings, console errors or page errors | `PASS` |
@@ -908,7 +908,18 @@ I2-S74 accepts presentation only for the current logged-out base-account rendere
 | I2-S75-ACC-003 | Existing cart behavior and accessibility remain intact | exact native remove and Store/header zero state, sole catalog CTA/focus ring, Woo ownership, no recommendations, axe/no-overflow/runtime gates remain passing on `1440/390/360` | `PASS / TECHNICAL` |
 | I2-S75-ACC-004 | Regression and evidence stay clean | pre-fix targeted `3 failed`; post-fix targeted `3 passed`, cart file `9 passed`, full `61`: `59 passed / 2 skipped`; 6 existing cart PNG refreshed, total stays 28; inventory `10/0/0/0`; code/visual reviews no findings | `PASS` |
 
-I2-S75 accepts only the current Blocks cart presentation cleanup. Paper has no approved empty-state icon, so the slice remains `DESIGN_REVIEW_REQUIRED`; other legacy mini-headings are tracked separately, and undo/minus/multi-row/mixed carts, behavioral navigation changes, commercial rules, live announcements/focus transfer, AT/browser matrix, classic renderer, full WCAG and production commerce remain open.
+I2-S75 accepts only the current Blocks cart presentation cleanup. Paper has no approved empty-state icon, so the slice remains `DESIGN_REVIEW_REQUIRED`; other then-current legacy mini-headings were tracked separately and removed by I2-S76, while undo/minus/multi-row/mixed carts, behavioral navigation changes, commercial rules, live announcements/focus transfer, AT/browser matrix, classic renderer, full WCAG and production commerce remain open.
+
+### I2-S76 — remaining frontend decorative mini-heading cleanup
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S76-ACC-001 | Four remaining decorative pre-headings are absent | executable homepage contract finds zero VIN visual, B2B and shared dialog eyebrow nodes; «ПОДБОР ПО VIN», B2B eyebrow, «Помощь с подбором» and «Предварительная функция» are no longer rendered | `PASS / PROVISIONAL` |
+| I2-S76-ACC-002 | Meaningful hierarchy and behavior remain intact | VIN/B2B/contact/status H2 and copy remain; contact/status `aria-labelledby`, automatic close focus, Enter/Escape/outside dismissal, opener focus return and fail-closed status routing stay covered | `PASS / TECHNICAL` |
+| I2-S76-ACC-003 | Responsive presentation remains usable | targeted `3 passed`; homepage file `13 passed / 2 intentional skipped`; refreshed homepage and new open status-dialog screenshots show no overflow, hierarchy regression or title/close collision on `1440/390/360` | `PASS / PROVISIONAL` |
+| I2-S76-ACC-004 | Regression, evidence and data stay clean | full `61`: `59 passed / 2 skipped`; 3 homepage PNG refreshed + 3 status-dialog PNG added, total `31` (`30` actual + Paper); inventory `10/0/0/0`; independent code/visual reviews no findings | `PASS` |
+
+I2-S76 accepts only removal of current public-theme decorative pre-headings. Functional demo/status badges, product brands, field/navigation labels and semantic H1–H3 remain valid; stored-settings schema cleanup, VIN/B2B integrations, typography redesign, Paper approval, AT/browser matrix, full WCAG and production domain behavior remain outside the slice.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 
@@ -974,6 +985,7 @@ Package имеет статус `TESTING / SERVER_VALIDATION_REQUIRED`, а serve
 - Technical demo PDP: `docs/qa/visual-diffs/product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png`.
 - Product search empty state: `docs/qa/visual-diffs/product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png`.
 - Product search results: `docs/qa/visual-diffs/product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png`.
+- Open status dialog: `docs/qa/visual-diffs/status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png`.
 - Наличие actual screenshots не означает утверждённый Paper diff: mobile и общий визуальный результат имеют `DESIGN_REVIEW_REQUIRED`; pixel-perfect не заявляется.
 
 ## Условие финального статуса
