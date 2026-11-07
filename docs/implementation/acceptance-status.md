@@ -5,7 +5,7 @@
 
 **Приёмочный прогон Итерации 1:** `13` tests = `11 passed`, `2 intentional skipped`, `0 failed`.
 
-**Текущий regression после I2-S78 Paper-informed Woo listing cards:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S78 strengthens existing catalog/search/admin scenarios without adding a new test case.
+**Текущий regression после I2-S79 truthful homepage product collections:** `61` tests = `59 passed`, `2 intentional skipped`, `0 failed`; desktop `1440`, compact desktop `900`, mobile `390`, mobile `360`, отдельный serial desktop admin project. Два skip — ожидаемые mobile-копии viewport-независимого Store API guard. I2-S79 strengthens existing homepage/admin scenarios without adding a new test case.
 
 ## Технические критерии Итерации 2
 
@@ -942,6 +942,17 @@ I2-S77 accepts only the current simple-product presentation and safe existing me
 | I2-S78-ACC-004 | Targeted evidence and visual inventory stay bounded | valid pre-fix `6 failed`; post-fix listing target `6 passed`; localized category refresh `3 passed`; admin target plus dependencies `55`: `53 passed / 2 intentional skipped`; final full regression `61`: `59 passed / 2 intentional skipped / 0 failed`; six catalog/search PNG refreshed and three category PNG added, total `34` (`33` actual + Paper) | `PASS` |
 
 I2-S78 accepts presentation and existing Woo data only. Sorting semantics, filters, ranking, offers, fitment, OEM/analogs, favorites, reviews, real stock/price/ETA, business add-to-cart success, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
+
+### I2-S79 — truthful responsive homepage product collections
+
+| ID | Критерий | Доказательство | Статус |
+|---|---|---|---|
+| I2-S79-ACC-001 | Existing presentation Settings are the public source | admin scenario saves unique `popular_title/text` and `stock_title/text` markers, verifies exact stored/public values, then restores all four original values plus hero/selections and verifies the restored public render | `PASS / TECHNICAL` |
+| I2-S79-ACC-002 | Homepage identity and provenance fail closed | demo cards expose only curated brand/article plus marked provenance; temporary unmarked card exposes exact native SKU and no fallback brand/demo copy; favorite, fake reference, availability and ETA nodes/text are absent | `PASS / TECHNICAL` |
+| I2-S79-ACC-003 | Native actions and responsive collections remain usable | renderer calls native Woo loop action with `finally` restoration; homepage-only exact-default localization leaves merchant/plugin and non-home loop labels untouched; five desktop cards and contained mobile snap rails keep every action `>=48px`, reachable and unclipped | `PASS / PROVISIONAL` |
+| I2-S79-ACC-004 | Evidence and cleanup stay bounded | valid pre-fix `3 failed`; post-fix homepage `3 passed`; both changed admin targets pass; full `61`: `59 passed / 2 skipped / 0 failed`; seven existing PNG refreshed, total stays `34`; PHP lint/preflight/diff clean; inventory `10/0/0/0`; independent scope finding fixed and visual review clean, including the `390px` category recapture | `PASS` |
+
+I2-S79 accepts only truthful rendering of existing Woo data and existing homepage selections/copy. Real stock/ETA/offers, favorite/filter behavior, fitment/OEM/analogs, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce remain outside the slice.
 
 ### OPS-QT-001 — isolated Quick Tunnel deployment package
 

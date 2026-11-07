@@ -2098,6 +2098,30 @@ Qualifier: это prevention-срез; одноразовая локальная
 - valid pre-fix target: `6 failed`; post-fix target: `6 passed`; localized category refresh: `3 passed`; admin target/dependencies: `53 passed / 2 intentional skipped`; final regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
 - девять listing artifacts обновлены/добавлены, empty-search artifacts получили ту же listing surface, а desktop homepage/status-dialog guards повторно просмотрены после full suite; repository total `34` PNG (`33` actual + Paper); axe serious/critical, no-overflow, runtime, PHP lint и `git diff --check` проходят; post-suite inventory `10/0/0/0`, config/documentation preflight `11/11`.
 
+### I2-S79 — truthful responsive homepage product collections
+
+**Статус:** `DONE / PROVISIONAL / DESIGN_REVIEW_REQUIRED`
+
+**Связь:** continuation `I2-S3/I2-S8/I2-S13/I2-S22/I2-S23/I2-S25/I2-S26/I2-S28/I2-S37/I2-S38/I2-S57/I2-S58/I2-S78`; `SCR-002`, `UI-SCR002-013/014/015`; renderer partials `FR-CAT-002/FR-CART-001/FR-OFR-002`; `PBL-010/011/019/040`, `ISSUE-PAP-014/024/030`, `DG-017/018`; `DEC-002/003/005/006/008/009/019/020` remain open.
+
+Критерии среза:
+
+- stored `popular_title/text` and `stock_title/text` are the exact public source for both homepage collection headings/copy and survive save → public render → exact restore;
+- custom homepage cards reuse the fail-closed demo/unmarked identity helper, render no invented brand/reference/availability/ETA and expose demo provenance only for explicitly marked products;
+- WooCommerce keeps native thumbnail, permalink, price and product-type action generation; theme code restores the global product in `finally`, and homepage-only localization changes only untouched default Woo labels while merchant/plugin labels and other loops pass through;
+- non-functional favorite/filter controls are absent; desktop keeps five cards, `390/360` keep every card in a contained horizontal snap rail with `>=48px` actions and no document overflow;
+- existing homepage/status-dialog screenshots, axe serious/critical, runtime, cleanup and full regression remain clean.
+
+Вне scope: real stock/ETA/offer truth, favorites/filter behavior, fitment/OEM/analogs, business add-to-cart success, Paper mobile/pixel-perfect approval, AT/browser matrix, full WCAG and production commerce.
+
+Выполнено:
+
+- theme `0.12.0` maps the four existing Settings fields into the public renderer and removes hard-coded collection copy, inert filter pills, dead favorite icon, fallback `АВТОЗАКУП`/`—` identity and fake stock/ETA lines;
+- the card renderer uses exact curated demo brand/article or optional unmarked `pa_brand`/native SKU, includes provenance only for marked demo records and delegates the action to `woocommerce_template_loop_add_to_cart()` with exact global/filter restoration;
+- Paper-informed desktop density stays at five cards; mobile uses a contained `270px` snap rail with the next card deliberately peeking into view, all items reachable and no page-level horizontal overflow;
+- valid pre-fix homepage target: `3 failed`; post-fix target: `3 passed`; admin presentation save/render/restore and CRUD/custom-card targets pass; final full regression: `61` = `59 passed / 2 intentional skipped / 0 failed`;
+- 3 homepage and 3 status-dialog-background artifacts plus the existing `390px` category guard were deterministically refreshed; repository total remains `34` PNG (`33` actual + Paper); PHP lint, `git diff --check`, preflight `11/11` and post-suite inventory `10/0/0/0` pass; independent code review's one global-filter scope finding was fixed, and final code/visual reviews, including the category recapture, report no remaining findings.
+
 ### OPS-QT-001 — isolated one-command Quick Tunnel preview
 
 **Статус:** `TESTING / SERVER_VALIDATION_REQUIRED`

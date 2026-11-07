@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { expectHomeProductCardPresentation, expectHomeProductRailPresentation } from './product-card';
 import { captureStableVisual } from './visual';
 
 type RuntimeErrors = {
@@ -147,7 +148,19 @@ test.describe('АВТОЗАКУП homepage', () => {
       await expect(navPanel).toBeHidden();
     }
 
-    const productCards = page.locator('.az-product-card');
+    const maintenanceCollection = page.locator('[data-home-product-collection="maintenance"]');
+    const stockCollection = page.locator('[data-home-product-collection="stock"]');
+    await expect(maintenanceCollection).toHaveCount(1);
+    await expect(stockCollection).toHaveCount(1);
+    await expect(page.locator('.az-product-filters')).toHaveCount(0);
+    await expect(maintenanceCollection.locator('[data-home-collection-copy="maintenance"]')).toContainText(/\S/);
+    await expect(stockCollection.locator('[data-home-collection-copy="stock"]')).toContainText(/\S/);
+
+    const viewportWidth = page.viewportSize()?.width ?? 1440;
+    await expectHomeProductRailPresentation(maintenanceCollection.locator('.az-product-row'), viewportWidth);
+    await expectHomeProductRailPresentation(stockCollection.locator('.az-product-row'), viewportWidth);
+
+    const productCards = page.locator('[data-home-product-card]');
     const productCount = await productCards.count();
     expect(productCount, 'The homepage must render WooCommerce product cards').toBeGreaterThan(0);
 
@@ -157,12 +170,19 @@ test.describe('АВТОЗАКУП homepage', () => {
 
     const demoTitle = 'Масляный фильтр MANN-FILTER W 914/2';
     const demoCard = page
-      .locator('[aria-labelledby="az-maintenance-title"] .az-product-card')
+      .locator('[data-home-product-collection="maintenance"] [data-home-product-card]')
       .filter({ has: page.getByRole('link', { name: demoTitle, exact: true }) });
     await expect(demoCard).toHaveCount(1);
     await expect(demoCard).toBeVisible();
     const demoProductId = await demoCard.getAttribute('data-product-id');
     expect(demoProductId).toMatch(/^\d+$/);
+
+    await expectHomeProductCardPresentation(demoCard, {
+      kind: 'demo',
+      expectedBrand: 'MANN-FILTER',
+      expectedReference: 'W 914/2',
+      expectedProductId: demoProductId!,
+    });
 
     const demoTitleLink = demoCard.locator('.az-product-card__title');
     const demoMediaLink = demoCard.locator('.az-product-card__media');
@@ -172,18 +192,16 @@ test.describe('АВТОЗАКУП homepage', () => {
     expect(demoPermalink).toBeTruthy();
     await expect(demoMediaLink).toHaveAttribute('href', demoPermalink!);
 
-    await expect(demoCard.locator('.az-product-card__brand')).toHaveText('MANN-FILTER');
-    const demoArticle = demoCard.locator('.az-product-card__sku');
-    await expect(demoArticle).toHaveText('Арт. W 914/2');
+    await expect(demoCard.locator('[data-home-product-brand]')).toHaveText('MANN-FILTER');
+    const demoArticle = demoCard.locator('[data-home-product-reference]');
+    await expect(demoArticle).toHaveText('Артикул: W 914/2');
     await expect(demoArticle).not.toContainText('AZ-DEMO-');
-    const demoStock = demoCard.locator('.az-product-card__stock');
-    await expect(demoStock).toHaveClass(/is-in-stock/);
-    await expect(demoStock).toHaveText('Демо: есть в наличии');
-    await expect(demoCard.locator('.az-product-card__note')).toHaveText('Цена и наличие демонстрационные');
-    const demoAction = demoCard.locator('.add_to_cart_button.ajax_add_to_cart');
+    const demoAction = demoCard.locator(
+      '.az-product-card__action > .button.product_type_simple.add_to_cart_button.ajax_add_to_cart',
+    );
     await expect(demoAction).toHaveCount(1);
     await expect(demoAction).toBeVisible();
-    await expect(demoAction).toHaveText('В корзину');
+    await expect(demoAction).toHaveText('Добавить в демо-корзину');
     await expect(demoAction).toHaveAttribute('data-product_id', demoProductId!);
 
     const pageWidth = await page.evaluate(() => ({

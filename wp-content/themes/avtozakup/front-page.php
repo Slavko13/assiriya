@@ -52,19 +52,18 @@ $shop_url = avtozakup_wc_page_url( 'shop' );
 		</div>
 	</section>
 
-	<section class="az-section az-products az-container" aria-labelledby="az-maintenance-title">
-		<div class="az-section__heading"><h2 id="az-maintenance-title"><?php esc_html_e( 'Расходники для планового ТО', 'avtozakup' ); ?></h2><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Все товары', 'avtozakup' ); ?><?php echo avtozakup_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></div>
-		<p class="az-demo-note"><?php esc_html_e( 'Демонстрационная подборка · цены и наличие не являются коммерческим предложением', 'avtozakup' ); ?></p>
-		<div class="az-product-filters" aria-label="<?php esc_attr_e( 'Фильтры подборки', 'avtozakup' ); ?>"><span class="is-active"><?php esc_html_e( 'Все', 'avtozakup' ); ?></span><span><?php esc_html_e( 'Фильтры', 'avtozakup' ); ?></span><span><?php esc_html_e( 'Масла', 'avtozakup' ); ?></span><span><?php esc_html_e( 'Свечи', 'avtozakup' ); ?></span></div>
+	<section class="az-section az-products az-container" aria-labelledby="az-maintenance-title" data-home-product-collection="maintenance">
+		<div class="az-section__heading"><h2 id="az-maintenance-title"><?php echo esc_html( (string) $settings['maintenance_title'] ); ?></h2><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Все товары', 'avtozakup' ); ?><?php echo avtozakup_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></div>
+		<p class="az-collection-copy" data-home-collection-copy="maintenance"><?php echo esc_html( (string) $settings['maintenance_text'] ); ?></p>
 		<div class="az-product-row">
 			<?php foreach ( $maintenance_products as $product ) : avtozakup_product_card( $product ); endforeach; ?>
 			<?php if ( ! $maintenance_products ) : ?><p class="az-empty-state"><?php esc_html_e( 'Товары появятся после подключения WooCommerce и демо-импорта.', 'avtozakup' ); ?></p><?php endif; ?>
 		</div>
 	</section>
 
-	<section class="az-section az-products az-container" aria-labelledby="az-stock-title">
-		<div class="az-section__heading"><h2 id="az-stock-title"><?php esc_html_e( 'В наличии на нашем складе', 'avtozakup' ); ?></h2><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Все товары', 'avtozakup' ); ?><?php echo avtozakup_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></div>
-		<p class="az-demo-note"><?php esc_html_e( 'Демонстрационная подборка · фактический склад будет определён после DEC-001/DEC-002', 'avtozakup' ); ?></p>
+	<section class="az-section az-products az-container" aria-labelledby="az-stock-title" data-home-product-collection="stock">
+		<div class="az-section__heading"><h2 id="az-stock-title"><?php echo esc_html( (string) $settings['stock_title'] ); ?></h2><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Все товары', 'avtozakup' ); ?><?php echo avtozakup_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></div>
+		<p class="az-collection-copy" data-home-collection-copy="stock"><?php echo esc_html( (string) $settings['stock_text'] ); ?></p>
 		<div class="az-product-row">
 			<?php foreach ( $stock_products as $product ) : avtozakup_product_card( $product ); endforeach; ?>
 			<?php if ( ! $stock_products ) : ?><p class="az-empty-state"><?php esc_html_e( 'Складская подборка появится после демо-импорта.', 'avtozakup' ); ?></p><?php endif; ?>

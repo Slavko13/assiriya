@@ -25,6 +25,10 @@ function avtozakup_home_settings(): array {
 		'pickup_text' => 'Выберите удобный способ получения при оформлении заказа.',
 		'contact_phone' => '+7 (000) 000-00-00',
 		'contact_email' => 'info@example.invalid',
+		'maintenance_title' => 'Расходники для планового ТО',
+		'maintenance_text' => 'Демонстрационная подборка товаров WooCommerce',
+		'stock_title' => 'В наличии на нашем складе',
+		'stock_text' => 'Наличие в первой итерации носит демонстрационный характер',
 		'featured_category_ids' => array(),
 		'maintenance_product_ids' => array(),
 		'stock_product_ids' => array(),
@@ -46,6 +50,10 @@ function avtozakup_home_settings(): array {
 		'pickup_text' => $raw['delivery_text'] ?? null,
 		'contact_phone' => $raw['contact_phone'] ?? null,
 		'contact_email' => $raw['contact_email'] ?? null,
+		'maintenance_title' => $raw['popular_title'] ?? null,
+		'maintenance_text' => $raw['popular_text'] ?? null,
+		'stock_title' => $raw['stock_title'] ?? null,
+		'stock_text' => $raw['stock_text'] ?? null,
 		'featured_category_ids' => $raw['category_ids'] ?? null,
 		'maintenance_product_ids' => $raw['popular_product_ids'] ?? null,
 		'stock_product_ids' => $raw['stock_product_ids'] ?? null,
@@ -242,36 +250,61 @@ function avtozakup_demo_technical_sku( WC_Product $product ): ?string {
 	return 1 === preg_match( '/\AAZ-DEMO-\d{3}\z/', $sku ) ? $sku : null;
 }
 
+/**
+ * Localize only untouched WooCommerce default loop labels inside the custom
+ * homepage renderer. Merchant/plugin-provided labels pass through unchanged.
+ */
+function avtozakup_home_loop_add_to_cart_text( string $text, WC_Product $_product ): string {
+	$labels = array(
+		'Add to cart'    => 'В корзину',
+		'Select options' => 'Выбрать параметры',
+		'View products'   => 'Посмотреть товары',
+		'Read more'       => 'Подробнее',
+	);
+
+	return $labels[ $text ] ?? $text;
+}
+
 function avtozakup_product_card( WC_Product $product ): void {
+	$identity   = avtozakup_loop_product_identity( $product );
 	$provenance = avtozakup_demo_product_provenance( $product );
-	$demo = null !== $provenance;
-	$available = $product->is_in_stock();
-	$brand = (string) $product->get_attribute( 'pa_brand' );
-	$article = $product->get_sku();
-	if ( $demo ) {
-		$identity = avtozakup_demo_product_identity( $product );
-		$brand = null !== $identity ? $identity['brand'] : '';
-		$article = null !== $identity ? $identity['article'] : '';
-	}
+	$permalink  = $product->get_permalink();
 	?>
-	<article class="az-product-card" data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
-		<a class="az-product-card__media" href="<?php echo esc_url( $product->get_permalink() ); ?>" aria-label="<?php echo esc_attr( $product->get_name() ); ?>">
+	<article class="az-product-card az-product-card--<?php echo esc_attr( $identity['kind'] ); ?>" data-home-product-card data-product-id="<?php echo esc_attr( (string) $product->get_id() ); ?>">
+		<a class="az-product-card__media" href="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( $product->get_name() ); ?>">
 			<?php echo wp_kses_post( $product->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy' ) ) ); ?>
-			<span class="az-product-card__favorite" aria-hidden="true"><?php echo avtozakup_icon( 'heart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 		</a>
 		<div class="az-product-card__body">
-			<div class="az-product-card__brand"><?php echo esc_html( $brand ?: ( $demo ? 'Бренд не указан' : 'АВТОЗАКУП' ) ); ?></div>
-			<a class="az-product-card__title" href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
-			<div class="az-product-card__sku"><?php echo esc_html( sprintf( 'Арт. %s', $article ?: '—' ) ); ?></div>
-			<div class="az-product-card__stock <?php echo $available ? 'is-in-stock' : 'is-out-of-stock'; ?>"><span aria-hidden="true"></span><?php echo esc_html( $demo ? ( $available ? 'Демо: есть в наличии' : 'Демо: под заказ' ) : ( $available ? 'Есть в наличии' : 'Нет в наличии' ) ); ?></div>
-			<div class="az-product-card__note"><?php echo esc_html( $demo ? 'Цена и наличие демонстрационные' : 'Срок уточняется при заказе' ); ?></div>
+			<?php if ( '' !== $identity['brand'] ) : ?>
+				<div class="az-product-card__brand" data-home-product-brand><?php echo esc_html( $identity['brand'] ); ?></div>
+			<?php endif; ?>
+			<a class="az-product-card__title" href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
+			<?php if ( '' !== $identity['reference'] ) : ?>
+				<div class="az-product-card__reference" data-home-product-reference data-reference-kind="<?php echo esc_attr( $identity['reference_kind'] ); ?>"><?php echo esc_html( sprintf( '%s: %s', $identity['reference_label'], $identity['reference'] ) ); ?></div>
+			<?php endif; ?>
 			<div class="az-product-card__footer">
 				<div class="az-product-card__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
-				<?php if ( $product->is_purchasable() && $available ) : ?>
-					<a class="az-button az-button--small add_to_cart_button ajax_add_to_cart" data-product_id="<?php echo esc_attr( (string) $product->get_id() ); ?>" data-quantity="1" href="<?php echo esc_url( $product->add_to_cart_url() ); ?>" rel="nofollow"><?php esc_html_e( 'В корзину', 'avtozakup' ); ?></a>
-				<?php else : ?>
-					<a class="az-button az-button--small" href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php esc_html_e( 'Подробнее', 'avtozakup' ); ?></a>
+				<?php if ( null !== $provenance ) : ?>
+					<div class="az-product-card__provenance" data-demo-provenance="product"><?php echo esc_html( $provenance['loop'] ); ?></div>
 				<?php endif; ?>
+				<div class="az-product-card__action">
+					<?php
+					$had_global_product = array_key_exists( 'product', $GLOBALS );
+					$global_product     = $GLOBALS['product'] ?? null;
+					add_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20, 2 );
+					try {
+						$GLOBALS['product'] = $product;
+						woocommerce_template_loop_add_to_cart();
+					} finally {
+						remove_filter( 'woocommerce_product_add_to_cart_text', 'avtozakup_home_loop_add_to_cart_text', 20 );
+						if ( $had_global_product ) {
+							$GLOBALS['product'] = $global_product;
+						} else {
+							unset( $GLOBALS['product'] );
+						}
+					}
+					?>
+				</div>
 			</div>
 		</div>
 	</article>

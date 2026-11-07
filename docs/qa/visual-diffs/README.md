@@ -6,18 +6,18 @@
 
 - `paper-home-desktop-1440.png` — reference текущего Paper SCR-002.
 - Размер макета: 1440 × 3376.
-- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3347; presentation was cleaned up in I2-S76 and the desktop guard was most recently recaptured/reviewed in the I2-S78 full regression.
-- `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация, visually refreshed in I2-S76.
+- `homepage-desktop-chrome-1440.png` — фактическая страница 1440 × 3491; presentation was cleaned up in I2-S76 and the truthful product collections were recaptured/reviewed in I2-S79.
+- `homepage-mobile-chrome-390.png` и `homepage-mobile-chrome-360.png` — фактическая provisional mobile-адаптация, refreshed in I2-S79 with contained product snap rails.
 - `catalog-desktop-chrome-1440.png`, `catalog-mobile-chrome-390.png`, `catalog-mobile-chrome-360.png` — actual shop artifacts, refreshed in I2-S78 with the shared Paper-informed native Woo card; an approved full SCR-005/006 baseline is still absent.
 - `product-demo-provenance-desktop-chrome-1440.png`, `product-demo-provenance-mobile-chrome-390.png`, `product-demo-provenance-mobile-chrome-360.png` — actual PDP provenance artifacts from I2-S3, visually refreshed in I2-S77 inside the Paper-informed product shell; they do not approve demo commercial data or a full PDP baseline.
 - `product-technical-baseline-desktop-chrome-1440.png`, `product-technical-baseline-mobile-chrome-390.png`, `product-technical-baseline-mobile-chrome-360.png` — actual PDP technical/presentation artifacts from I2-S4, visually refreshed in I2-S77; desktop follows the safe SCR-009 title/gallery/purchase subset, while mobile remains a provisional reflow because Paper has no mobile PDP frame.
 - `product-search-empty-desktop-chrome-1440.png`, `product-search-empty-mobile-chrome-390.png`, `product-search-empty-mobile-chrome-360.png` — actual no-results artifacts from I2-S5, refreshed in I2-S78 on the shared light listing surface; search-results design отсутствует в Paper и не считается утверждённым.
 - `product-search-results-desktop-chrome-1440.png`, `product-search-results-mobile-chrome-390.png`, `product-search-results-mobile-chrome-360.png` — actual generic results artifacts from I2-S6, refreshed in I2-S78 with the shared listing card; order/ranking remain unapproved.
-- `product-category-desktop-chrome-1440.png`, `product-category-mobile-chrome-390.png`, `product-category-mobile-chrome-360.png` — new I2-S78 actual category-listing artifacts with Russian count, no unsupported ordering and the same card contract; they do not approve assortment or category business rules.
+- `product-category-desktop-chrome-1440.png`, `product-category-mobile-chrome-390.png`, `product-category-mobile-chrome-360.png` — I2-S78 actual category-listing artifacts with Russian count, no unsupported ordering and the same card contract; the `390px` guard was recaptured/reviewed in I2-S79, and none approve assortment or category business rules.
 - `cart-desktop-chrome-1440.png`, `cart-mobile-chrome-390.png`, `cart-mobile-chrome-360.png` — actual responsive cart artifacts from I2-S71, visually refreshed in I2-S75 to remove the decorative cart eyebrow; presentation follows SCR-010 vocabulary but does not prove mixed-offer/business acceptance or pixel-perfect Paper conformance.
 - `cart-empty-desktop-chrome-1440.png`, `cart-empty-mobile-chrome-390.png`, `cart-empty-mobile-chrome-360.png` — actual branded empty-cart artifacts from I2-S73, visually refreshed in I2-S75 with the owner-approved no-eyebrow rule and a deterministic cart illustration; Paper has no approved empty-state design, so they remain provisional.
 - `account-login-desktop-chrome-1440.png`, `account-login-mobile-chrome-390.png`, `account-login-mobile-chrome-360.png` — actual branded guest-login artifacts I2-S74; Woo keeps the form behavior and Paper has no approved login screen, so they remain provisional.
-- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76; desktop was most recently recaptured/reviewed in the I2-S78 full regression, and the set verifies the meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
+- `status-dialog-desktop-chrome-1440.png`, `status-dialog-mobile-chrome-390.png`, `status-dialog-mobile-chrome-360.png` — actual open shared status-dialog artifacts I2-S76, recaptured in I2-S79 because the backdrop contains the updated homepage; the set verifies meaningful title/close layout after eyebrow removal, not domain-flow or final Paper acceptance.
 - Baseline остаётся provisional, пока `DEC-019` открыт.
 - Mobile baseline отсутствует; 390/360 px screenshots относятся к `DG-017`, имеют статус `PROVISIONAL / DESIGN_REVIEW_REQUIRED` и не закрывают дизайн.
 
@@ -217,6 +217,14 @@ report-home-YYYYMMDD.md
 - the final suite also refreshed all 3 empty-search artifacts on the shared light listing surface plus the desktop homepage/status-dialog guard frames; manual review found no header, dialog, overflow or hierarchy regression;
 - repository total is `34` PNG (`33` actual + Paper reference); valid pre-fix target `6 failed`, post-fix target `6 passed`, category refresh `3 passed`, admin target/dependencies `53 passed / 2 intentional skipped`, and final full regression `61` = `59 passed / 2 intentional skipped / 0 failed`;
 - result is `PROVISIONAL / DESIGN_REVIEW_REQUIRED`: filters/sorting/ranking, offer/stock/price/ETA truth, fitment/OEM/analogs/favorites, business add-to-cart acceptance, Paper mobile/pixel-perfect, AT/browser/full WCAG and production commerce remain outside this visual slice.
+
+## Truthful responsive homepage product collections I2-S79
+
+- both SCR-002 product collections now render the four existing admin title/text fields, fail-closed demo/unmarked identity and native Woo action output; hard-coded collection copy, fake brand/reference/availability/ETA, dead favorite and inert filter pills are absent;
+- desktop keeps five evenly aligned cards with `180px` media and bottom-aligned `>=48px` actions; `390/360` show one complete `270px` card plus a deliberate next-card peek in a contained horizontal snap rail, with every card reachable and no document overflow;
+- all 3 homepage artifacts and 3 open status-dialog artifacts were deterministically refreshed; the dialog files changed because their fixed backdrop includes the updated homepage. The full suite also recaptured the existing `product-category-mobile-chrome-390.png`; independent review found no category clipping, spacing, CTA or overflow regression. Repository total remains `34` PNG (`33` actual + Paper reference);
+- valid pre-fix homepage target `3 failed`; post-fix target `3 passed`; changed admin save/render/restore and CRUD-card targets pass; final full regression remains `61` = `59 passed / 2 intentional skipped / 0 failed`; axe serious/critical, no-overflow, runtime and inventory `10/0/0/0` pass;
+- independent review found no card hierarchy, clipping, CTA, rail-affordance or dialog regression. Real product imagery remains preferable to honest Woo placeholders; mobile rail and compact provenance remain `PROVISIONAL / DESIGN_REVIEW_REQUIRED`, not Paper mobile/pixel-perfect, full WCAG/AT/browser or production commerce acceptance.
 
 ## Отчёт
 

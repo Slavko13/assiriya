@@ -1,6 +1,6 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
-import { expectLoopCardPresentation } from './product-card';
+import { expectHomeProductCardPresentation, expectLoopCardPresentation } from './product-card';
 
 type RuntimeErrors = {
   console: string[];
@@ -597,6 +597,21 @@ test.describe('WordPress administration', () => {
     const heroTitle = page.locator('#hero_title');
     await expect(heroTitle).toBeVisible();
     const originalTitle = await heroTitle.inputValue();
+    const collectionFields = {
+      popularTitle: page.locator('#popular_title'),
+      popularText: page.locator('#popular_text'),
+      stockTitle: page.locator('#stock_title'),
+      stockText: page.locator('#stock_text'),
+    };
+    for (const field of Object.values(collectionFields)) {
+      await expect(field).toBeVisible();
+    }
+    const originalCollectionCopy = {
+      popularTitle: await collectionFields.popularTitle.inputValue(),
+      popularText: await collectionFields.popularText.inputValue(),
+      stockTitle: await collectionFields.stockTitle.inputValue(),
+      stockText: await collectionFields.stockText.inputValue(),
+    };
     await page.goto('/', { waitUntil: 'networkidle' });
     const originalRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
       lines.map((line) => (line.textContent ?? '').trim()),
@@ -604,30 +619,56 @@ test.describe('WordPress administration', () => {
     expect(originalRenderedTitleLines.length).toBeGreaterThan(0);
     await page.goto('/wp-admin/admin.php?page=avtozakup');
     const marker = `E2E проверка редактирования ${Date.now()}`;
+    const markerCopy = {
+      popularTitle: `${marker} — плановое ТО`,
+      popularText: `${marker} — описание планового ТО`,
+      stockTitle: `${marker} — складская подборка`,
+      stockText: `${marker} — описание складской подборки`,
+    };
 
     try {
       await heroTitle.fill(marker);
+      await collectionFields.popularTitle.fill(markerCopy.popularTitle);
+      await collectionFields.popularText.fill(markerCopy.popularText);
+      await collectionFields.stockTitle.fill(markerCopy.stockTitle);
+      await collectionFields.stockText.fill(markerCopy.stockText);
       await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
       ]);
       await expect(page.locator('#hero_title')).toHaveValue(marker);
+      await expect(page.locator('#popular_title')).toHaveValue(markerCopy.popularTitle);
+      await expect(page.locator('#popular_text')).toHaveValue(markerCopy.popularText);
+      await expect(page.locator('#stock_title')).toHaveValue(markerCopy.stockTitle);
+      await expect(page.locator('#stock_text')).toHaveValue(markerCopy.stockText);
 
       await page.goto('/', { waitUntil: 'networkidle' });
       const mutatedRenderedTitleLines = await page.locator('#az-hero-title .az-heading-line').evaluateAll((lines) =>
         lines.map((line) => (line.textContent ?? '').trim()),
       );
       expect(mutatedRenderedTitleLines).toEqual([marker]);
+      await expect(page.locator('#az-maintenance-title')).toHaveText(markerCopy.popularTitle);
+      await expect(page.locator('[data-home-collection-copy="maintenance"]')).toHaveText(markerCopy.popularText);
+      await expect(page.locator('#az-stock-title')).toHaveText(markerCopy.stockTitle);
+      await expect(page.locator('[data-home-collection-copy="stock"]')).toHaveText(markerCopy.stockText);
     } finally {
       await page.goto('/wp-admin/admin.php?page=avtozakup');
       await page.locator('#hero_title').fill(originalTitle);
+      await page.locator('#popular_title').fill(originalCollectionCopy.popularTitle);
+      await page.locator('#popular_text').fill(originalCollectionCopy.popularText);
+      await page.locator('#stock_title').fill(originalCollectionCopy.stockTitle);
+      await page.locator('#stock_text').fill(originalCollectionCopy.stockText);
       await stageHomepageSelections(page, originalSelections);
       await Promise.all([
         page.waitForURL(/settings-updated=true/),
         page.locator('#submit').click(),
       ]);
       await expect(page.locator('#hero_title')).toHaveValue(originalTitle);
+      await expect(page.locator('#popular_title')).toHaveValue(originalCollectionCopy.popularTitle);
+      await expect(page.locator('#popular_text')).toHaveValue(originalCollectionCopy.popularText);
+      await expect(page.locator('#stock_title')).toHaveValue(originalCollectionCopy.stockTitle);
+      await expect(page.locator('#stock_text')).toHaveValue(originalCollectionCopy.stockText);
     }
 
     await page.goto('/', { waitUntil: 'networkidle' });
@@ -635,6 +676,14 @@ test.describe('WordPress administration', () => {
       lines.map((line) => (line.textContent ?? '').trim()),
     );
     expect(restoredRenderedTitleLines).toEqual(originalRenderedTitleLines);
+    await expect(page.locator('#az-maintenance-title')).toHaveText(originalCollectionCopy.popularTitle);
+    await expect(page.locator('[data-home-collection-copy="maintenance"]')).toHaveText(
+      originalCollectionCopy.popularText,
+    );
+    await expect(page.locator('#az-stock-title')).toHaveText(originalCollectionCopy.stockTitle);
+    await expect(page.locator('[data-home-collection-copy="stock"]')).toHaveText(
+      originalCollectionCopy.stockText,
+    );
 
     const restoredStoredSelections = await readStoredHomepageSelectionOrder(page);
     expect(restoredStoredSelections).toEqual(originalSelections);
@@ -1020,14 +1069,17 @@ test.describe('WordPress administration', () => {
       await expect(productTitle).toHaveText(updatedProductName);
       await expect(productTitle).toHaveAttribute('href', productPermalink);
       await expect(productCard.locator('.az-product-card__media')).toHaveAttribute('href', productPermalink);
-      await expect(productCard.locator('.az-product-card__sku')).toHaveText(`Арт. ${sku}`);
-      const productStock = productCard.locator('.az-product-card__stock');
-      await expect(productStock).toHaveClass(/is-in-stock/);
-      await expect(productStock).toHaveText('Есть в наличии');
-      const productNote = productCard.locator('.az-product-card__note');
-      await expect(productNote).toHaveText('Срок уточняется при заказе');
+      await expectHomeProductCardPresentation(productCard, {
+        kind: 'standard',
+        expectedReference: sku,
+        expectedProductId: String(productId),
+      });
+      await expect(productCard.locator('[data-home-product-brand]')).toHaveCount(0);
+      await expect(productCard.locator('[data-home-product-reference]')).toHaveText(`SKU: ${sku}`);
       await expect(productCard).not.toContainText(/демо/i);
-      const productAction = productCard.locator('.add_to_cart_button.ajax_add_to_cart');
+      const productAction = productCard.locator(
+        '.az-product-card__action > .button.product_type_simple.add_to_cart_button.ajax_add_to_cart',
+      );
       await expect(productAction).toHaveCount(1);
       await expect(productAction).toBeVisible();
       await expect(productAction).toHaveText('В корзину');
